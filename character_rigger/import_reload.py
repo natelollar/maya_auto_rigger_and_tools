@@ -5,7 +5,6 @@ import character_rigger.ar_functions
 import character_rigger.ar_other
 import character_rigger.ar_rig
 import character_rigger.ar_rig.fk_spine_rig
-import character_rigger.ar_rig.global_ctrl_setup
 import character_rigger.ar_ui
 
 imp.reload(character_rigger.ar_functions.sel_near_jnt)
