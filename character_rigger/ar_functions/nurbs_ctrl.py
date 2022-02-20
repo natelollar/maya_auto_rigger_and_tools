@@ -2,6 +2,7 @@
 
 import maya.cmds as mc
 
+
 class nurbs_ctrl():
     def __init__(self, name, size, colorR, colorG, colorB):
         self.name = name
@@ -10,28 +11,72 @@ class nurbs_ctrl():
         self.colorG = colorG
         self.colorB = colorB
 
-    def box_ctrl(self):
-        print('_____AAAAAA______')
-        print(self.name)
-        print(self.colorR)
-        print('_____AAAAAA______')
 
-    def circle_ctrl(self):
-        # create and name nurbs curve
-        nurbsCurve = mc.circle( n=(self.name), ch=False, r=10, nr=(1,0,0) )
-        mc.setAttr( (nurbsCurve[0] + '.scale'), self.size, self.size, self.size )
+    def box_ctrl(self):
+        #curve point positions
+        nurbsCurve = mc.curve( n=(self.name), d=1, p=[  (-1, 1, 1), 
+                                                        (-1, 1, -1), 
+                                                        (1, 1, -1), 
+                                                        (1, 1, 1), 
+                                                        (-1, 1, 1), 
+                                                        (-1, -1, 1), 
+                                                        (-1, -1, -1), 
+                                                        (1, -1, -1), 
+                                                        (1, -1, 1), 
+                                                        (-1, -1, 1), 
+                                                        (-1, 1, 1), 
+                                                        (1, 1, 1), 
+                                                        (1, -1, 1), 
+                                                        (1, -1, -1), 
+                                                        (1, 1, -1), 
+                                                        (-1, 1, -1), 
+                                                        (-1, -1, -1)
+                                                        ])
+        #adjust scale
+        mc.setAttr( (nurbsCurve + '.scale'), self.size, self.size, self.size )
+        # freeze transforms
         mc.makeIdentity(apply=True)
+
+        #access nurbs curve shape
         itemsShape = mc.listRelatives(s=True)
         mc.setAttr( (itemsShape[0] + '.overrideEnabled'), 1 )
         mc.setAttr( (itemsShape[0] + '.overrideRGBColors'), 1 )
         mc.setAttr( (itemsShape[0] + '.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+        #rename shape
+        mc.rename(itemsShape[0], nurbsCurve + 'Shape' )
 
         # grp nurbs curve control
-        curveGroup = mc.group( nurbsCurve, n=(self.name + '_grp') )
-        curveGroup_offset = mc.group( nurbsCurve, n=(self.name + '_grp_offset') )
+        curveGroup_offset = mc.group( em=True, n=(nurbsCurve + '_grp_offset') )
+        mc.parent(nurbsCurve, curveGroup_offset)
+
+        curveGroup = mc.group( em=True, n=(nurbsCurve + '_grp') )
+        mc.parent(curveGroup_offset, curveGroup)
 
         # return name of control and its grp
-        return curveGroup, nurbsCurve[0]
+        return curveGroup, nurbsCurve
+
+
+    def circle_ctrl(self):
+        # create and name nurbs curve
+        nurbsCurve_circle = mc.circle( n=(self.name), ch=False, r=10, nr=(1,0,0) )
+        nurbsCurve = nurbsCurve_circle[0]
+        mc.setAttr( (nurbsCurve + '.scale'), self.size, self.size, self.size )
+        mc.makeIdentity(apply=True)
+        itemsShape = mc.listRelatives(s=True)
+        mc.setAttr( ('.overrideEnabled'), 1 )
+        mc.setAttr( ('.overrideRGBColors'), 1 )
+        mc.setAttr( ('.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+
+        # grp nurbs curve control
+        curveGroup_offset = mc.group( em=True, n=(nurbsCurve + '_grp_offset') )
+        mc.parent(nurbsCurve, curveGroup_offset)
+
+        curveGroup = mc.group( em=True, n=(nurbsCurve + '_grp') )
+        mc.parent(curveGroup_offset, curveGroup)
+
+        # return name of control and its grp
+        return curveGroup, nurbsCurve
+
 
     def global_ctrl(self):
         # create and name nurbs curve
@@ -55,13 +100,230 @@ class nurbs_ctrl():
         mc.setAttr( (itemsShape[0] + '.overrideRGBColors'), 1 )
         mc.setAttr( (itemsShape[0] + '.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
         #rename shape
-        mc.rename(itemsShape[0], self.name + 'Shape' )
+        mc.rename(itemsShape[0], nurbsCurve + 'Shape' )
 
         # grp nurbs curve control
-        curveGroup_offset = mc.group( em=True, n=(self.name + '_grp_offset') )
+        curveGroup_offset = mc.group( em=True, n=(nurbsCurve + '_grp_offset') )
         mc.parent(nurbsCurve, curveGroup_offset)
 
-        curveGroup = mc.group( em=True, n=(self.name + '_grp') )
+        curveGroup = mc.group( em=True, n=(nurbsCurve + '_grp') )
+        mc.parent(curveGroup_offset, curveGroup)
+
+        # return name of control and its grp
+        return curveGroup, nurbsCurve
+
+
+    def pyramid_ctrl(self):
+        #curve point positions
+        nurbsCurve = mc.curve( n=(self.name), d=1, p=[  (0, 5, -5), 
+                                                        (-5, 0, -5), 
+                                                        (0, -5, -5),
+                                                        (5, 0, -5),
+                                                        (0, 5, -5), 
+                                                        (0, 0, 5), 
+                                                        (5, 0, -5), 
+                                                        (0, -5, -5), 
+                                                        (0, 0, 5), 
+                                                        (-5, 0, -5), 
+                                                        ])
+        #adjust scale
+        mc.setAttr( (nurbsCurve + '.scale'), self.size, self.size, self.size )
+        # freeze transforms
+        mc.makeIdentity(apply=True)
+
+        #access nurbs curve shape
+        itemsShape = mc.listRelatives(s=True)
+        mc.setAttr( (itemsShape[0] + '.overrideEnabled'), 1 )
+        mc.setAttr( (itemsShape[0] + '.overrideRGBColors'), 1 )
+        mc.setAttr( (itemsShape[0] + '.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+        #rename shape
+        mc.rename(itemsShape[0], nurbsCurve + 'Shape' )
+
+        # grp nurbs curve control
+        curveGroup_offset = mc.group( em=True, n=(nurbsCurve + '_grp_offset') )
+        mc.parent(nurbsCurve, curveGroup_offset)
+
+        curveGroup = mc.group( em=True, n=(nurbsCurve + '_grp') )
+        mc.parent(curveGroup_offset, curveGroup)
+
+        # return name of control and its grp
+        return curveGroup, nurbsCurve
+
+    
+    def sphere_ctrl(self):
+        #create nurbs circle
+        curveA_circle = mc.circle( n=self.name, ch=False, r=3, nr=(0,1,0))
+        curveA = curveA_circle[0]
+        #create variable for nurbs circle shape
+        mc.listRelatives(curveA, s=True)
+        #color nurbs circle shape
+        mc.setAttr( ('.overrideEnabled'), 1 )
+        mc.setAttr( ('.overrideRGBColors'), 1 )
+        mc.setAttr( ('.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+        #adjust scale
+        mc.setAttr( ('.scale'), self.size, self.size, self.size )
+        # freeze transforms
+        mc.makeIdentity(apply=True)
+        
+        #create 2nd nurbs circle
+        curveB_circle = mc.circle(ch=False, r=3, nr=(0,0,0))
+        curveB = curveB_circle[0]
+        #create variable for 2nd nurbs circle shape
+        curveB_circle_shape = mc.listRelatives(curveB, s=True)
+        curveB_shape = curveB_circle_shape[0]
+        #color 2nd nurbs circle shape
+        mc.setAttr(('.overrideEnabled'), 1)
+        mc.setAttr(('.overrideRGBColors'), 1)
+        mc.setAttr(('.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+        #adjust scale
+        mc.setAttr( ('.scale'), self.size, self.size, self.size )
+        # freeze transforms
+        mc.makeIdentity(apply=True)
+        #parent shape to main transform
+        mc.parent(curveB_shape, curveA, r=True, shape=True)
+        #delete 2nd nurbs circle transform
+        mc.delete(curveB)
+        
+        #create 3rd nurbs circle
+        curveC_circle = mc.circle(ch=False, r=3, nr=(1,0,0))
+        curveC = curveC_circle[0]
+        #create variable for 3rd nurbs circle shape
+        curveC_circle_shape = mc.listRelatives(curveC, s=True)
+        curveC_shape = curveC_circle_shape[0]
+        #color 3rd nurbs circle shape
+        mc.setAttr((".overrideEnabled"), 1)
+        mc.setAttr((".overrideRGBColors"), 1)
+        mc.setAttr(('.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+        #adjust scale
+        mc.setAttr( ('.scale'), self.size, self.size, self.size )
+        # freeze transforms
+        mc.makeIdentity(apply=True)
+        #parent shape to main transform
+        mc.parent(curveC_shape, curveA, r=True, shape=True)
+        #delete 3rd nurbs circle transform
+        mc.delete(curveC)
+        
+        #rename shapes
+        shapeList = mc.listRelatives(curveA, s=True)
+        mc.rename(shapeList[1], self.name + 'AShape' )
+        mc.rename(shapeList[2], self.name + 'BShape' )
+
+        # grp nurbs curve control
+        curveGroup_offset = mc.group( em=True, n=(curveA + '_grp_offset') )
+        mc.parent(curveA, curveGroup_offset)
+
+        curveGroup = mc.group( em=True, n=(curveA + '_grp') )
+        mc.parent(curveGroup_offset, curveGroup)
+
+        # return name of control and its grp
+        return curveGroup, curveA
+
+
+    def tri_circle_ctrl(self):
+        #create nurbs circle
+        curveA_circle = mc.circle( n=self.name, ch=False, r=3, nr=(0,1,0))
+        curveA = curveA_circle[0]
+        #create variable for nurbs circle shape
+        curveA_shape = mc.listRelatives(curveA, s=True)
+        #color nurbs circle shape
+        mc.setAttr( ('.overrideEnabled'), 1 )
+        mc.setAttr( ('.overrideRGBColors'), 1 )
+        mc.setAttr( ('.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+        #adjust scale
+        mc.setAttr( ('.scale'), self.size, self.size, self.size )
+        # freeze transforms
+        mc.makeIdentity(apply=True)
+
+        #create 2nd nurbs circle
+        curveB_circle = mc.circle( n=curveA[0] + 'A', ch=False, r=3, nr=(0,1,0))
+        curveB = curveB_circle[0]
+        mc.move(0, 5, 0, r=True )
+        #create variable for 2nd nurbs circle shape
+        curveB_circle_shape = mc.listRelatives(curveB, s=True)
+        curveB_shape = curveB_circle_shape[0]
+        #color 2nd nurbs circle shape
+        mc.setAttr(('.overrideEnabled'), 1)
+        mc.setAttr(('.overrideRGBColors'), 1)
+        mc.setAttr(('.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+        #adjust scale
+        mc.setAttr( ('.scale'), self.size, self.size, self.size )
+        # freeze transforms
+        mc.makeIdentity(apply=True)
+        #parent 2nd nurbs circle shape to first nurbs circle
+        mc.parent(curveB_shape, curveA, r=True, shape=True)
+        #delete 2nd nurbs circle transform
+        mc.delete(curveB)
+
+        #create 3rd nurbs circle
+        curveC_circle = mc.circle( n=curveA[0] + 'B', ch=False, r=3, nr=(0,1,0))
+        curveC = curveC_circle[0]
+        mc.move(0, -5, 0, r=True )
+        #create variable for 3rd nurbs circle shape
+        curveC_circle_shape = mc.listRelatives(curveC, s=True)
+        curveC_shape = curveC_circle_shape[0]
+        #color 3rd nurbs circle shape
+        mc.setAttr(('.overrideEnabled'), 1)
+        mc.setAttr(('.overrideRGBColors'), 1)
+        mc.setAttr(('.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+        #adjust scale
+        mc.setAttr( ('.scale'), self.size, self.size, self.size )
+        # freeze transforms
+        mc.makeIdentity(apply=True)
+        #parent 3rd nurbs circle shape to first nurbs circle
+        mc.parent(curveC_shape, curveA, r=True, shape=True)
+        #delete 3rd nurbs circle transform
+        mc.delete(curveC)
+
+        #scale to reshape points
+        mc.scale(2.5, 1, 2.5, curveA, r=True)
+        mc.makeIdentity(curveA, apply=True)
+
+        #rename shapes
+        shapeList = mc.listRelatives(curveA, s=True)
+        mc.rename(shapeList[1], self.name + 'AShape' )
+        mc.rename(shapeList[2], self.name + 'BShape' )
+
+        # grp nurbs curve control
+        curveGroup_offset = mc.group( em=True, n=(curveA + '_grp_offset') )
+        mc.parent(curveA, curveGroup_offset)
+
+        curveGroup = mc.group( em=True, n=(curveA + '_grp') )
+        mc.parent(curveGroup_offset, curveGroup)
+
+        # return name of control and its grp
+        return curveGroup, curveA
+    
+
+    def locator_ctrl(self):
+        #curve point positions
+        nurbsCurve = mc.curve( n=(self.name), d=1, p=[  (0.0, 0.0, 5.0),
+                                                        (0.0, 0.0, -5.0),
+                                                        (0.0, 0.0, 0.0),
+                                                        (-5.0, 0.0, 0.0),
+                                                        (5.0, 0.0, 0.0),
+                                                        (0.0, 0.0, 0.0),
+                                                        (0.0, 5.0, 0.0),
+                                                        (0.0, 0.0, 0.0),
+                                                        (0.0, -5.0, 0.0) 
+                                                        ])
+        #adjust scale
+        mc.setAttr( (nurbsCurve + '.scale'), self.size, self.size, self.size )
+        # freeze transforms
+        mc.makeIdentity(apply=True)
+
+        #access nurbs curve shape
+        itemsShape = mc.listRelatives(s=True)
+        mc.setAttr( (itemsShape[0] + '.overrideEnabled'), 1 )
+        mc.setAttr( (itemsShape[0] + '.overrideRGBColors'), 1 )
+        mc.setAttr( (itemsShape[0] + '.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+        #rename shape
+        mc.rename(itemsShape[0], nurbsCurve + 'Shape' )
+
+        # grp nurbs curve control
+        curveGroup_offset = mc.group( em=True, n=(nurbsCurve + '_grp_offset') )
+        mc.parent(nurbsCurve, curveGroup_offset)
+
+        curveGroup = mc.group( em=True, n=(nurbsCurve + '_grp') )
         mc.parent(curveGroup_offset, curveGroup)
 
         # return name of control and its grp

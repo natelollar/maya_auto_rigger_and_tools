@@ -2,25 +2,30 @@
 
 import maya.cmds as mc
 import itertools
-import character_rigger
+from character_rigger.ar_functions import sel_near_jnt
+from character_rigger.ar_functions import sel_joints
+from character_rigger.ar_functions import nurbs_ctrl
+
 
 class fk_spine_rig_class():
 
     def fk_spine_rig_meth(self):
-        character_rigger.ar_functions.sel_near_jnt.sel_near_jnt('spine_ROOT_selection_box')
+        #bounding box joint selection
+        sel_near_jnt.sel_near_jnt('spine_ROOT_selection_box')
         spine_root = mc.ls(sl=True)
 
-        character_rigger.ar_functions.sel_near_jnt.sel_near_jnt('spine_END_selection_box')
+        sel_near_jnt.sel_near_jnt('spine_END_selection_box')
         spine_end = mc.ls(sl=True)
 
-        x = character_rigger.ar_functions.sel_joints.sel_joints(spine_root, spine_end)
-        sel_spine = x.rev_sel_jnt_chain()
+        # select joints in chain
+        sel_joints_var = sel_joints.sel_joints(spine_root, spine_end)
+        sel_spine = sel_joints_var.rev_sel_jnt_chain()
 
         fk_ctrl_grp_list = []
         fk_ctrl_list = []
 
         for i in sel_spine:
-            z = character_rigger.ar_functions.nurbs_ctrl.nurbs_ctrl( i + '_ctrl', 4.5, 1, 0, 0)
+            z = nurbs_ctrl.nurbs_ctrl( i + '_ctrl', 4.5, 1, 0, 0)
             alpha = z.circle_ctrl()
             curveGroup = alpha[0]
             nurbsCurve = alpha[1]
