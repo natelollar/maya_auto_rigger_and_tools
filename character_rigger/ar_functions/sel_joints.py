@@ -11,7 +11,7 @@ class sel_joints():
         chain_list = []
         jointSel = self.lastJoint
         chain_list.append(jointSel[0])
-        for i in range(1,10):
+        for i in range(1,25):
             if jointSel != self.firstJoint:
                 jointSel = mc.listRelatives( jointSel, type = 'joint', ap = True )
                 chain_list.append(jointSel[0])

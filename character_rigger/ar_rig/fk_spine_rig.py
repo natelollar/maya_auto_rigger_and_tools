@@ -11,10 +11,10 @@ class fk_spine_rig_class():
 
     def fk_spine_rig_meth(self):
         #bounding box joint selection
-        sel_near_jnt.sel_near_jnt('spine_ROOT_selection_box')
+        sel_near_jnt.sel_near_jnt('spine_ROOT_select_object')
         spine_root = mc.ls(sl=True)
 
-        sel_near_jnt.sel_near_jnt('spine_END_selection_box')
+        sel_near_jnt.sel_near_jnt('spine_END_select_object')
         spine_end = mc.ls(sl=True)
 
         # select joints in chain
@@ -25,10 +25,10 @@ class fk_spine_rig_class():
         fk_ctrl_list = []
 
         for i in sel_spine:
-            z = nurbs_ctrl.nurbs_ctrl( i + '_ctrl', 4.5, 1, 0, 0)
-            alpha = z.circle_ctrl()
-            curveGroup = alpha[0]
-            nurbsCurve = alpha[1]
+            make_curve = nurbs_ctrl.nurbs_ctrl( i + '_ctrl', 4.5, 1, 0, 0)
+            make_curve_info = make_curve.circle_ctrl()
+            curveGroup = make_curve_info[0]
+            nurbsCurve = make_curve_info[1]
             
             # grp location and rotation to joint
             mc.parent( curveGroup, i, relative=True )
@@ -45,6 +45,7 @@ class fk_spine_rig_class():
             mc.setAttr( i + '.segmentScaleCompensate', 0 )
 
         top_grp = fk_ctrl_grp_list[0]
+        top_ctrl = fk_ctrl_list[0]
 
         fk_ctrl_grp_list.pop(0)
         fk_ctrl_list.pop(-1)
@@ -52,7 +53,7 @@ class fk_spine_rig_class():
         for i_grp, i_ctrl in itertools.izip(fk_ctrl_grp_list, fk_ctrl_list):
             mc.parent(i_grp, i_ctrl)
 
-        return top_grp
+        return top_grp, top_ctrl
 
 
 

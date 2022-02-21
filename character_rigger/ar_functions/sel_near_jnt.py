@@ -1,6 +1,6 @@
-#select joint in bounding box (of nurbs standin object)
 import maya.cmds as mc
 
+# select joint/s in bounding box (of nurbs standin objects)
 def sel_near_jnt(standin_obj):
     #query joints in scene
     scene_jnt_list = mc.ls(type='joint')
@@ -19,6 +19,7 @@ def sel_near_jnt(standin_obj):
     bb_z_max = root_selection_box_bb[5]
 
     #select joint if in bounding box of standin object
+    myJoint_list = []
     for jnts in scene_jnt_list:
         scene_jnt_list_position = mc.xform(jnts, query=True, translation=True, worldSpace=True )
 
@@ -33,7 +34,12 @@ def sel_near_jnt(standin_obj):
                     if jnt_x_pos <= bb_x_max:
                         if jnt_y_pos <= bb_y_max:
                             if jnt_z_pos <= bb_z_max:
-                                mc.select(jnts)
+                                myJoint_list.append(jnts)
+    
+    mc.select(myJoint_list)
+    return myJoint_list
+    
+
 
 
 
