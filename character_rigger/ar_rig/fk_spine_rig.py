@@ -2,28 +2,27 @@
 
 import maya.cmds as mc
 import itertools
-from character_rigger.ar_functions import sel_near_jnt
+from character_rigger.ar_functions import find_jnts
 from character_rigger.ar_functions import sel_joints
 from character_rigger.ar_functions import nurbs_ctrl
 
 
 class fk_spine_rig_class():
-
+    #fk spine rig
     def fk_spine_rig_meth(self):
-        #bounding box joint selection
-        sel_near_jnt.sel_near_jnt('spine_ROOT_select_object')
-        spine_root = mc.ls(sl=True)
+        #get spine root and head joitns
+        spine_root_temp = find_jnts.find_jnts()
+        spine_root = spine_root_temp.find_spine_root()
 
-        sel_near_jnt.sel_near_jnt('spine_END_select_object')
-        spine_end = mc.ls(sl=True)
-
+        head_end_temp = find_jnts.find_jnts()
+        head_end = head_end_temp.find_head_jnt()
+        
         # select joints in chain
-        sel_joints_var = sel_joints.sel_joints(spine_root, spine_end)
-        sel_spine = sel_joints_var.rev_sel_jnt_chain()
+        sel_joints_temp = sel_joints.sel_joints(spine_root, head_end)
+        sel_spine = sel_joints_temp.rev_sel_jnt_chain()
 
         fk_ctrl_grp_list = []
         fk_ctrl_list = []
-
         for i in sel_spine:
             make_curve = nurbs_ctrl.nurbs_ctrl( i + '_ctrl', 4.5, 1, 0, 0)
             make_curve_info = make_curve.circle_ctrl()
@@ -44,8 +43,11 @@ class fk_spine_rig_class():
             # turn off "segmentScaleCompensate" to avoid double scale while joints parented under global contrl
             mc.setAttr( i + '.segmentScaleCompensate', 0 )
 
-        top_grp = fk_ctrl_grp_list[0]
-        top_ctrl = fk_ctrl_list[0]
+        first_grp = fk_ctrl_grp_list[0]
+        first_ctrl = fk_ctrl_list[0]
+
+        last_grp = fk_ctrl_grp_list[-1]
+        last_ctrl = fk_ctrl_list[-1]
 
         fk_ctrl_grp_list.pop(0)
         fk_ctrl_list.pop(-1)
@@ -53,7 +55,8 @@ class fk_spine_rig_class():
         for i_grp, i_ctrl in itertools.izip(fk_ctrl_grp_list, fk_ctrl_list):
             mc.parent(i_grp, i_ctrl)
 
-        return top_grp, top_ctrl
+        return first_grp, first_ctrl, last_grp, last_ctrl
+        
 
 
 

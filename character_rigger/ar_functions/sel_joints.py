@@ -9,15 +9,31 @@ class sel_joints():
     # reverse select joint chain (from last joint)
     def rev_sel_jnt_chain(self):
         chain_list = []
-        jointSel = self.lastJoint
-        chain_list.append(jointSel[0])
+        jointSel = [self.lastJoint]
+        chain_list.append(jointSel)
         for i in range(1,25):
             if jointSel != self.firstJoint:
-                jointSel = mc.listRelatives( jointSel, type = 'joint', ap = True )
-                chain_list.append(jointSel[0])
-
+                if jointSel != None:
+                    jointSel = mc.listRelatives( jointSel, type = 'joint', ap = True )
+                    chain_list.append(jointSel)
+        
+        # delete "None" value from last append before repeating if statement
+        chain_list.pop(-1)
+        # reverse list as it was selected in reverse
         chain_list.reverse()
-        return chain_list
+        
+        #get rid of list: list structure
+        chain_list_new = []
+        for i in chain_list:
+            i = i[0]
+            chain_list_new.append(i)
+
+        # return clean list
+        return chain_list_new
+
+
+    def sel_jnt_chain(self):
+        pass
 
 
 

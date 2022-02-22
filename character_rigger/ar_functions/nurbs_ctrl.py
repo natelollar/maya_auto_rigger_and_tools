@@ -56,9 +56,9 @@ class nurbs_ctrl():
         return curveGroup, nurbsCurve
 
 
-    def circle_ctrl(self):
+    def circle_ctrl( self, normal = [1,0,0] ):
         # create and name nurbs curve
-        nurbsCurve_circle = mc.circle( n=(self.name), ch=False, r=10, nr=(1,0,0) )
+        nurbsCurve_circle = mc.circle( n=(self.name), ch=False, r=10, nr=normal )
         nurbsCurve = nurbsCurve_circle[0]
         mc.setAttr( (nurbsCurve + '.scale'), self.size, self.size, self.size )
         mc.makeIdentity(apply=True)
@@ -76,6 +76,34 @@ class nurbs_ctrl():
 
         # return name of control and its grp
         return curveGroup, nurbsCurve
+
+    def nurbs_sphere_ctrl( self ):
+        # create and name nurbs curve
+        nurbsSphere_var = mc.sphere( n=(self.name), axis=[0,1,0], radius=1, ch=False)
+        # get string of sphere name
+        nurbsSphere = nurbsSphere_var[0]
+        #adjust size
+        mc.setAttr( (nurbsSphere + '.scale'), self.size, self.size, self.size )
+        #freeze transforms
+        mc.makeIdentity(apply=True)
+        # color shape
+        itemsShape = mc.listRelatives(s=True)
+        mc.setAttr( (itemsShape[0] + '.overrideEnabled'), 1 )
+        mc.setAttr( (itemsShape[0] + '.overrideRGBColors'), 1 )
+        mc.setAttr( (itemsShape[0] + '.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+        #creat blinn and assign blinn
+        nurbsSphere_mat = mc.shadingNode('blinn', asShader=True, n=(nurbsSphere + '_mat'))
+        mc.setAttr((nurbsSphere_mat + '.color'), self.colorR, self.colorG, self.colorB, type='double3')
+        mc.select(nurbsSphere)
+        mc.hyperShade(assign = nurbsSphere_mat)
+        # grp nurbs sphere to offset grp
+        sphereGroup_offset = mc.group( em=True, n=(nurbsSphere + '_grp_offset') )
+        mc.parent(nurbsSphere, sphereGroup_offset)
+        # grp nurbs sphere to main grp
+        sphereGroup = mc.group( em=True, n=(nurbsSphere + '_grp') )
+        mc.parent(sphereGroup_offset, sphereGroup)
+        # return grp and control name
+        return sphereGroup, nurbsSphere
 
 
     def global_ctrl(self):

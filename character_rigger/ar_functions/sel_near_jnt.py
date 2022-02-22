@@ -35,6 +35,7 @@ def sel_near_jnt(standin_obj):
                         if jnt_y_pos <= bb_y_max:
                             if jnt_z_pos <= bb_z_max:
                                 myJoint_list.append(jnts)
+                                #mc.select(myJoint_list)
     
     mc.select(myJoint_list)
     return myJoint_list

@@ -2,7 +2,7 @@
 import maya.cmds as mc
 import itertools
 from character_rigger.ar_functions import create_jnts
-from character_rigger.ar_functions import sel_near_jnt
+from character_rigger.ar_functions import find_jnts
 
 
 class extra_rig():
@@ -10,11 +10,11 @@ class extra_rig():
     # create offset joints for blend color limbs
     def blend_jnt_offset(self, parent, parentTo, size, colorR, colorG, colorB):
 
-        sel_near_jnt.sel_near_jnt('spine_ROOT_select_object')
-        spine_root = mc.ls(sl=True)
+        spine_root_temp = find_jnts.find_jnts()
+        spine_root = spine_root_temp.find_spine_root()
 
         if parent == 'spine_root_pos':
-            single_jnt_var = create_jnts.create_jnts(spine_root[0] + '_blendOffset', size, colorR, colorG, colorB)
+            single_jnt_var = create_jnts.create_jnts(spine_root + '_blendOffset', size, colorR, colorG, colorB)
             myJoint = single_jnt_var.single_jnt()
             mc.Unparent(myJoint)
 
