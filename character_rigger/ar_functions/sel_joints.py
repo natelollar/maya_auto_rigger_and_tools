@@ -2,7 +2,7 @@ import maya.cmds as mc
 
 class sel_joints():
 
-    def __init__(self, firstJoint, lastJoint):
+    def __init__(self, firstJoint='', lastJoint=''):
         self.firstJoint = firstJoint
         self.lastJoint = lastJoint
 
@@ -31,9 +31,16 @@ class sel_joints():
         # return clean list
         return chain_list_new
 
-
+    # select basic chain with no fork (finger, tongue, tentacle)
     def sel_jnt_chain(self):
-        pass
+        jnt_desc = mc.listRelatives(self.firstJoint, type='joint', ad=True)
+
+        jnt_desc.append(self.firstJoint)
+
+        jnt_desc.reverse()
+
+        mc.select(jnt_desc)
+        return jnt_desc
 
 
 

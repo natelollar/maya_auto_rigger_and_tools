@@ -1,7 +1,10 @@
 import maya.cmds as mc
+import itertools
 
-from character_rigger.ar_functions import find_jnts
-from character_rigger.ar_tools import fk_ctrl
+from ..ar_functions import find_jnts
+from ..ar_functions import sel_joints
+from ..ar_tools import fk_ctrl
+
 
 # fk jaw ctrl
 class face_rig():
@@ -25,6 +28,7 @@ class face_rig():
         # return joint group and then control
         return jaw_ctrl_info[0], jaw_ctrl_info[1]
 
+
     def tongue_ctrls(self, parent_to):
         # find head joint
         head_jnt_temp = find_jnts.find_jnts()
@@ -36,8 +40,40 @@ class face_rig():
         tongue_jnt_temp = find_jnts.find_jnts()
         tongue_jnt = tongue_jnt_temp.most_descendants_jnt(jaw_jnt)
 
-        mc.select(tongue_jnt)
-        return tongue_jnt
+        # find tongue joint chain
+        tongue_list_var = sel_joints.sel_joints(firstJoint=tongue_jnt)
+
+        tongue_list_info = tongue_list_var.sel_jnt_chain()
+
+        #create controls and groups for tongue
+        tongue_grp_list = []
+        tongue_ctrl_list = []
+        for jnt in tongue_list_info:
+            jnt_var = fk_ctrl.fk_ctrl()
+            jnt_var_info = jnt_var.single_fk_curve_ctrl(jnt=jnt, 
+                                                        parent_to='', 
+                                                        version='box', 
+                                                        size=3, 
+                                                        colorR=1, 
+                                                        colorG=0, 
+                                                        colorB=0)
+            # make grp and ctrl list for tongue ctrls
+            tongue_grp_list.append(jnt_var_info[0])
+            tongue_ctrl_list.append(jnt_var_info[1])
+        # varaiable for top grp to parent
+        tongue_top_grp = tongue_grp_list[0]
+
+        #remove first and last of lists to correctly parent ctrls and grps together in for loop
+        tongue_grp_list.pop(0)
+        tongue_ctrl_list.pop(-1)
+
+        #parent ctrls and grps together
+        for i_grp, i_ctrl in itertools.izip(tongue_grp_list, tongue_ctrl_list):
+            mc.parent(i_grp, i_ctrl)
+        # parent top grp to head ctrl
+        mc.parent(tongue_top_grp, parent_to)
+        #return tongue top grp (not needed)
+        return tongue_top_grp
 
 
     def bot_face_ctrls(self, parent_to):
@@ -63,17 +99,15 @@ class face_rig():
             bot_face_ctrl.single_fk_sphere_ctrl(jnt=i, 
                                                 parent_to=parent_to,
                                                 size=1,
+                                                mat_name='nurbs_sphere_green_mat',
                                                 colorR=0, 
                                                 colorG=1, 
                                                 colorB=0)
         
 
 
-    def mid_face_ctrls(self, parent_to):
-        pass
-
-
-    def top_face_ctrls(self, parent_to):
+    #top face controls w/ mid ctrls (parented to head)
+    def top_face_ctrls(self, parent_to_head='', parent_to_jaw='', mid_ctrls=0):
         # find head joint
         head_jnt_temp = find_jnts.find_jnts()
         head_jnt = head_jnt_temp.find_head_jnt()
@@ -87,7 +121,7 @@ class face_rig():
         for i in head_jnt_descendants:
             if i != jaw_jnt:
                 top_head_jnts.append(i)
-        #list head joints without ear joitns
+        #list head joints without ear joints
         top_face_jnts = []
         for i in top_head_jnts:
             i_descendats = mc.listRelatives(i, type='joint', ad=True)
@@ -97,14 +131,55 @@ class face_rig():
             except:
                 top_face_jnts.append(i)
         
+        #get position of face jnts
+        y_pos_list = []
+        for i in top_face_jnts:
+            pos = mc.xform(i, q=True , ws=True, t=True)
+            y_pos = pos[1]
+            y_pos_list.append(y_pos)
+
+        mid_jnt_list = []
+        for i in range(mid_ctrls):
+            # get index of joint with lowest y value position
+            low_y_val_ind = y_pos_list.index(min(y_pos_list))
+            # get joint name with lowest y value
+            low_y_val_jnt = [top_face_jnts[low_y_val_ind]]
+            # add lowest y to to mid_jnt_list
+            mid_jnt_list.append(low_y_val_jnt[0])
+            # delete lowest y from top_face_jnts ('remove' better than 'pop' for some reason)
+            top_face_jnts.remove(low_y_val_jnt[0])
+
+        
         for i in top_face_jnts:
             top_face_ctrl = fk_ctrl.fk_ctrl()
             top_face_ctrl.single_fk_sphere_ctrl(jnt=i, 
-                                                parent_to=parent_to, 
+                                                parent_to=parent_to_head, 
+                                                mat_name='nurbs_sphere_magenta_mat',
                                                 size=1,
                                                 colorR=1, 
                                                 colorG=0, 
                                                 colorB=1)
+
+        for i in mid_jnt_list:
+            mid_face_ctrl = fk_ctrl.fk_ctrl()
+            mid_face_ctrl_info = mid_face_ctrl.single_fk_sphere_ctrl(   jnt=i, 
+                                                                        parent_to='', 
+                                                                        mat_name='nurbs_sphere_blue_mat',
+                                                                        size=1,
+                                                                        colorR=0, 
+                                                                        colorG=0, 
+                                                                        colorB=1)
+            # parent constrain mid face ctrl grp between head and jaw
+            mc.parentConstraint(parent_to_head, parent_to_jaw, mid_face_ctrl_info[0], mo=1)
+            mc.scaleConstraint(parent_to_head, parent_to_jaw, mid_face_ctrl_info[0], mo=1)
+
+        return top_face_jnts, mid_jnt_list
+
+                
+
+
+        
+
 
 
     def ear_ctrls(self, parent_to):
@@ -130,6 +205,69 @@ class face_rig():
                     ear_jnts.append(i)
             except:
                 pass
-        # return only ear joints
-        mc.select(ear_jnts)
-        return ear_jnts
+
+        # chain for first r ear
+        r_ear_list_var = sel_joints.sel_joints(firstJoint=ear_jnts[0])
+
+        r_ear_list_info = r_ear_list_var.sel_jnt_chain()
+
+        # chain for first l ear
+        l_ear_list_var = sel_joints.sel_joints(firstJoint=ear_jnts[1])
+
+        l_ear_list_info = l_ear_list_var.sel_jnt_chain()
+
+        #create controls and groups for R EAR ___________________________
+        r_ear_grp_list = []
+        r_ear_ctrl_list = []
+        for jnt in r_ear_list_info:
+            jnt_var = fk_ctrl.fk_ctrl()
+            jnt_var_info = jnt_var.single_fk_curve_ctrl(jnt=jnt, 
+                                                        parent_to='', 
+                                                        version='box', 
+                                                        size=3, 
+                                                        colorR=1, 
+                                                        colorG=0, 
+                                                        colorB=0)
+            r_ear_grp_list.append(jnt_var_info[0])
+            r_ear_ctrl_list.append(jnt_var_info[1])
+        # varaiable for top grp before removed
+        r_ear_top_grp = r_ear_grp_list[0]
+
+        #remove first and last of lists to correctly parent ctrls and grps together in for loop
+        r_ear_grp_list.pop(0)
+        r_ear_ctrl_list.pop(-1)
+
+        #parent ctrls and grps together
+        for i_grp, i_ctrl in itertools.izip(r_ear_grp_list, r_ear_ctrl_list):
+            mc.parent(i_grp, i_ctrl)
+        # parent top grp to head ctrl
+        mc.parent(r_ear_top_grp, parent_to)
+
+        #create controls and groups for L EAR ___________________________
+        l_ear_grp_list = []
+        l_ear_ctrl_list = []
+        for jnt in l_ear_list_info:
+            jnt_var = fk_ctrl.fk_ctrl()
+            jnt_var_info = jnt_var.single_fk_curve_ctrl(jnt=jnt, 
+                                                        parent_to='', 
+                                                        version='box', 
+                                                        size=3, 
+                                                        colorR=1, 
+                                                        colorG=0, 
+                                                        colorB=0)
+            l_ear_grp_list.append(jnt_var_info[0])
+            l_ear_ctrl_list.append(jnt_var_info[1])
+        # varaiable for top grp before removed
+        l_ear_top_grp = l_ear_grp_list[0]
+
+        #remove first and last of lists to correctly parent ctrls and grps together in for loop
+        l_ear_grp_list.pop(0)
+        l_ear_ctrl_list.pop(-1)
+
+        #parent ctrls and grps together
+        for i_grp, i_ctrl in itertools.izip(l_ear_grp_list, l_ear_ctrl_list):
+            mc.parent(i_grp, i_ctrl)
+        # parent top grp to head ctrl
+        mc.parent(l_ear_top_grp, parent_to)
+
+        return r_ear_top_grp, l_ear_top_grp

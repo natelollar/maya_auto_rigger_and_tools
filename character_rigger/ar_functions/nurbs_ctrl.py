@@ -77,7 +77,7 @@ class nurbs_ctrl():
         # return name of control and its grp
         return curveGroup, nurbsCurve
 
-    def nurbs_sphere_ctrl( self ):
+    def nurbs_sphere_ctrl( self, mat_name ):
         # create and name nurbs curve
         nurbsSphere_var = mc.sphere( n=(self.name), axis=[0,1,0], radius=1, ch=False)
         # get string of sphere name
@@ -92,10 +92,14 @@ class nurbs_ctrl():
         mc.setAttr( (itemsShape[0] + '.overrideRGBColors'), 1 )
         mc.setAttr( (itemsShape[0] + '.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
         #creat blinn and assign blinn
-        nurbsSphere_mat = mc.shadingNode('blinn', asShader=True, n=(nurbsSphere + '_mat'))
-        mc.setAttr((nurbsSphere_mat + '.color'), self.colorR, self.colorG, self.colorB, type='double3')
-        mc.select(nurbsSphere)
-        mc.hyperShade(assign = nurbsSphere_mat)
+        if mc.objExists(mat_name):
+            mc.select(nurbsSphere)
+            mc.hyperShade(assign = mat_name)
+        else:
+            mc.shadingNode('blinn', asShader=True, n=(mat_name))
+            mc.setAttr((mat_name + '.color'), self.colorR, self.colorG, self.colorB, type='double3')
+            mc.select(nurbsSphere)
+            mc.hyperShade(assign = mat_name)
         # grp nurbs sphere to offset grp
         sphereGroup_offset = mc.group( em=True, n=(nurbsSphere + '_grp_offset') )
         mc.parent(nurbsSphere, sphereGroup_offset)

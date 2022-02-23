@@ -1,8 +1,8 @@
 
 import maya.cmds as mc
-import itertools
-from character_rigger.ar_functions import create_jnts
-from character_rigger.ar_functions import find_jnts
+
+from ..ar_functions import create_jnts
+from ..ar_functions import find_jnts
 
 
 class extra_rig():

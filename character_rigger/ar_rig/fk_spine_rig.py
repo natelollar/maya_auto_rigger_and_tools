@@ -2,9 +2,9 @@
 
 import maya.cmds as mc
 import itertools
-from character_rigger.ar_functions import find_jnts
-from character_rigger.ar_functions import sel_joints
-from character_rigger.ar_functions import nurbs_ctrl
+from ..ar_functions import find_jnts
+from ..ar_functions import sel_joints
+from ..ar_functions import nurbs_ctrl
 
 
 class fk_spine_rig_class():

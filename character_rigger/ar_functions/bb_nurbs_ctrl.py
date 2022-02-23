@@ -1,6 +1,6 @@
 import maya.cmds as mc
 
-from character_rigger.ar_functions import nurbs_ctrl
+from . import nurbs_ctrl
 
 class bb_nurbs_ctrl():
 
