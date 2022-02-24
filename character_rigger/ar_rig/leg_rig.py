@@ -342,6 +342,7 @@ class leg_rig():
 
         #___________ik handle CTRL____________#
         ik_group_list = []
+        ik_ctrl_list = []
         #create curve box
         for i in range(0,1):
             myCurve = mc.curve(d=1, p=[ (-1, 1, 1), 
@@ -386,16 +387,12 @@ class leg_rig():
             #unparent group (since it has correct position)
             mc.Unparent(myGroup)
 
-            #translate contrain ik ctrl to ik handle
-            mc.parentConstraint(myCurve, ikHandle_var[0], sr=('x','y','z'))
-            #rotate constrain ik ctrl to ankle joint
-            mc.parentConstraint(myCurve, ikJoint_list_noFoot[-1], st=('x','y','z'))
-
             #parent grp to global grp to organize
             mc.parent(myGroup, myIKGrp)
 
             #append grp for outside use
             ik_group_list.append(myGroup)
+            ik_ctrl_list.append(myCurve)
         
         
         #_________________POLE VECTOR Start___________________#
@@ -491,6 +488,7 @@ class leg_rig():
         #______________________________________________________________________________#
         #____________________________IK/ FK Switch Ctrl _______________________________#
         #______________________________________________________________________________#
+
         switch_ctrl_list = []
         switch_ctrl_grp_list = []
         for i in range(0,1):
@@ -604,90 +602,114 @@ class leg_rig():
             mc.setDrivenKeyframe((pv_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 
-    '''
+    
     #________________________________________________________________________________#
     #________________________END of FK/IK BLEND______________________________________#
 
         #_________________Reverse Foot Rig___________________#
         #____________________________________________________#
+        # create locators for reverse foot if not exist, also declare locator list
+        if direction == 'right':
+            # if any of the locators don't exist, create them
+            if  mc.objExists('right_loc_ankle') == False or \
+                mc.objExists('right_loc_toe') == False or \
+                mc.objExists('right_loc_toe_end') == False or \
+                mc.objExists('right_loc_heel') == False or \
+                mc.objExists('right_loc_outer_foot') == False or \
+                mc.objExists('right_loc_inner_foot') == False:
+                self.rev_foot_locators('right')
+            # declare locator list          
+            rvFoot_loc_list = ( 'right_loc_ankle', 
+                                'right_loc_toe', 
+                                'right_loc_toe_end', 
+                                'right_loc_heel', 
+                                'right_loc_outer_foot', 
+                                'right_loc_inner_foot')
+        elif direction == 'left':
+            # if any of the locators don't exist, create them
+            if  mc.objExists('left_loc_ankle') == False or \
+                mc.objExists('left_loc_toe') == False or \
+                mc.objExists('left_loc_toe_end') == False or \
+                mc.objExists('left_loc_heel') == False or \
+                mc.objExists('left_loc_outer_foot') == False or \
+                mc.objExists('left_loc_inner_foot') == False:
+                self.rev_foot_locators('left')
+            # declare locator list          
+            rvFoot_loc_list = ( 'left_loc_ankle', 
+                                'left_loc_toe', 
+                                'left_loc_toe_end', 
+                                'left_loc_heel', 
+                                'left_loc_outer_foot', 
+                                'left_loc_inner_foot')
 
-        l_ftCtrl_list = []
-        l_ftCtrl_grp_list = []
-
-        for items in loc_l_foot_list:
-            
+        # create controls for locators
+        ftCtrl_list = []
+        ftCtrl_grp_list = []
+        for i in rvFoot_loc_list:
             #name circle curves
-            locCurveA_l_name = items.replace('loc_', reverseFootCtrlPrefix)
-            locCurveB_l_name = items.replace('loc_', reverseFootCtrlPrefix) + '0'
-            locCurveC_l_name = items.replace('loc_', reverseFootCtrlPrefix) + '1'
+            locCurveA_name = i.replace('loc_', 'ftCtrl_')
+            locCurveB_name = i.replace('loc_', 'ftCtrl_') + 'A'
+            locCurveC_name = i.replace('loc_', 'ftCtrl_') + 'B'
 
             #create nurbs circle
-            locCurveA_l = mc.circle(n=locCurveA_l_name, ch=False, r=4, nr=(0,1,0))
+            locCurveA = mc.circle(n=locCurveA_name, ch=False, r=3, nr=(0,1,0))
             #create variable for nurbs circle shape
-            locCurveA_l_shape = mc.listRelatives(locCurveA_l, s=True)
+            locCurveA_shape = mc.listRelatives(locCurveA, s=True)
             #color nurbs circle shape
-            mc.setAttr((locCurveA_l_shape[0] + '.overrideEnabled'), 1)
-            mc.setAttr((locCurveA_l_shape[0] + '.overrideRGBColors'), 1)
-            mc.setAttr((locCurveA_l_shape[0] + '.overrideColorR'), .5)
-            mc.setAttr((locCurveA_l_shape[0] + '.overrideColorG'), 1)
-            mc.setAttr((locCurveA_l_shape[0] + '.overrideColorB'), 0)
+            mc.setAttr((locCurveA_shape[0] + ".overrideEnabled"), 1)
+            mc.setAttr((locCurveA_shape[0] + ".overrideRGBColors"), 1)
+            mc.setAttr((locCurveA_shape[0] + ".overrideColorRGB"), .5, 1, 0)
 
             #create 2nd nurbs circle
-            locCurveB_l = mc.circle(n=locCurveB_l_name, ch=False, r=4, nr=(0,0,0))
+            locCurveB = mc.circle(n=locCurveB_name, ch=False, r=3, nr=(0,0,0))
             #create variable for 2nd nurbs circle shape
-            locCurveB_l_shape = mc.listRelatives(locCurveB_l, s=True)
+            locCurveB_shape = mc.listRelatives(locCurveB, s=True)
             #color 2nd nurbs circle shape
-            mc.setAttr((locCurveB_l_shape[0] + '.overrideEnabled'), 1)
-            mc.setAttr((locCurveB_l_shape[0] + '.overrideRGBColors'), 1)
-            mc.setAttr((locCurveB_l_shape[0] + '.overrideColorR'), .5)
-            mc.setAttr((locCurveB_l_shape[0] + '.overrideColorG'), 1)
-            mc.setAttr((locCurveB_l_shape[0] + '.overrideColorB'), 0)
+            mc.setAttr((locCurveB_shape[0] + ".overrideEnabled"), 1)
+            mc.setAttr((locCurveB_shape[0] + ".overrideRGBColors"), 1)
+            mc.setAttr((locCurveB_shape[0] + ".overrideColorRGB"), .5, 1, 0)
             #parent 2nd nurbs circle shape to first nurbs circle
-            mc.parent(locCurveB_l_shape, locCurveA_l, r=True, shape=True)
+            mc.parent(locCurveB_shape, locCurveA, r=True, shape=True)
             #delete 2nd nurbs circle transform
-            mc.delete(locCurveB_l)
+            mc.delete(locCurveB)
 
             #create 3rd nurbs circle
-            locCurveC_l = mc.circle(n=locCurveC_l_name, ch=False, r=4, nr=(1,0,0))
+            locCurveC = mc.circle(n=locCurveC_name, ch=False, r=3, nr=(1,0,0))
             #create variable for 3rd nurbs circle shape
-            locCurveC_l_shape = mc.listRelatives(locCurveC_l, s=True)
+            locCurveC_shape = mc.listRelatives(locCurveC, s=True)
             #color 3rd nurbs circle shape
-            mc.setAttr((locCurveC_l_shape[0] + '.overrideEnabled'), 1)
-            mc.setAttr((locCurveC_l_shape[0] + '.overrideRGBColors'), 1)
-            mc.setAttr((locCurveC_l_shape[0] + '.overrideColorR'), .5)
-            mc.setAttr((locCurveC_l_shape[0] + '.overrideColorG'), 1)
-            mc.setAttr((locCurveC_l_shape[0] + '.overrideColorB'), 0)
+            mc.setAttr((locCurveC_shape[0] + ".overrideEnabled"), 1)
+            mc.setAttr((locCurveC_shape[0] + ".overrideRGBColors"), 1)
+            mc.setAttr((locCurveC_shape[0] + ".overrideColorRGB"), .5, 1, 0)
             #parent 3rd nurbs circle shape to first nurbs circle
-            mc.parent(locCurveC_l_shape, locCurveA_l, r=True, shape=True)
+            mc.parent(locCurveC_shape, locCurveA, r=True, shape=True)
             #delete 3rd nurbs circle transform
-            mc.delete(locCurveC_l)
+            mc.delete(locCurveC)
 
             #_______group ctrl_______#
-            locCurveA_l_grp = mc.group(locCurveA_l, n = (locCurveA_l_name + '_grp'))
-            locCurveA_l_grp_offset = mc.group(locCurveA_l, n = (locCurveA_l_name + '_grp_offset'))
-
+            locCurveA_grp = mc.group(locCurveA, n = (locCurveA[0] + '_grp'))
+            locCurveA_grp_offset = mc.group(locCurveA, n = (locCurveA[0] + '_grp_offset'))
 
             #_______move ctrl grp to loc_______#
-
-            #parent and zero joints to l_leg_list
-            mc.parent(locCurveA_l_grp, items, relative=True)
-            #parent joints to world space
-            mc.Unparent(locCurveA_l_grp)
+            mc.parent(locCurveA_grp, i, relative=True)
+            mc.Unparent(locCurveA_grp)
             #add/ create list for ftCtrl's
-            l_ftCtrl_list.append(locCurveA_l)
-            l_ftCtrl_grp_list.append(locCurveA_l_grp)
+            ftCtrl_list.append(locCurveA)
+            ftCtrl_grp_list.append(locCurveA_grp)
 
         #group reverse foot ctrls together
-        mc.parent(l_ftCtrl_grp_list[4], l_ftCtrl_list[5])
-        mc.parent(l_ftCtrl_grp_list[3], l_ftCtrl_list[4])
-        mc.parent(l_ftCtrl_grp_list[2], l_ftCtrl_list[3])
-        mc.parent(l_ftCtrl_grp_list[1], l_ftCtrl_list[2])
-        mc.parent(l_ftCtrl_grp_list[0], l_ftCtrl_list[1])
-        #group reverse foot ctrls under ankle ctrl
-        mc.parent(ftCtrl_l_foot_inner_grp, ikFootCtrl_l)
+        mc.parent(ftCtrl_grp_list[4], ftCtrl_list[5])
+        mc.parent(ftCtrl_grp_list[3], ftCtrl_list[4])
+        mc.parent(ftCtrl_grp_list[2], ftCtrl_list[3])
+        mc.parent(ftCtrl_grp_list[1], ftCtrl_list[2])
+        mc.parent(ftCtrl_grp_list[0], ftCtrl_list[1])
 
+        #group reverse foot ctrls under ankle ctrl
+        mc.parent(ftCtrl_grp_list[-1], ik_ctrl_list[0])
+        
         # create extra toe offset ctrl_______
-        for items in range(0,1):
+        toe_wiggle_list = []
+        for i in range(0,1):
             myCurve = mc.curve(d=1, p=[ (-1, 1, 1), 
                                         (-1, 1, -1), 
                                         (1, 1, -1), 
@@ -707,9 +729,7 @@ class leg_rig():
                                         (-1, -1, -1)
                                         ])
             #curve size
-            mc.setAttr((myCurve + '.scaleX'), 4.5)
-            mc.setAttr((myCurve + '.scaleY'), 3)
-            mc.setAttr((myCurve + '.scaleZ'), 6)
+            mc.setAttr((myCurve + '.scale'), 4.5, 3, 6)
             #freeze transforms
             mc.makeIdentity(myCurve, apply=True)
             #select curve box's shape
@@ -717,12 +737,9 @@ class leg_rig():
             #color curve box's shape red
             mc.setAttr((curveShape[0] + '.overrideEnabled'), 1)
             mc.setAttr((curveShape[0] + '.overrideRGBColors'), 1)
-            mc.setAttr((curveShape[0] + '.overrideColorR'), 1)
-            mc.setAttr((curveShape[0] + '.overrideColorG'), 0)
-            mc.setAttr((curveShape[0] + '.overrideColorB'), 1)
+            mc.setAttr((curveShape[0] + '.overrideColorRGB'), 1, 0, 1)
             #rename curve
-            myCurve = loc_l_foot_toe.replace('loc_', reverseFootCtrlPrefix)
-            myCurve = mc.rename(myCurve + '_toeWiggle')
+            myCurve = mc.rename('ftCtrl_' + direction + '_toeWiggle')
             #group curve
             curveGrouped = mc.group(myCurve)
             curveGrouped_offset = mc.group(myCurve)
@@ -730,41 +747,22 @@ class leg_rig():
             myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
             myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
             #parent and zero curveGrp
-            mc.parent(myGroup, ftCtrl_l_foot_toe, relative=True)
+            mc.parent(myGroup, ftCtrl_list[1], relative=True)
             #unparent after getting position
             mc.Unparent(myGroup)
             #reparent to toe_end
-            mc.parent(myGroup, ftCtrl_l_foot_toe_end, relative=False)
+            mc.parent(myGroup, ftCtrl_list[2], relative=False)
+            # append to list for later use
+            toe_wiggle_list.append(myCurve)
 
-
+        
         #___________reverse foot joint parenting___________#
 
         #parent reverse foot ankle ctrl to ikHandle trans and ankle joint rotate
-        mc.parentConstraint(ftCtrl_l_foot_ankle, l_leg_ikHandle[0], mo=True, sr=('x', 'y', 'z'))
-        mc.parentConstraint(ftCtrl_l_foot_ankle, ik_l_leg_ankle, mo=True, st=('x', 'y', 'z'))
+        mc.parentConstraint(ftCtrl_list[0], ikHandle_var[0], mo=True, sr=('x', 'y', 'z'))
+        mc.parentConstraint(ftCtrl_list[0], ikJoint_list_noFoot[-1], mo=True, st=('x', 'y', 'z'))
+
         #parent toe
-        mc.parentConstraint(ftCtrl_l_foot_toe_toeWiggle, ik_l_leg_toes, mo=True)
+        mc.parentConstraint(toe_wiggle_list[0], ikJoint_list[-1], mo=True)
 
-        #___________________________________________#
-        #____l leg cleanup____ visibility, etc______#
-        #___________________________________________#
-
-        #hide ankle ctrl (not needed)
-        mc.setAttr((ftCtrl_l_foot_ankle + '_grp' + '.visibility'), 0)
-        #set driven key to hide ctrls for blend
-        mc.setAttr((switchCtrl_l_leg + '.fk_ik_blend'), 0)
-        mc.setAttr((ikFootCtrl_l_foot1_grp + '.visibility'), 1)
-        mc.setAttr((pvCtrl_l_leg_grp + '.visibility'), 1)
-        mc.setAttr((fkCtrl_l_hip_grp + '.visibility'), 0)
-        mc.setDrivenKeyframe((ikFootCtrl_l_foot1_grp + '.visibility'), currentDriver = (switchCtrl_l_leg + '.fk_ik_blend'))
-        mc.setDrivenKeyframe((pvCtrl_l_leg_grp + '.visibility'), currentDriver = (switchCtrl_l_leg + '.fk_ik_blend'))
-        mc.setDrivenKeyframe((fkCtrl_l_hip_grp + '.visibility'), currentDriver = (switchCtrl_l_leg + '.fk_ik_blend'))
-        mc.setAttr((switchCtrl_l_leg + '.fk_ik_blend'), 1)
-        mc.setAttr((ikFootCtrl_l_foot1_grp + '.visibility'), 0)
-        mc.setAttr((pvCtrl_l_leg_grp + '.visibility'), 0)
-        mc.setAttr((fkCtrl_l_hip_grp + '.visibility'), 1)
-        mc.setDrivenKeyframe((ikFootCtrl_l_foot1_grp + '.visibility'), currentDriver = (switchCtrl_l_leg + '.fk_ik_blend'))
-        mc.setDrivenKeyframe((pvCtrl_l_leg_grp + '.visibility'), currentDriver = (switchCtrl_l_leg + '.fk_ik_blend'))
-        mc.setDrivenKeyframe((fkCtrl_l_hip_grp + '.visibility'), currentDriver = (switchCtrl_l_leg + '.fk_ik_blend'))
-
-        '''
+        
