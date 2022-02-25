@@ -375,7 +375,7 @@ class leg_rig():
             mc.setAttr((curveShape[0] + '.overrideColorRGB'), 0.1, 1, 0)
 
             #rename curve
-            myCurve = mc.rename(ikJoint_list_noFoot[0] + '_ik_ctrl')
+            myCurve = mc.rename(ikJoint_list_noFoot[-1] + '_ik_ctrl')
             #group curve
             curveGrouped = mc.group(myCurve)
             curveGrouped_offset = mc.group(myCurve)
@@ -395,6 +395,69 @@ class leg_rig():
             ik_ctrl_list.append(myCurve)
         
         
+        #___________ik hip CTRL____________#
+        # not needed, but added for extra hip translation, (and to parent measure control to)
+        ik_hip_group_list = []
+        ik_hip_ctrl_list = []
+        #create curve box
+        for i in range(0,1):
+            myCurve = mc.curve(d=1, p=[ (-1, 1, 1), 
+                                        (-1, 1, -1), 
+                                        (1, 1, -1), 
+                                        (1, 1, 1), 
+                                        (-1, 1, 1), 
+                                        (-1, -1, 1), 
+                                        (-1, -1, -1), 
+                                        (1, -1, -1), 
+                                        (1, -1, 1), 
+                                        (-1, -1, 1), 
+                                        (-1, 1, 1), 
+                                        (1, 1, 1), 
+                                        (1, -1, 1), 
+                                        (1, -1, -1), 
+                                        (1, 1, -1), 
+                                        (-1, 1, -1), 
+                                        (-1, -1, -1)
+                                        ])
+            #curve size
+            mc.setAttr((myCurve + '.scale'), ik_ctrl_size, ik_ctrl_size, ik_ctrl_size)
+            #freeze transforms
+            mc.makeIdentity(myCurve, apply=True)
+            #select curve box's shape
+            curveShape = mc.listRelatives(myCurve, s=True)
+            #color curve box's shape red
+            mc.setAttr((curveShape[0] + '.overrideEnabled'), 1)
+            mc.setAttr((curveShape[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((curveShape[0] + '.overrideColorRGB'), 0.1, 1, 0)
+
+            #rename curve
+            myCurve = mc.rename(ikJoint_list_noFoot[0] + '_ik_ctrl')
+            #group curve
+            curveGrouped = mc.group(myCurve)
+            curveGrouped_offset = mc.group(myCurve)
+            #rename group
+            myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
+            myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
+            #parent and zero curveGrp to joints
+            mc.parent(myGroup, ikJoint_list_noFoot[0], relative=True)
+            #unparent group (since it has correct position)
+            mc.Unparent(myGroup)
+
+            #parent grp to global grp to organize
+            mc.parent(myGroup, myIKGrp)
+
+            #append grp for outside use
+            ik_hip_group_list.append(myGroup)
+            ik_hip_ctrl_list.append(myCurve)
+
+        # parent contstrain hip joint translation to control
+        mc.parentConstraint(ik_hip_ctrl_list[0], ikJoint_list_noFoot[0])
+        # lock and hide rotation values for hip control
+        mc.setAttr((ik_hip_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
+        mc.setAttr((ik_hip_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
+        mc.setAttr((ik_hip_ctrl_list[0] + '.rz'), lock=True, keyable=False, channelBox=False)
+
+
         #_________________POLE VECTOR Start___________________#
         #_____________________________________________________#
         pv_group_list = []
@@ -484,7 +547,7 @@ class leg_rig():
 
             pv_group_list.append(myGroup)
 
-        
+
         #______________________________________________________________________________#
         #____________________________IK/ FK Switch Ctrl _______________________________#
         #______________________________________________________________________________#
@@ -765,4 +828,77 @@ class leg_rig():
         #parent toe
         mc.parentConstraint(toe_wiggle_list[0], ikJoint_list[-1], mo=True)
 
-        
+        # ______________________________________________________#
+        # __________________ IK stretchy leg __________________#
+        # ______________________________________________________#
+        # get joint x lengths
+        to_knee_len = mc.getAttr(ikJoint_list_noFoot[int(roughMedian-1.0)] + '.tx')
+        to_ankle_len = mc.getAttr(ikJoint_list_noFoot[-1] + '.tx')
+        # create ruler tool
+        ik_jnt_ruler_temp = mc.distanceDimension( sp=(0, 0, 0), ep=(0, 0, 10) )
+        ik_jnt_ruler = mc.rename(ik_jnt_ruler_temp, (direction + '_ik_jnt_ruler' ) )
+        # get locators controling length
+        ruler_loc_list = mc.listConnections( ik_jnt_ruler, type='locator' )
+        # parent constraint measure locators to ctrls (ruler loc is ends of distanceMeasure tool)
+        mc.parentConstraint(ik_hip_ctrl_list[0], ruler_loc_list[0] )
+        mc.parentConstraint(ftCtrl_list[0], ruler_loc_list[1] )
+
+        # make nodes for stretchy limb
+        leg_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_dist_ratio' )
+        # set mulDiv node to Divide
+        mc.setAttr(leg_dist_ratio + '.operation', 2)
+        # create mult/div nodes for ratio * length
+        ratio_knee_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_knee_mult' )
+        ratio_ankle_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_ankle_mult' )
+        #create condition nodes for if greater than length, to prevent negative stretching
+        #set operation to 'greater than'
+        knee_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_knee_len_con' )
+        ankle_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_ankle_len_con' )
+        #set operation to 'greater than'
+        if direction == 'left':
+            mc.setAttr(knee_len_con + '.operation', 2)
+            mc.setAttr(ankle_len_con + '.operation', 2)
+        #set operation to 'less than'
+        elif direction == 'right':
+            mc.setAttr(knee_len_con + '.operation', 4)
+            mc.setAttr(ankle_len_con + '.operation', 4)
+
+
+        # connect ruler distance over total distance of joints
+        if direction == 'left':
+            mc.connectAttr( (ik_jnt_ruler + '.distance'), (leg_dist_ratio + '.input1X'), f=True )
+        # right in negative translate X so some value must be inverted
+        elif direction == 'right':
+            invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_invert_value' )
+            mc.setAttr( (invert_value + '.input2X'), -1 )
+            mc.connectAttr( (ik_jnt_ruler + '.distance'), (invert_value + '.input1X'), f=True )
+            mc.connectAttr( (invert_value + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
+
+        # soft ik, a little less than total length to keep some bend in knee joint
+        mc.setAttr( (leg_dist_ratio + '.input2X'), (to_knee_len + to_ankle_len) * 0.994 )
+
+        # connect length ratio to apply to x length of knee and ankle (fraction * distance)
+        mc.connectAttr( (leg_dist_ratio + '.outputX'), (ratio_knee_mult + '.input2X'), f=True )
+        mc.connectAttr( (leg_dist_ratio + '.outputX'), (ratio_ankle_mult + '.input2X'), f=True )
+        # joint length to input 1X
+        mc.setAttr( (ratio_knee_mult + '.input1X'), to_knee_len )
+        mc.setAttr( (ratio_ankle_mult + '.input1X'), to_ankle_len )
+
+        # connect mult ratio nodes to condition node (if length greater, then stretch)
+        mc.connectAttr( (ratio_knee_mult + '.outputX'), (knee_len_con + '.colorIfTrueR'), f=True )
+        mc.connectAttr( (ratio_knee_mult + '.outputX'), (knee_len_con + '.firstTerm'), f=True )
+
+        mc.connectAttr( (ratio_ankle_mult + '.outputX'), (ankle_len_con + '.colorIfTrueR'), f=True )
+        mc.connectAttr( (ratio_ankle_mult + '.outputX'), (ankle_len_con + '.firstTerm'), f=True )
+
+        # add joint lengths to base value, if false
+        mc.setAttr( (knee_len_con + '.colorIfFalseR'), to_knee_len )
+        mc.setAttr( (knee_len_con + '.secondTerm'), to_knee_len )
+
+        mc.setAttr( (ankle_len_con + '.colorIfFalseR'), to_ankle_len )
+        mc.setAttr( (ankle_len_con + '.secondTerm'), to_ankle_len )
+
+        #connect stretch lengths to joint translate x
+        mc.connectAttr( (knee_len_con + '.outColorR'), (ikJoint_list_noFoot[int(roughMedian-1.0)] + '.tx'), f=True )
+        mc.connectAttr( (ankle_len_con + '.outColorR'), (ikJoint_list_noFoot[-1] + '.tx'), f=True )
+
