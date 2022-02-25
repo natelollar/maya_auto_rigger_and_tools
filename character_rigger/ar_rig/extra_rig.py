@@ -14,7 +14,11 @@ class extra_rig():
         spine_root = spine_root_temp.find_spine_root()
 
         if parent == 'spine_root_pos':
-            single_jnt_var = create_jnts.create_jnts(spine_root + '_blendOffset', size, colorR, colorG, colorB)
+            single_jnt_var = create_jnts.create_jnts(   spine_root + '_blendOffset', 
+                                                        size, 
+                                                        colorR, 
+                                                        colorG, 
+                                                        colorB)
             myJoint = single_jnt_var.single_jnt()
             mc.Unparent(myJoint)
 

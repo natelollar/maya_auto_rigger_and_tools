@@ -150,9 +150,6 @@ class leg_rig():
     def create_fk_ik_leg(self, direction, offset_parent_jnt, fk_ctrl_size, ik_ctrl_size, pv_ctrl_size, knee_dist_mult):
         jnt_info = self.find_leg_jnts(direction)
         leg_chain = jnt_info[0]
-        leg_chain_no_foot = leg_chain[0:-1]
-        hip_jnt = jnt_info[1]
-        ankle_jnt = jnt_info[2]
 
         #______________________________#
         #_____Blended Joint Chain______#
@@ -450,7 +447,7 @@ class leg_rig():
             ik_hip_group_list.append(myGroup)
             ik_hip_ctrl_list.append(myCurve)
 
-        # parent contstrain hip joint translation to control
+        # parent constrain hip joint translation to control
         mc.parentConstraint(ik_hip_ctrl_list[0], ikJoint_list_noFoot[0])
         # lock and hide rotation values for hip control
         mc.setAttr((ik_hip_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
@@ -837,8 +834,9 @@ class leg_rig():
         mc.parentConstraint(toe_wiggle_list[0], ikJoint_list[-1], mo=True)
 
         # ______________________________________________________#
-        # __________________ IK stretchy leg __________________#
+        # __________________ IK stretchy leg ___________________#
         # ______________________________________________________#
+
         # get joint x lengths
         to_knee_len = mc.getAttr(ikJoint_list_noFoot[int(roughMedian-1.0)] + '.tx')
         to_ankle_len = mc.getAttr(ikJoint_list_noFoot[-1] + '.tx')
@@ -932,4 +930,7 @@ class leg_rig():
         mc.parent(leg_loc_1, myIKGrp)
         # delete foot locators (rather than hide)
         mc.delete(rvFoot_loc_list)
+
+        # return top ik and fk controls to parent to hip
+        return ik_hip_group_list[0], fk_ctrl_grp_list[0]
 

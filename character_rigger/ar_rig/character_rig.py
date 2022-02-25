@@ -7,6 +7,7 @@ from ..ar_functions import nurbs_ctrl
 from . import fk_spine_rig
 from . import extra_rig
 from . import face_rig
+from . import leg_rig
 
 def character_rig():
     #________________________________________________________________________#
@@ -22,7 +23,7 @@ def character_rig():
 
     #________________________________________________________________________#
 
-    # fk spine controls
+    # fk spine controls, including fk neck controls 
     fk_spine_rig_var = fk_spine_rig.fk_spine_rig_class()
     fk_spine_rig_info = fk_spine_rig_var.fk_spine_rig_meth()
 
@@ -31,6 +32,7 @@ def character_rig():
 
     #________________________________________________________________________#
 
+    # find spine root joint
     # parent joints to global control
     spine_root_temp = find_jnts.find_jnts()
     spine_root = spine_root_temp.find_spine_root()
@@ -42,7 +44,12 @@ def character_rig():
     # create offset joints for blend color limbs
     spine_blend_offset = extra_rig.extra_rig ()
 
-    spine_blend_offset_info =  spine_blend_offset.blend_jnt_offset('spine_root_pos', fk_spine_rig_info[1] , 5, 1, 0, 0)
+    spine_blend_offset_info =  spine_blend_offset.blend_jnt_offset( parent='spine_root_pos', 
+                                                                    parentTo=fk_spine_rig_info[1], 
+                                                                    size=5, 
+                                                                    colorR=1, 
+                                                                    colorG=0, 
+                                                                    colorB=0)
 
     # parent spine offset joint under global control
     mc.parent(spine_blend_offset_info, global_ctrl_info[1])
@@ -80,9 +87,44 @@ def character_rig():
     #________________________________________________________________________#
 
     # tongue ctrls
-    # parent to spine jaw controls
+    # parent to jaw controls
     top_ctrls_var = face_rig.face_rig()
     top_ctrls_var.tongue_ctrls(jaw_ctrl_var_info[1])
 
-    print(top_ctrls_info[1])
+    #________________________________________________________________________#
+
+    # left leg ctrls
+    # parent to spine root control
+    left_leg_rig = leg_rig.leg_rig()
+    left_leg_rig_info = left_leg_rig.create_fk_ik_leg(  direction='left',
+                                                        offset_parent_jnt=spine_blend_offset_info,
+                                                        fk_ctrl_size=12,
+                                                        ik_ctrl_size=12,
+                                                        pv_ctrl_size=1,
+                                                        knee_dist_mult=10)
+
+    # parent fk and ik hip controls under spine root control
+    # ik hip to spine root ctrl
+    mc.parent(left_leg_rig_info[0], fk_spine_rig_info[1])
+    # fk hip to spine root ctrl
+    mc.parent(left_leg_rig_info[1], fk_spine_rig_info[1])
+
+
+    #________________________________________________________________________#
+
+    # right leg ctrls
+    # parent to spine root control
+    right_leg_rig = leg_rig.leg_rig()
+    right_leg_rig_info = right_leg_rig.create_fk_ik_leg(direction='right',
+                                                        offset_parent_jnt=spine_blend_offset_info,
+                                                        fk_ctrl_size=12,
+                                                        ik_ctrl_size=12,
+                                                        pv_ctrl_size=1,
+                                                        knee_dist_mult=10)
+
+    # parent fk and ik hip controls under spine root control
+    # ik hip to spine root ctrl
+    mc.parent(right_leg_rig_info[0], fk_spine_rig_info[1])
+    # fk hip to spine root ctrl
+    mc.parent(right_leg_rig_info[1], fk_spine_rig_info[1])
 
