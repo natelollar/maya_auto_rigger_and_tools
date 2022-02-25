@@ -653,16 +653,24 @@ class leg_rig():
             mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0)
             mc.setAttr((ik_group_list[0] + '.visibility'), 1)
             mc.setAttr((pv_group_list[0] + '.visibility'), 1)
+            mc.setAttr((ik_hip_group_list[0] + '.visibility'), 1)
             mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 0)
+
+
             mc.setDrivenKeyframe((ik_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((pv_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((ik_hip_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+
             mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 1)
             mc.setAttr((ik_group_list[0] + '.visibility'), 0)
             mc.setAttr((pv_group_list[0] + '.visibility'), 0)
+            mc.setAttr((ik_hip_group_list[0] + '.visibility'), 0)
             mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 1)
+
             mc.setDrivenKeyframe((ik_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((pv_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((ik_hip_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 
     
@@ -836,12 +844,19 @@ class leg_rig():
         to_ankle_len = mc.getAttr(ikJoint_list_noFoot[-1] + '.tx')
         # create ruler tool
         ik_jnt_ruler_temp = mc.distanceDimension( sp=(0, 0, 0), ep=(0, 0, 10) )
-        ik_jnt_ruler = mc.rename(ik_jnt_ruler_temp, (direction + '_ik_jnt_ruler' ) )
+        ik_jnt_ruler = mc.rename(ik_jnt_ruler_temp, ( direction + '_ik_jnt_rulerShape' ) )
+        # rename transform parent of distanceDimesion tool
+        ruler_loc_list_rel = mc.listRelatives( ik_jnt_ruler, ap=1, type='transform' )
+        ruler_loc_list_parent = mc.rename(ruler_loc_list_rel, direction + '_ik_jnt_ruler')
+
         # get locators controling length
         ruler_loc_list = mc.listConnections( ik_jnt_ruler, type='locator' )
+        # rename and hide distance locators
+        leg_loc_0 = mc.rename(ruler_loc_list[0], direction + '_hip_dist_loc')
+        leg_loc_1 = mc.rename(ruler_loc_list[1], direction + '_ankle_dist_loc')
         # parent constraint measure locators to ctrls (ruler loc is ends of distanceMeasure tool)
-        mc.parentConstraint(ik_hip_ctrl_list[0], ruler_loc_list[0] )
-        mc.parentConstraint(ftCtrl_list[0], ruler_loc_list[1] )
+        mc.parentConstraint(ik_hip_ctrl_list[0], leg_loc_0 )
+        mc.parentConstraint(ftCtrl_list[0], leg_loc_1 )
 
         # make nodes for stretchy limb
         leg_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_dist_ratio' )
@@ -901,4 +916,20 @@ class leg_rig():
         #connect stretch lengths to joint translate x
         mc.connectAttr( (knee_len_con + '.outColorR'), (ikJoint_list_noFoot[int(roughMedian-1.0)] + '.tx'), f=True )
         mc.connectAttr( (ankle_len_con + '.outColorR'), (ikJoint_list_noFoot[-1] + '.tx'), f=True )
+
+        #___________________________________________#
+        #___________________________________________#
+        #___________________________________________#
+        # set ankle reverse foot control to invisible (not needed to be seen)
+        mc.setAttr(ftCtrl_grp_list[0] + '.visibility', 0)
+        # hide dist loc and tool
+        mc.setAttr(ruler_loc_list_parent + '.visibility', 0)
+        mc.setAttr(leg_loc_0 + '.visibility', 0)
+        mc.setAttr(leg_loc_1 + '.visibility', 0)
+        #parent grp to global grp to organize
+        mc.parent(ruler_loc_list_parent, myIKGrp)
+        mc.parent(leg_loc_0, myIKGrp)
+        mc.parent(leg_loc_1, myIKGrp)
+        # delete foot locators (rather than hide)
+        mc.delete(rvFoot_loc_list)
 
