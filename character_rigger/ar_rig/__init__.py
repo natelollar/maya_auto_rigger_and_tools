@@ -4,3 +4,4 @@ import extra_rig
 import leg_rig
 import face_rig
 import clavicle_rig
+import arm_rig

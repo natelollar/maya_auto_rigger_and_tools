@@ -41,9 +41,9 @@ def character_rig():
 
     #________________________________________________________________________#
 
-    # create offset joints for blend color limbs
+    # create offset joints for blend color legs
+    # parent constrain to spine root fk control
     spine_blend_offset = extra_rig.extra_rig ()
-
     spine_blend_offset_info =  spine_blend_offset.blend_jnt_offset( parent='spine_root_pos', 
                                                                     parentTo=fk_spine_rig_info[1], 
                                                                     size=5, 
@@ -51,7 +51,7 @@ def character_rig():
                                                                     colorG=0, 
                                                                     colorB=0)
 
-    # parent spine offset joint under global control
+    # parent spine offset JOINT under global control (for organization and global scale)
     mc.parent(spine_blend_offset_info, global_ctrl_info[1])
 
     #________________________________________________________________________#
@@ -59,7 +59,7 @@ def character_rig():
     # fk jaw ctrl
     #parent to spine top (head) control
     jaw_ctrl_var = face_rig.face_rig()
-    jaw_ctrl_var_info = jaw_ctrl_var.jaw_ctrl(fk_spine_rig_info[-1])
+    jaw_ctrl_var_info = jaw_ctrl_var.jaw_ctrl(fk_spine_rig_info[3])
 
     #________________________________________________________________________#
 
@@ -67,13 +67,13 @@ def character_rig():
     # parent to jaw control
     bot_ctrls_var = face_rig.face_rig()
     bot_ctrls_var.bot_face_ctrls(jaw_ctrl_var_info[1])
-
+    
     #________________________________________________________________________#
 
     # top face ctrls
     #parent to spine top (head) control
     top_ctrls_var = face_rig.face_rig()
-    top_ctrls_info = top_ctrls_var.top_face_ctrls(  parent_to_head = fk_spine_rig_info[-1], 
+    top_ctrls_info = top_ctrls_var.top_face_ctrls(  parent_to_head = fk_spine_rig_info[3], 
                                                     parent_to_jaw = jaw_ctrl_var_info[1], 
                                                     mid_ctrls = 2)
 
@@ -82,7 +82,7 @@ def character_rig():
     # ear ctrls
     #parent to spine top (head) control
     top_ctrls_var = face_rig.face_rig()
-    top_ctrls_var.ear_ctrls(fk_spine_rig_info[-1])
+    top_ctrls_var.ear_ctrls(fk_spine_rig_info[3])
 
     #________________________________________________________________________#
 
@@ -90,7 +90,7 @@ def character_rig():
     # parent to jaw controls
     top_ctrls_var = face_rig.face_rig()
     top_ctrls_var.tongue_ctrls(jaw_ctrl_var_info[1])
-
+    
     #________________________________________________________________________#
 
     # left leg ctrls
@@ -110,9 +110,9 @@ def character_rig():
     # fk hip to spine root ctrl
     mc.parent(left_leg_rig_info[1], fk_spine_rig_info[1])
 
-
-    #________________________________________________________________________#
     '''
+    #________________________________________________________________________#
+
     # right leg ctrls
     # parent to spine root control
     right_leg_rig = leg_rig.leg_rig()
@@ -130,6 +130,28 @@ def character_rig():
     # fk hip to spine root ctrl
     mc.parent(right_leg_rig_info[1], fk_spine_rig_info[1])
     '''
+    
+    #________________________________________________________________________#
+    # create offset joints for blend color arms
 
+    # find chest jnt index
+    chest_index = find_jnts.find_jnts()
+    chest_index_info = chest_index.find_chest_jnt_index()
 
+    # fk chest control list
+    fk_chest_ctrl_list = fk_spine_rig_info[4]
+
+    # create offset jnt
+    # parent constrain offset jnt to fk chest ctrl
+    chest_blend_offset = extra_rig.extra_rig ()
+    chest_blend_offset_info =  chest_blend_offset.blend_jnt_offset( parent='chest_pos', 
+                                                                    parentTo=fk_chest_ctrl_list[chest_index_info], 
+                                                                    size=5, 
+                                                                    colorR=1, 
+                                                                    colorG=0, 
+                                                                    colorB=0)
+
+    # parent chest offset joint under global control (for organization and global scale)
+    mc.parent(chest_blend_offset_info, global_ctrl_info[1])
+    
     

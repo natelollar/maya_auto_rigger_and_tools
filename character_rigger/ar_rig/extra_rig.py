@@ -13,6 +13,9 @@ class extra_rig():
         spine_root_temp = find_jnts.find_jnts()
         spine_root = spine_root_temp.find_spine_root()
 
+        chest_temp = find_jnts.find_jnts()
+        chest = spine_root_temp.find_chest_jnt()
+
         if parent == 'spine_root_pos':
             single_jnt_var = create_jnts.create_jnts(   spine_root + '_blendOffset', 
                                                         size, 
@@ -25,6 +28,27 @@ class extra_rig():
             pos_const = mc.parentConstraint(spine_root, myJoint)
             mc.delete(pos_const)
 
+            mc.parentConstraint(parentTo, myJoint)
+            mc.scaleConstraint(parentTo, myJoint)  
+
+        if parent == 'chest_pos':
+            # create single joint
+            single_jnt_var = create_jnts.create_jnts(   chest[0] + '_blendOffset', 
+                                                        size, 
+                                                        colorR, 
+                                                        colorG, 
+                                                        colorB)
+            # myJoint = single joint
+            myJoint = single_jnt_var.single_jnt()
+            # unparent if auto parented to anything
+            mc.Unparent(myJoint)
+
+            # parent single jnt to chest
+            pos_const = mc.parentConstraint(chest, myJoint)
+            # delete parent constraint
+            mc.delete(pos_const)
+
+            # constrain jnt to chest control
             mc.parentConstraint(parentTo, myJoint)
             mc.scaleConstraint(parentTo, myJoint)
 

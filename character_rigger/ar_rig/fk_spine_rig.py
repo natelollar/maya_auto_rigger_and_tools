@@ -55,7 +55,7 @@ class fk_spine_rig_class():
         for i_grp, i_ctrl in itertools.izip(fk_ctrl_grp_list, fk_ctrl_list):
             mc.parent(i_grp, i_ctrl)
 
-        return first_grp, first_ctrl, last_grp, last_ctrl
+        return first_grp, first_ctrl, last_grp, last_ctrl, fk_ctrl_list
         
 
 

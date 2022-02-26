@@ -1,5 +1,7 @@
 import maya.cmds as mc
 
+from . import sel_joints
+
 # find joints with boudning box object as starting point
 class find_jnts():
     # find base root to start rigging and find all other joints from
@@ -55,6 +57,18 @@ class find_jnts():
         mc.select(jointSelB)
         chest_jnt = mc.ls(sl=True)
         return chest_jnt
+
+    def find_chest_jnt_index(self):
+        spine_root_name = self.find_spine_root()
+        neckTop_name = self.find_head_jnt()
+        chest_jnt_name = self.find_chest_jnt()
+    
+        spine_to_neckTop_list = sel_joints.sel_joints(spine_root_name, neckTop_name)
+        spine_to_neckTop_list_info = spine_to_neckTop_list.rev_sel_jnt_chain()
+
+        chest_jnt_index = spine_to_neckTop_list_info.index(chest_jnt_name[0])
+
+        return chest_jnt_index
 
 
     # get left or right most child joint (immediate child)
@@ -225,6 +239,22 @@ class find_jnts():
         # return and select joint with most child joints
         mc.select(most_children_jnt)
         return most_children_jnt
+
+    # find all jnts in arm (from clavicle to wrist/ hand)
+    def find_arm_jnts(self, direction):
+        # clavicle, shoulder, elbow, and wrist
+        # find clavicle
+        clav_jnt = self.l_r_clavicle_jnt(direction)
+        #find wrist
+        wrist_jnt = self.find_next_fork(clav_jnt)
+        # reverse select jnts from wrist to clavicle (then reverse list)
+        jnt_list = sel_joints.sel_joints(clav_jnt, wrist_jnt[0])
+        jnt_list_info = jnt_list.rev_sel_jnt_chain()
+        # insert clavicle into front of list
+        jnt_list_info.insert(0, clav_jnt[0])
+        # return list
+        return jnt_list_info
+
 
 
     
