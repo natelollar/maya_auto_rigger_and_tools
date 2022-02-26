@@ -226,12 +226,6 @@ class find_jnts():
         mc.select(most_children_jnt)
         return most_children_jnt
 
-    def find_ankle_jnt(self, direction):
-        clavicle_jnt = self.l_r_hip_jnt(direction)
-        clavicle_jnt_rel = mc.listRelatives(clavicle_jnt, ad=True, type='joint')
-        
-        return clavicle_jnt_rel[-2]
-
 
     
     
