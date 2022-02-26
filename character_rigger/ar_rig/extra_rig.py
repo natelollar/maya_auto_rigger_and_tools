@@ -31,6 +31,9 @@ class extra_rig():
         else:
             pass
 
+        # set offset joint to invisible
+        #mc.setAttr(myJoint + '.visibility', 0)
+
         return myJoint
 
     def single_fk_ctrl(self):

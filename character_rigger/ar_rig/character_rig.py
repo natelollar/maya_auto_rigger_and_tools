@@ -94,14 +94,15 @@ def character_rig():
     #________________________________________________________________________#
 
     # left leg ctrls
-    # parent to spine root control
+    # parent to spine root control (global_ctrl for scale offset)
     left_leg_rig = leg_rig.leg_rig()
     left_leg_rig_info = left_leg_rig.create_fk_ik_leg(  direction='left',
                                                         offset_parent_jnt=spine_blend_offset_info,
                                                         fk_ctrl_size=12,
                                                         ik_ctrl_size=12,
                                                         pv_ctrl_size=1,
-                                                        knee_dist_mult=10)
+                                                        knee_dist_mult=10,
+                                                        global_ctrl=global_ctrl_info[1])
 
     # parent fk and ik hip controls under spine root control
     # ik hip to spine root ctrl
@@ -111,7 +112,7 @@ def character_rig():
 
 
     #________________________________________________________________________#
-
+    '''
     # right leg ctrls
     # parent to spine root control
     right_leg_rig = leg_rig.leg_rig()
@@ -120,11 +121,15 @@ def character_rig():
                                                         fk_ctrl_size=12,
                                                         ik_ctrl_size=12,
                                                         pv_ctrl_size=1,
-                                                        knee_dist_mult=10)
+                                                        knee_dist_mult=10,
+                                                        global_ctrl=global_ctrl_info[1])
 
     # parent fk and ik hip controls under spine root control
     # ik hip to spine root ctrl
     mc.parent(right_leg_rig_info[0], fk_spine_rig_info[1])
     # fk hip to spine root ctrl
     mc.parent(right_leg_rig_info[1], fk_spine_rig_info[1])
+    '''
 
+
+    

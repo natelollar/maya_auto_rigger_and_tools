@@ -26,6 +26,7 @@ class leg_rig():
 
         return leg_chain, hip_jnt, ankle_jnt
 
+
     #reverse foot rig locators
     def rev_foot_locators( self, direction ):
 
@@ -145,9 +146,9 @@ class leg_rig():
             mc.select(cl=True)
 
 
-
-
-    def create_fk_ik_leg(self, direction, offset_parent_jnt, fk_ctrl_size, ik_ctrl_size, pv_ctrl_size, knee_dist_mult):
+    # create leg rig ('global_ctrl' for scale offset)
+    def create_fk_ik_leg(self, direction, offset_parent_jnt, fk_ctrl_size, ik_ctrl_size, pv_ctrl_size, knee_dist_mult, global_ctrl):
+        # find leg joints using method from own class
         jnt_info = self.find_leg_jnts(direction)
         leg_chain = jnt_info[0]
 
@@ -171,10 +172,14 @@ class leg_rig():
             
             fkJoint = mc.rename(fkJoint_orig, ('FK_' + i))
             mc.Unparent(fkJoint)
+
+            # scale constraint instead of blend joint (for proper ctrl and global scale)
+            mc.scaleConstraint(fkJoint, i)
             
+            # create list of fk joints
             fkJoint_list.append(fkJoint)
             
-            #______________________#
+            #_______________________#
             #____create _IK chain___#
             ikJoint_orig = mc.joint(i)
             
@@ -187,9 +192,19 @@ class leg_rig():
             
             ikJoint = mc.rename(ikJoint_orig, ('IK_' + i))
             mc.Unparent(ikJoint)
-            
+
+            # scale constraint instead of blend joint (for proper ctrl and global scale)
+            mc.scaleConstraint(ikJoint, i)
+
+            # create list of ik joints
             ikJoint_list.append(ikJoint)
-        
+
+            # set leg jnt scale comp off to avoid double scale (when global scale)
+            mc.setAttr( i + '.segmentScaleCompensate', 0 )
+            mc.setAttr( ('FK_' + i) + '.segmentScaleCompensate', 0 )
+            mc.setAttr( ('IK_' + i) + '.segmentScaleCompensate', 0 )
+
+            
         #parent FK joints together based on current index
         currentIndex = -1
         for i in fkJoint_list:
@@ -207,13 +222,11 @@ class leg_rig():
         #blend color node lists
         blendColorsTran_list = []
         blendColorsRot_list = []
-        blendColorsScale_list = []
         #blend joints together
         for i_FK, i_IK, i in itertools.izip(fkJoint_list, ikJoint_list, leg_chain):
             #create blend color nodes
             blendColorsTran = mc.createNode('blendColors', n='blendColorsTran#')
             blendColorsRot = mc.createNode('blendColors', n='blendColorsRot#')
-            blendColorsScale = mc.createNode('blendColors', n='blendColorsScale#')
             #translate
             mc.connectAttr((i_FK + '.translate'), (blendColorsTran + '.color1'), f=True)
             mc.connectAttr((i_IK + '.translate'), (blendColorsTran + '.color2'), f=True)
@@ -222,14 +235,10 @@ class leg_rig():
             mc.connectAttr((i_FK + '.rotate'), (blendColorsRot + '.color1'), f=True)
             mc.connectAttr((i_IK + '.rotate'), (blendColorsRot + '.color2'), f=True)
             mc.connectAttr((blendColorsRot + '.output'), (i + '.rotate'), f=True)
-            #scale
-            mc.connectAttr((i_FK + '.scale'), (blendColorsScale + '.color1'), f=True)
-            mc.connectAttr((i_IK + '.scale'), (blendColorsScale + '.color2'), f=True)
-            mc.connectAttr((blendColorsScale + '.output'), (i + '.scale'), f=True)
             #append lists for outside loop use
             blendColorsTran_list.append(blendColorsTran)
             blendColorsRot_list.append(blendColorsRot)
-            blendColorsScale_list.append(blendColorsScale)
+            #blendColorsScale_list.append(blendColorsScale)
 
         #__________________________________________________________________#
         # parent top joints to original root spine0 to offset blend Color nodes
@@ -296,9 +305,11 @@ class leg_rig():
             #create a list of the ctrl curves (to parent constrain the joints to)
             fk_ctrl_list.append(myCurve_name)
 
-            #parent constrain ctrls to fk jnts
+            #parent and scale constrain ctrls to fk jnts
             mc.parentConstraint(myCurve_name, i)
-
+            mc.scaleConstraint(myCurve_name, i)
+            # to avoid double scale (when global scale)
+            #mc.setAttr( i + '.segmentScaleCompensate', 0 )
         
         #remove first and last of lists to correctly parent ctrls and grps together in for loop
         fk_ctrl_grp_list_temp = fk_ctrl_grp_list[1:]
@@ -379,13 +390,14 @@ class leg_rig():
             #rename group
             myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
             myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
+
             #parent and zero curveGrp to joints
             mc.parent(myGroup, ikJoint_list_noFoot[-1], relative=True)
             #unparent group (since it has correct position)
             mc.Unparent(myGroup)
 
             #parent grp to global grp to organize
-            mc.parent(myGroup, myIKGrp)
+            mc.parent(myGroup, global_ctrl)
 
             #append grp for outside use
             ik_group_list.append(myGroup)
@@ -449,6 +461,8 @@ class leg_rig():
 
         # parent constrain hip joint translation to control
         mc.parentConstraint(ik_hip_ctrl_list[0], ikJoint_list_noFoot[0])
+        #scale constrain ctrl to jnt
+        mc.scaleConstraint(ik_hip_ctrl_list[0], ikJoint_list_noFoot[0])
         # lock and hide rotation values for hip control
         mc.setAttr((ik_hip_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
         mc.setAttr((ik_hip_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
@@ -539,8 +553,11 @@ class leg_rig():
             #___connect pole vector
             mc.poleVectorConstraint(myCurve, ikHandle_var[0])
 
+            # connect scale of knee and pole vector control (scale constraint creates cyclical error)
+            mc.connectAttr( (myCurve + '.scale'), ( ikJoint_list_noFoot[ int(roughMedian-1.0) ] ) + '.scale', f=True)
+
             #parent grp to global grp to organize
-            mc.parent(myGroup, myIKGrp)
+            mc.parent(myGroup, global_ctrl)
 
             pv_group_list.append(myGroup)
 
@@ -615,8 +632,9 @@ class leg_rig():
             #parent joints to world space
             mc.Unparent(switchCurveA_grp)
 
-            # parent constrain switch ctrl to ankle
+            # parent and scale constrain switch ctrl to ankle
             mc.parentConstraint(leg_chain[-2], switchCurveA_grp, mo=True)
+            mc.scaleConstraint(leg_chain[-2], switchCurveA_grp, mo=True)
 
             #_______add IK FK Blend attr to switch ctrl_______#
             mc.addAttr(switchCurveA, ln = 'fk_ik_blend', min=0, max=1, k=True)
@@ -637,16 +655,15 @@ class leg_rig():
 
 
         #_______connect switch control to blendNodes_______#
-        for items_trans, items_rot, items_scale in itertools.izip(  blendColorsTran_list, 
-                                                                    blendColorsRot_list, 
-                                                                    blendColorsScale_list):
+        for items_trans, items_rot in itertools.izip(   blendColorsTran_list, 
+                                                        blendColorsRot_list ):
             mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (items_trans + '.blender'), f=True)
             mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (items_rot + '.blender'), f=True)
-            mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (items_scale + '.blender'), f=True)
 
 
         #_______connect switch control to visibility______#
         for i in range(0,1): 
+            # 1 is fk, 0 is ik, (for loop to avoid clashing variables)
             mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0)
             mc.setAttr((ik_group_list[0] + '.visibility'), 1)
             mc.setAttr((pv_group_list[0] + '.visibility'), 1)
@@ -670,7 +687,25 @@ class leg_rig():
             mc.setDrivenKeyframe((ik_hip_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 
-    
+        # scale constraint switch
+        for jnt in leg_chain:
+            # 1 is fk, 0 is ik
+            mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0)
+            # alternative is to disconnect/ unlock and use '.target[0].targetWeight'
+            mc.setAttr( (jnt + '_scaleConstraint1.FK_' + jnt + 'W0'),  0)
+            mc.setAttr( (jnt + '_scaleConstraint1.IK_' + jnt + 'W1'),  1)
+
+            mc.setDrivenKeyframe((jnt + '_scaleConstraint1.FK_' + jnt + 'W0'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((jnt + '_scaleConstraint1.IK_' + jnt + 'W1'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+
+            mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 1)
+            mc.setAttr( (jnt + '_scaleConstraint1.FK_' + jnt + 'W0'),  1)
+            mc.setAttr( (jnt + '_scaleConstraint1.IK_' + jnt + 'W1'),  0)
+
+            mc.setDrivenKeyframe((jnt + '_scaleConstraint1.FK_' + jnt + 'W0'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((jnt + '_scaleConstraint1.IK_' + jnt + 'W1'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+
+
     #________________________________________________________________________________#
     #________________________END of FK/IK BLEND______________________________________#
 
@@ -829,9 +864,13 @@ class leg_rig():
         #parent reverse foot ankle ctrl to ikHandle trans and ankle joint rotate
         mc.parentConstraint(ftCtrl_list[0], ikHandle_var[0], mo=True, sr=('x', 'y', 'z'))
         mc.parentConstraint(ftCtrl_list[0], ikJoint_list_noFoot[-1], mo=True, st=('x', 'y', 'z'))
+        #scale constrain top reverse foot/ankle ctrl to ankle jnt
+        mc.scaleConstraint(ftCtrl_list[0], ikJoint_list_noFoot[-1] )
 
-        #parent toe
+        # parent toe
         mc.parentConstraint(toe_wiggle_list[0], ikJoint_list[-1], mo=True)
+        # scale constrain ik toe wiggle to jnt
+        mc.scaleConstraint(toe_wiggle_list[0], ikJoint_list[-1])
 
         # ______________________________________________________#
         # __________________ IK stretchy leg ___________________#
@@ -860,6 +899,10 @@ class leg_rig():
         leg_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_dist_ratio' )
         # set mulDiv node to Divide
         mc.setAttr(leg_dist_ratio + '.operation', 2)
+        # global scale offset multDiv node
+        globalScale_off = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_globalScale_off' )
+        # operation to divide
+        mc.setAttr(globalScale_off + '.operation', 2)
         # create mult/div nodes for ratio * length
         ratio_knee_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_knee_mult' )
         ratio_ankle_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_ankle_mult' )
@@ -876,15 +919,19 @@ class leg_rig():
             mc.setAttr(knee_len_con + '.operation', 4)
             mc.setAttr(ankle_len_con + '.operation', 4)
 
+        # connect leg distance to global scale offset
+        mc.connectAttr( (ik_jnt_ruler + '.distance'), (globalScale_off + '.input1X'), f=True )
+        # connect global ctrl scale X to global scale offset
+        mc.connectAttr( (global_ctrl + '.scaleX'), (globalScale_off + '.input2X'), f=True )
 
         # connect ruler distance over total distance of joints
         if direction == 'left':
-            mc.connectAttr( (ik_jnt_ruler + '.distance'), (leg_dist_ratio + '.input1X'), f=True )
-        # right in negative translate X so some value must be inverted
+            mc.connectAttr( (globalScale_off + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
         elif direction == 'right':
+            # (right) invert to negative translate X (since x is up the chain instead of down the chain)
             invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_invert_value' )
             mc.setAttr( (invert_value + '.input2X'), -1 )
-            mc.connectAttr( (ik_jnt_ruler + '.distance'), (invert_value + '.input1X'), f=True )
+            mc.connectAttr( (globalScale_off + '.outputX'), (invert_value + '.input1X'), f=True )
             mc.connectAttr( (invert_value + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
 
         # soft ik, a little less than total length to keep some bend in knee joint
