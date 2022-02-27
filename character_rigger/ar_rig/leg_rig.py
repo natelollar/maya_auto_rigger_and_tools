@@ -495,7 +495,7 @@ class leg_rig():
             mc.setAttr((curveShape[0] + '.overrideRGBColors'), 1)
             mc.setAttr((curveShape[0] + '.overrideColorRGB'), 1, 1, 0)
             #rename curve
-            myCurve = mc.rename(ikJoint_list_noFoot[0] + '_poleVector_ctrl')
+            myCurve = mc.rename(ikJoint_list_noFoot[1] + '_poleVector_ctrl')
             #group curve
             curveGrouped = mc.group(myCurve)
             curveGrouped_offset = mc.group(myCurve)
@@ -539,13 +539,14 @@ class leg_rig():
             #final polve vector point (to avoid knee changing position on creation)
             final_PV_point = mc.xform(myGroup, t=mid_point_to_knee_point)
 
-            myAimConst = mc.aimConstraint(  ikJoint_list_noFoot[int(roughMedian-1.0)], myGroup, 
+            myAimConst = mc.aimConstraint(  ikJoint_list_noFoot[int(roughMedian-1.0)], 
+                                            myGroup, 
                                             offset=(0, 0, 0), 
                                             weight=1, 
                                             aimVector=(0, 0, -1), 
                                             upVector=(0, 1, 0), 
                                             worldUpType=('vector'), 
-                                            worldUpVector=(0, 1, 0))
+                                            worldUpVector=(0, 1, 0) )
             mc.delete(myAimConst)
 
             #___connect pole vector
