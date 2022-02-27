@@ -225,8 +225,8 @@ class leg_rig():
         #blend joints together
         for i_FK, i_IK, i in itertools.izip(fkJoint_list, ikJoint_list, leg_chain):
             #create blend color nodes
-            blendColorsTran = mc.createNode('blendColors', n='blendColorsTran#')
-            blendColorsRot = mc.createNode('blendColors', n='blendColorsRot#')
+            blendColorsTran = mc.createNode('blendColors', n= i + '_blendColorsTran')
+            blendColorsRot = mc.createNode('blendColors', n= i + 'blendColorsRot')
             #translate
             mc.connectAttr((i_FK + '.translate'), (blendColorsTran + '.color1'), f=True)
             mc.connectAttr((i_IK + '.translate'), (blendColorsTran + '.color2'), f=True)
@@ -238,7 +238,6 @@ class leg_rig():
             #append lists for outside loop use
             blendColorsTran_list.append(blendColorsTran)
             blendColorsRot_list.append(blendColorsRot)
-            #blendColorsScale_list.append(blendColorsScale)
 
         #__________________________________________________________________#
         # parent top joints to original root spine0 to offset blend Color nodes
@@ -308,8 +307,7 @@ class leg_rig():
             #parent and scale constrain ctrls to fk jnts
             mc.parentConstraint(myCurve_name, i)
             mc.scaleConstraint(myCurve_name, i)
-            # to avoid double scale (when global scale)
-            #mc.setAttr( i + '.segmentScaleCompensate', 0 )
+
         
         #remove first and last of lists to correctly parent ctrls and grps together in for loop
         fk_ctrl_grp_list_temp = fk_ctrl_grp_list[1:]
@@ -327,7 +325,7 @@ class leg_rig():
         #_____________________________________#
         ikJoint_list_noFoot = ikJoint_list[0:-1]
         #group for organization
-        myIKGrp = mc.group(em=True, n=ikJoint_list_noFoot[0] + '_ik_grp')
+        myIKGrp = mc.group(em=True, n= direction + '_arm_ik_grp')
         
         #___________create IK HANDLE____________#
 
@@ -460,7 +458,7 @@ class leg_rig():
             ik_hip_ctrl_list.append(myCurve)
 
         # parent constrain hip joint translation to control
-        mc.parentConstraint(ik_hip_ctrl_list[0], ikJoint_list_noFoot[0])
+        mc.parentConstraint(ik_hip_ctrl_list[0], ikJoint_list_noFoot[0], sr=('x', 'y', 'z'))
         #scale constrain ctrl to jnt
         mc.scaleConstraint(ik_hip_ctrl_list[0], ikJoint_list_noFoot[0])
         # lock and hide rotation values for hip control
