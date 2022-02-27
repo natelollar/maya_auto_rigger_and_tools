@@ -145,7 +145,6 @@ class find_jnts():
         chest_children_jnts = mc.listConnections(chest_jnt, type='joint', s=False )
         mc.select(chest_children_jnts)
         chest_children_jnts_sel = mc.ls(sl=True)
-        print(chest_children_jnts_sel)
         
         # get l and r clavicle
         l_clav = self.l_r_clavicle_jnt('left')
