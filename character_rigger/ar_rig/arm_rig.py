@@ -22,23 +22,25 @@ class arm_rig():
         # create arm joint list
         if direction == 'left':
             arm_jnts_temp = find_jnts.find_jnts()
-            arm_jnts = arm_jnts_temp.find_arm_jnts('left')
+            arm_jnts_info = arm_jnts_temp.find_arm_jnts('left')
         elif direction == 'right':
             arm_jnts_temp = find_jnts.find_jnts()
-            arm_jnts = arm_jnts_temp.find_arm_jnts('right')
+            arm_jnts_info = arm_jnts_temp.find_arm_jnts('right')
         
+        # arm joints without twist jnts (clavicle, shoulder, elbow, wrist)
+        main_arm_jnts = arm_jnts_info[0]
+
         # create arm joint variables
-        clav_jnt = arm_jnts[0] 
-        shlder_jnt = arm_jnts[1] 
-        elbow_jnt = arm_jnts[2] 
-        twist_jnts = arm_jnts[3:-1]
-        wrist_jnt = arm_jnts[-1]
+        clav_jnt = main_arm_jnts[0] 
+        shldr_jnt = main_arm_jnts[1] 
+        elbow_jnt = main_arm_jnts[2] 
 
-        # other list
-        foreArm_jnts = arm_jnts[2:] 
+        twist_jnts = arm_jnts_info[1]
 
-        # arm joints without twist jnts
-        main_arm_jnts = [clav_jnt, shlder_jnt, elbow_jnt, wrist_jnt]
+        wrist_jnt = main_arm_jnts[-1]
+
+        # forearm list, elbow start, wrist end, twist in middle
+        foreArm_jnts = [elbow_jnt] + twist_jnts + [wrist_jnt]
 
         #_____________________________________________________________________#
         #___________________End of Find Arm Joints____________________________#
@@ -141,7 +143,7 @@ class arm_rig():
         #__________________________________________________________________#
         # wrist length offset, since twist not included in blend joints (b/c using blend color nodes and not constraints)
         #__________________________________________________________________#
-
+        '''
         # twist joint lengths for offset
         twist_jnt_tx_list = []
         for i in twist_jnts:
@@ -160,7 +162,7 @@ class arm_rig():
         blendNode_offset = mc.listConnections(main_arm_jnts[-1], s=1, d=0, type='blendColors')
         mc.connectAttr(blendNode_offset[0] + '.output', wrist_offset_plusMinus + '.input3D[0]')
         mc.connectAttr(wrist_offset_plusMinus + '.output3D', main_arm_jnts[-1] + '.translate', f=1)
-
+        '''
 
         #______________________________#
         #_________FK Controls__________#
@@ -324,8 +326,8 @@ class arm_rig():
 
         
         #___________ik shldr CTRL____________#
-        ik_shldr_group_list = []
-        ik_shldr_ctrl_list = []
+        ik_clav_grp_list = []
+        ik_clav_ctrl_list = []
         #create curve box
         for i in range(0,1):
             myCurve = mc.curve(d=1, p=[ (-1, 1, 1), 
@@ -358,7 +360,7 @@ class arm_rig():
             mc.setAttr((curveShape[0] + '.overrideColorRGB'), 0.1, 1, 0)
 
             #rename curve
-            myCurve = mc.rename(ikJoint_list[1] + '_ik_ctrl')
+            myCurve = mc.rename(ikJoint_list[0] + '_ik_ctrl')
             #group curve
             curveGrouped = mc.group(myCurve)
             curveGrouped_offset = mc.group(myCurve)
@@ -366,7 +368,7 @@ class arm_rig():
             myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
             myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
             #parent and zero curveGrp to joints
-            mc.parent(myGroup, ikJoint_list[1], relative=True)
+            mc.parent(myGroup, ikJoint_list[0], relative=True)
             #unparent group (since it has correct position)
             mc.Unparent(myGroup)
 
@@ -374,17 +376,17 @@ class arm_rig():
             mc.parent(myGroup, myIKGrp)
 
             #append grp for outside use
-            ik_shldr_group_list.append(myGroup)
-            ik_shldr_ctrl_list.append(myCurve)
+            ik_clav_grp_list.append(myGroup)
+            ik_clav_ctrl_list.append(myCurve)
 
         # parent and scale constrain shldr joint translation to control
-        mc.parentConstraint(ik_shldr_ctrl_list[0], ikJoint_list[1])
+        mc.parentConstraint(ik_clav_ctrl_list[0], ikJoint_list[0])
         #scale constrain ctrl to jnt
-        mc.scaleConstraint(ik_shldr_ctrl_list[0], ikJoint_list[1])
+        mc.scaleConstraint(ik_clav_ctrl_list[0], ikJoint_list[0])
         # lock and hide rotation values for shldr control
-        #mc.setAttr((ik_shldr_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
-        #mc.setAttr((ik_shldr_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
-        #mc.setAttr((ik_shldr_ctrl_list[0] + '.rz'), lock=True, keyable=False, channelBox=False)
+        #mc.setAttr((ik_clav_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
+        #mc.setAttr((ik_clav_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
+        #mc.setAttr((ik_clav_ctrl_list[0] + '.rz'), lock=True, keyable=False, channelBox=False)
         
         
         #_________________POLE VECTOR Start___________________#
@@ -579,23 +581,23 @@ class arm_rig():
             mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0) ###
             mc.setAttr((ik_group_list[0] + '.visibility'), 1)
             mc.setAttr((pv_group_list[0] + '.visibility'), 1)
-            mc.setAttr((ik_shldr_group_list[0] + '.visibility'), 1)
+            mc.setAttr((ik_clav_grp_list[0] + '.visibility'), 1)
             mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 0)
 
             mc.setDrivenKeyframe((ik_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((pv_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
-            mc.setDrivenKeyframe((ik_shldr_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((ik_clav_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 
             mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 1) ###
             mc.setAttr((ik_group_list[0] + '.visibility'), 0)
             mc.setAttr((pv_group_list[0] + '.visibility'), 0)
-            mc.setAttr((ik_shldr_group_list[0] + '.visibility'), 0)
+            mc.setAttr((ik_clav_grp_list[0] + '.visibility'), 0)
             mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 1)
 
             mc.setDrivenKeyframe((ik_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((pv_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
-            mc.setDrivenKeyframe((ik_shldr_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((ik_clav_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 
 
@@ -634,10 +636,10 @@ class arm_rig():
         arm_startTwist_jnt = mc.joint(main_arm_jnts[2], n=direction + '_startTwistJnt_arm', rad=7)
         mc.Unparent(arm_startTwist_jnt)
         #color joint
-        mc.setAttr(arm_startTwist_jnt + ".overrideEnabled", 1)
-        mc.setAttr(arm_startTwist_jnt + ".overrideRGBColors", 1)
-        mc.setAttr(arm_startTwist_jnt + ".overrideColorRGB", 0, 0, 0)
-        #parent constrain to elbow
+        mc.setAttr(arm_startTwist_jnt + '.overrideEnabled', 1)
+        mc.setAttr(arm_startTwist_jnt + '.overrideRGBColors', 1)
+        mc.setAttr(arm_startTwist_jnt + '.overrideColorRGB', 0, 0, 0)
+        #mc.parent(arm_startTwist_jnt, main_arm_jnts[2])
         mc.parentConstraint(main_arm_jnts[2], arm_startTwist_jnt)
         mc.scaleConstraint(main_arm_jnts[2], arm_startTwist_jnt)
         mc.setAttr( arm_startTwist_jnt + '.segmentScaleCompensate', 0 )
@@ -648,18 +650,19 @@ class arm_rig():
         arm_endTwist_jnt = mc.joint(main_arm_jnts[3], n=direction + '_endTwistJnt_arm', rad=7)
         mc.Unparent(arm_endTwist_jnt)
         #color joint
-        mc.setAttr(arm_endTwist_jnt + ".overrideEnabled", 1)
-        mc.setAttr(arm_endTwist_jnt + ".overrideRGBColors", 1)
-        mc.setAttr(arm_endTwist_jnt + ".overrideColorRGB", 0, 0, 0)
+        mc.setAttr(arm_endTwist_jnt + '.overrideEnabled', 1)
+        mc.setAttr(arm_endTwist_jnt + '.overrideRGBColors', 1)
+        mc.setAttr(arm_endTwist_jnt + '.overrideColorRGB', 0, 0, 0)
         #parent constrain to ik wrist ctrl
-        mc.parentConstraint(ik_ctrl_list[0], arm_endTwist_jnt)
-        mc.scaleConstraint(ik_ctrl_list[0], arm_endTwist_jnt)
+        mc.parentConstraint(main_arm_jnts[3], arm_endTwist_jnt)
+        mc.scaleConstraint(main_arm_jnts[3], arm_endTwist_jnt)
         #parent constrain to fk wrist ctrl
-        mc.parentConstraint(fk_ctrl_list[-1], arm_endTwist_jnt)
-        mc.scaleConstraint(fk_ctrl_list[-1], arm_endTwist_jnt)
+        #mc.parentConstraint(fk_ctrl_list[-1], arm_endTwist_jnt)
+        #mc.scaleConstraint(fk_ctrl_list[-1], arm_endTwist_jnt)
         mc.setAttr( arm_endTwist_jnt + '.segmentScaleCompensate', 0 )
 
         
+
         #_______create arm mid twist joints_______
 
         arm_twist_list = []
@@ -670,11 +673,11 @@ class arm_rig():
             #create twist joint
             mc.joint()
             #joint visual size
-            mc.setAttr(".radius", 3)
+            mc.setAttr('.radius', 3)
             #joint color
-            mc.setAttr(".overrideEnabled", 1)
-            mc.setAttr(".overrideRGBColors", 1)
-            mc.setAttr(".overrideColorRGB", 0, 0, 0)
+            mc.setAttr('.overrideEnabled', 1)
+            mc.setAttr('.overrideRGBColors', 1)
+            mc.setAttr('.overrideColorRGB', 0, 0, 0)
             #rename joint
             #newName = i_betterName.replace(i, twistSkelPrefix)
             myJnt = mc.rename('twist_' + i)
@@ -698,6 +701,8 @@ class arm_rig():
             # first and last forearm are already constrained/ parented
             if i_twist != arm_twist_list[0] and i_twist != arm_twist_list[-1]:
                 if i_foreArm != foreArm_jnts[0] and i_foreArm != foreArm_jnts[-1]:
+                    #mc.connectAttr(i_twist + '.rotate', i_foreArm + '.rotate')
+                    #mc.connectAttr(i_twist + '.translate', i_foreArm + '.translate')
                     mc.parentConstraint(i_twist, i_foreArm)
                     mc.scaleConstraint(i_twist, i_foreArm)
         
@@ -740,7 +745,7 @@ class arm_rig():
         mc.rename(arm_twist_curve_tweak, direction + '_tweak_arm_twist')
         
         
-
+        '''
         #_______connect switch ctrl to twist jnts______#
         for i in range(0,1): 
             # 1 is fk, 0 is ik, (for loop to avoid clashing variables)
@@ -767,12 +772,13 @@ class arm_rig():
             mc.setDrivenKeyframe((arm_endTwist_jnt + '_scaleConstraint1' + '.IK_sknJnt_l_foreArm5_ik_ctrlW0'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((arm_endTwist_jnt + '_parentConstraint1' + '.FK_sknJnt_l_foreArm5_ctrlW1'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((arm_endTwist_jnt + '_parentConstraint1' + '.IK_sknJnt_l_foreArm5_ik_ctrlW0'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
-        
+        '''
         # ______________________________________________________#
         # __________________ IK stretchy arm ___________________#
         # ______________________________________________________#
 
         # get joint x lengths
+        to_shldr_len = mc.getAttr(ikJoint_list[1] + '.tx')
         to_elbow_len = mc.getAttr(ikJoint_list[2] + '.tx')
         to_wrist_len = mc.getAttr(ikJoint_list[-1] + '.tx')
         # create ruler tool
@@ -785,10 +791,10 @@ class arm_rig():
         # get locators controling length
         ruler_loc_list = mc.listConnections( ik_jnt_ruler, type='locator' )
         # rename and hide distance locators
-        arm_loc_0 = mc.rename(ruler_loc_list[0], direction + '_hip_dist_loc')
+        arm_loc_0 = mc.rename(ruler_loc_list[0], direction + '_clav_dist_loc')
         arm_loc_1 = mc.rename(ruler_loc_list[1], direction + '_wrist_dist_loc')
         # parent constraint measure locators to ctrls (ruler loc is ends of distanceMeasure tool)
-        mc.parentConstraint(ik_shldr_ctrl_list[0], arm_loc_0 )
+        mc.parentConstraint(ik_clav_ctrl_list[0], arm_loc_0 )
         mc.parentConstraint(ik_ctrl_list[0], arm_loc_1 )
         
         # make nodes for stretchy limb
@@ -800,18 +806,23 @@ class arm_rig():
         # operation to divide
         mc.setAttr(globalScale_off + '.operation', 2)
         # create mult/div nodes for ratio * length
+        ratio_shldr_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_shldr_mult' )
         ratio_elbow_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_elbow_mult' )
         ratio_wrist_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_wrist_mult' )
+        
         #create condition nodes for if greater than length, to prevent negative stretching
         #set operation to 'greater than'
+        shldr_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_shldr_len_con' )
         elbow_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_elbow_len_con' )
         wrist_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_wrist_len_con' )
         #set operation to 'greater than'
         if direction == 'left':
+            mc.setAttr(shldr_len_con + '.operation', 2)
             mc.setAttr(elbow_len_con + '.operation', 2)
             mc.setAttr(wrist_len_con + '.operation', 2)
         #set operation to 'less than'
         elif direction == 'right':
+            mc.setAttr(shldr_len_con + '.operation', 4)
             mc.setAttr(elbow_len_con + '.operation', 4)
             mc.setAttr(wrist_len_con + '.operation', 4)
         
@@ -831,16 +842,21 @@ class arm_rig():
             mc.connectAttr( (invert_value + '.outputX'), (arm_dist_ratio + '.input1X'), f=True )
 
         # soft ik, a little less than total length to keep some bend in elbow joint
-        mc.setAttr( (arm_dist_ratio + '.input2X'), (to_elbow_len + to_wrist_len) * 0.994 )
+        mc.setAttr( (arm_dist_ratio + '.input2X'), (to_shldr_len + to_elbow_len + to_wrist_len) * 0.994 )
 
         # connect length ratio to apply to x length of elbow and wrist (fraction * distance)
+        mc.connectAttr( (arm_dist_ratio + '.outputX'), (ratio_shldr_mult + '.input2X'), f=True )
         mc.connectAttr( (arm_dist_ratio + '.outputX'), (ratio_elbow_mult + '.input2X'), f=True )
         mc.connectAttr( (arm_dist_ratio + '.outputX'), (ratio_wrist_mult + '.input2X'), f=True )
         # joint length to input 1X
+        mc.setAttr( (ratio_shldr_mult + '.input1X'), to_shldr_len )
         mc.setAttr( (ratio_elbow_mult + '.input1X'), to_elbow_len )
         mc.setAttr( (ratio_wrist_mult + '.input1X'), to_wrist_len )
 
         # connect mult ratio nodes to condition node (if length greater, then stretch)
+        mc.connectAttr( (ratio_shldr_mult + '.outputX'), (shldr_len_con + '.colorIfTrueR'), f=True )
+        mc.connectAttr( (ratio_shldr_mult + '.outputX'), (shldr_len_con + '.firstTerm'), f=True )
+
         mc.connectAttr( (ratio_elbow_mult + '.outputX'), (elbow_len_con + '.colorIfTrueR'), f=True )
         mc.connectAttr( (ratio_elbow_mult + '.outputX'), (elbow_len_con + '.firstTerm'), f=True )
 
@@ -848,6 +864,9 @@ class arm_rig():
         mc.connectAttr( (ratio_wrist_mult + '.outputX'), (wrist_len_con + '.firstTerm'), f=True )
 
         # add joint lengths to base value, if false
+        mc.setAttr( (shldr_len_con + '.colorIfFalseR'), to_shldr_len )
+        mc.setAttr( (shldr_len_con + '.secondTerm'), to_shldr_len )
+
         mc.setAttr( (elbow_len_con + '.colorIfFalseR'), to_elbow_len )
         mc.setAttr( (elbow_len_con + '.secondTerm'), to_elbow_len )
 
@@ -855,6 +874,7 @@ class arm_rig():
         mc.setAttr( (wrist_len_con + '.secondTerm'), to_wrist_len )
 
         #connect stretch lengths to joint translate x
+        mc.connectAttr( (shldr_len_con + '.outColorR'), (ikJoint_list[1] + '.tx'), f=True )
         mc.connectAttr( (elbow_len_con + '.outColorR'), (ikJoint_list[2] + '.tx'), f=True )
         mc.connectAttr( (wrist_len_con + '.outColorR'), (ikJoint_list[-1] + '.tx'), f=True )
 
@@ -903,7 +923,5 @@ class arm_rig():
         mc.parent(arm_loc_1, myIKGrp)
 
         # return top ik and fk controls to parent to hip
-        return ik_shldr_group_list[0], fk_ctrl_grp_list[0]
+        return ik_clav_grp_list[0], fk_ctrl_grp_list[0]
         '''
-
-        

@@ -244,15 +244,33 @@ class find_jnts():
         # clavicle, shoulder, elbow, and wrist
         # find clavicle
         clav_jnt = self.l_r_clavicle_jnt(direction)
-        #find wrist
-        wrist_jnt = self.find_next_fork(clav_jnt)
+
+        elbow_jnt = self.find_next_fork(clav_jnt)
+
+        wrist_jnt = self.most_children_jnt(clav_jnt)
+
+        elbow_rel = mc.listRelatives(elbow_jnt, ad=1, ap=0, type='joint')
+
+        wrist_rel = mc.listRelatives(wrist_jnt, ad=1, ap=0, type='joint')
+
+        twist_jnts = []
+        for i in elbow_rel:
+            if i not in wrist_jnt and i not in wrist_rel:
+                twist_jnts.append(i)
+        # list wrong direction
+        twist_jnts.reverse()
+
         # reverse select jnts from wrist to clavicle (then reverse list)
-        jnt_list = sel_joints.sel_joints(clav_jnt, wrist_jnt[0])
+        jnt_list = sel_joints.sel_joints(clav_jnt, wrist_jnt)
         jnt_list_info = jnt_list.rev_sel_jnt_chain()
-        # insert clavicle into front of list
+
+        # insert clavicle into front of list (return main joint chain)
         jnt_list_info.insert(0, clav_jnt[0])
-        # return list
-        return jnt_list_info
+
+        # return list (jnt_list_info = main joint chain)
+        return jnt_list_info, twist_jnts
+        
+
 
 
 
