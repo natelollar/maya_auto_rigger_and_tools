@@ -500,6 +500,7 @@ class arm_rig():
         #_________________POLE VECTOR Start___________________#
         #_____________________________________________________#
         pv_group_list = []
+        pv_ctrl_list = []
         for i in range(0,1):
             #create pyramid curve______
             myCurve = mc.curve(d=1, p=[ (0, 5, -5), 
@@ -582,6 +583,7 @@ class arm_rig():
             mc.parent(myGroup, global_ctrl)
 
             pv_group_list.append(myGroup)
+            pv_ctrl_list.append(myCurve)
 
         
         #______________________________________________________________________________#
@@ -730,7 +732,8 @@ class arm_rig():
 
             mc.setDrivenKeyframe((jnt + '_scaleConstraint1.FK_' + jnt + 'W0'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((jnt + '_scaleConstraint1.IK_' + jnt + 'W1'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
-
+        
+        
         #________________________________________________________________________________#
         #________________________END of FK/IK BLEND______________________________________#
 
@@ -750,7 +753,7 @@ class arm_rig():
         mc.setAttr(arm_startTwist_jnt + '.overrideColorRGB', 0, 0, 0)
         #mc.parent(arm_startTwist_jnt, main_arm_jnts[2])
         mc.parentConstraint(main_arm_jnts[2], arm_startTwist_jnt)
-        mc.scaleConstraint(main_arm_jnts[2], arm_startTwist_jnt)
+        #mc.scaleConstraint(main_arm_jnts[2], arm_startTwist_jnt)
         mc.setAttr( arm_startTwist_jnt + '.segmentScaleCompensate', 0 )
 
 
@@ -764,10 +767,8 @@ class arm_rig():
         mc.setAttr(arm_endTwist_jnt + '.overrideColorRGB', 0, 0, 0)
         #parent constrain to ik wrist ctrl
         mc.parentConstraint(main_arm_jnts[3], arm_endTwist_jnt)
-        mc.scaleConstraint(main_arm_jnts[3], arm_endTwist_jnt)
+        #mc.scaleConstraint(main_arm_jnts[3], arm_endTwist_jnt)
         #parent constrain to fk wrist ctrl
-        #mc.parentConstraint(fk_ctrl_list[-1], arm_endTwist_jnt)
-        #mc.scaleConstraint(fk_ctrl_list[-1], arm_endTwist_jnt)
         mc.setAttr( arm_endTwist_jnt + '.segmentScaleCompensate', 0 )
 
         
@@ -797,6 +798,13 @@ class arm_rig():
             arm_twist_list.append(myJnt)
             # avoid double global scale
             mc.setAttr( i + '.segmentScaleCompensate', 0 )
+            mc.setAttr( myJnt + '.segmentScaleCompensate', 0 )
+
+        # scale constrain elbow fk to first twist joint (for proper twist scaling)
+        # for fk
+        mc.scaleConstraint(fk_ctrl_list[2], arm_twist_list[0])
+        # for ik
+        mc.scaleConstraint(pv_ctrl_list[0], arm_twist_list[0])
 
         #parent FK joints together based on current index
         currentIndex = -1
@@ -816,7 +824,26 @@ class arm_rig():
                     mc.scaleConstraint(i_twist, i_foreArm)
         
 
-        
+        # scale constraint switch
+        # twist elbow, fk elbow ctrl and ik pole vector ctrl
+        # 1 is fk, 0 is ik
+        mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0)
+        # alternative is to disconnect/ unlock and use '.target[0].targetWeight'
+        mc.setAttr( (arm_twist_list[0] + '_scaleConstraint1.' + fk_ctrl_list[2] + 'W0'),  0)
+        mc.setAttr( (arm_twist_list[0] + '_scaleConstraint1.' + pv_ctrl_list[0] + 'W1'),  1)
+
+        mc.setDrivenKeyframe((arm_twist_list[0] + '_scaleConstraint1.' + fk_ctrl_list[2] + 'W0'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+        mc.setDrivenKeyframe((arm_twist_list[0] + '_scaleConstraint1.' + pv_ctrl_list[0] + 'W1'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+
+        mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 1)
+        mc.setAttr( (arm_twist_list[0] + '_scaleConstraint1.' + fk_ctrl_list[2] + 'W0'),  1)
+        mc.setAttr( (arm_twist_list[0] + '_scaleConstraint1.' + pv_ctrl_list[0] + 'W1'),  0)
+
+        mc.setDrivenKeyframe((arm_twist_list[0] + '_scaleConstraint1.' + fk_ctrl_list[2] + 'W0'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+        mc.setDrivenKeyframe((arm_twist_list[0]+ '_scaleConstraint1.' + pv_ctrl_list[0] + 'W1'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+    
+
+
         #__________________create IK SPLINE for arm TWIST__________________
         #create simple curve
         twistStart_pos = mc.xform(arm_startTwist_jnt,q=1,ws=1,rp=1)
@@ -910,7 +937,7 @@ class arm_rig():
         # set mulDiv node to Divide
         mc.setAttr(arm_dist_ratio + '.operation', 2)
         # global scale offset multDiv node
-        globalScale_off = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_arm_globalScale_off' )
+        globalScale_off = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ik_arm_globalScale_off' )
         # operation to divide
         mc.setAttr(globalScale_off + '.operation', 2)
         # create mult/div nodes for ratio * length
@@ -933,6 +960,10 @@ class arm_rig():
         mc.connectAttr( (ik_jnt_ruler + '.distance'), (globalScale_off + '.input1X'), f=True )
         # connect global ctrl scale X to global scale offset
         mc.connectAttr( (global_ctrl + '.scaleX'), (globalScale_off + '.input2X'), f=True )
+        #mc.expression(  s = globalScale_off + '.input2X = ' + global_ctrl + '.scaleX * ' + 
+                         #pv_ctrl_list[0] + '.scaleX * ' + 
+                         #ik_shldr_ctrl_list[0] + '.scaleX')
+                         #ik_clav_ctrl_list[0] + '.scaleX' )
 
         # connect ruler distance over total distance of joints
         if direction == 'left':
@@ -1035,8 +1066,14 @@ class arm_rig():
         
         # connect arm distance to global scale offset
         mc.connectAttr( (fk_jnt_ruler + '.distance'), (fk_globalScale_off + '.input1X'), f=True )
+
         # connect global ctrl scale X to global scale offset
-        mc.connectAttr( (global_ctrl + '.scaleX'), (fk_globalScale_off + '.input2X'), f=True )
+        # _____create expression to multiply all scaling nodes above multDiv global scale offset____#
+        #mc.connectAttr( (global_ctrl + '.scaleX'), (fk_globalScale_off + '.input2X'), f=True )
+        mc.expression(  s = fk_globalScale_off + '.input2X = ' + global_ctrl + '.scaleX * ' + 
+                        fk_ctrl_list[0] + '.scaleX * ' + 
+                        fk_ctrl_list[1] + '.scaleX * ' +
+                        fk_ctrl_list[2] + '.scaleX' )
 
         # connect ruler distance over total distance of joints
         if direction == 'left':
@@ -1141,9 +1178,6 @@ class arm_rig():
         finger_jnt_lists = finger_jnt_lists_temp.find_finger_jnts('left')
 
         # 5 colors for 5 fingers
-        color_list = [  (1, 1, 1), (0, 1, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0), 
-                        # in case extra fingers
-                        (1, 1, 1), (0, 1, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)]
         # cycle through finger jnt lists and create fk chain parented to hand grp
         for jnt_list in finger_jnt_lists:
             current_index = finger_jnt_lists.index(jnt_list)
@@ -1151,10 +1185,10 @@ class arm_rig():
             finger_ctrl_list.fk_chain(  jnt_chain = jnt_list, 
                                         parent_to = hand_grp_list[0],
                                         ctrl_type='circle',
-                                        size=.5, 
-                                        color_r=round(color_list[current_index][0]), 
-                                        color_g=round(color_list[current_index][1]), 
-                                        color_b=round(color_list[current_index][2]) )
+                                        size=0.5, 
+                                        color_r=1, 
+                                        color_g=1, 
+                                        color_b=0 )
 
         '''
         #_______________________________________________________________#
