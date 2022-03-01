@@ -4,8 +4,11 @@ import maya.api.OpenMaya as om
 
 import itertools
 
+import random
+
 from ..ar_functions import find_jnts
 from ..ar_functions import sel_joints
+from ..ar_tools import fk_chain
 
 # arm rig
 class arm_rig():
@@ -372,6 +375,9 @@ class arm_rig():
             #unparent group (since it has correct position)
             mc.Unparent(myGroup)
 
+            # 0 out rotation, to level out ctrl, and represent that it does not control rotation
+            mc.setAttr((myGroup + '.rotate'), 0, 0, 0)
+
             #parent grp to global grp to organize
             mc.parent(myGroup, myIKGrp)
 
@@ -379,16 +385,118 @@ class arm_rig():
             ik_shldr_group_list.append(myGroup)
             ik_shldr_ctrl_list.append(myCurve)
 
-        # parent and scale constrain shldr joint translation to control
-        mc.parentConstraint(ik_shldr_ctrl_list[0], ikJoint_list[1])
+        
+        #___________ik clav CTRL____________#
+        ik_clav_group_list = []
+        ik_clav_ctrl_list = []
+        #create curve box
+        for i in range(0,1):
+            myCurve = mc.curve(d=1, p=[ (-1, 1, 1), 
+                                        (-1, 1, -1), 
+                                        (1, 1, -1), 
+                                        (1, 1, 1), 
+                                        (-1, 1, 1), 
+                                        (-1, -1, 1), 
+                                        (-1, -1, -1), 
+                                        (1, -1, -1), 
+                                        (1, -1, 1), 
+                                        (-1, -1, 1), 
+                                        (-1, 1, 1), 
+                                        (1, 1, 1), 
+                                        (1, -1, 1), 
+                                        (1, -1, -1), 
+                                        (1, 1, -1), 
+                                        (-1, 1, -1), 
+                                        (-1, -1, -1)
+                                        ])
+            #curve size
+            mc.setAttr((myCurve + '.scale'), ik_ctrl_size, ik_ctrl_size, ik_ctrl_size)
+            #freeze transforms
+            mc.makeIdentity(myCurve, apply=True)
+            #select curve box's shape
+            curveShape = mc.listRelatives(myCurve, s=True)
+            #color curve box's shape red
+            mc.setAttr((curveShape[0] + '.overrideEnabled'), 1)
+            mc.setAttr((curveShape[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((curveShape[0] + '.overrideColorRGB'), 0.1, 1, 0)
+
+            #rename curve
+            myCurve = mc.rename(ikJoint_list[0] + '_ik_ctrl')
+            #group curve
+            curveGrouped = mc.group(myCurve)
+            curveGrouped_offset = mc.group(myCurve)
+            #rename group
+            myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
+            myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
+            #parent and zero curveGrp to joints
+            mc.parent(myGroup, ikJoint_list[0], relative=True)
+            #unparent group (since it has correct position)
+            mc.Unparent(myGroup)
+
+            # 0 out rotation, to level out ctrl, and represent that it does not control rotation
+            mc.setAttr((myGroup + '.rotate'), 0, 0, 0)
+
+            #parent grp to global grp to organize
+            mc.parent(myGroup, myIKGrp)
+
+            #append grp for outside use
+            ik_clav_group_list.append(myGroup)
+            ik_clav_ctrl_list.append(myCurve)
+
+        # parent and scale constrain clav joint translation to control
+        mc.parentConstraint(ik_clav_ctrl_list[0], ikJoint_list[0], sr=('x','y','z'))
         #scale constrain ctrl to jnt
+        mc.scaleConstraint(ik_clav_ctrl_list[0], ikJoint_list[0])
+        # lock and hide rotation values for clav control
+        mc.setAttr((ik_clav_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
+        mc.setAttr((ik_clav_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
+        mc.setAttr((ik_clav_ctrl_list[0] + '.rz'), lock=True, keyable=False, channelBox=False)
+
+
+        #__________________________________________________________#
+        #___________ik Clavicle (single chain solver)______________#
+        #__________________________________________________________#
+
+        #create single chain ikHandle for clavicle________
+        clavicle_ikHandle = mc.ikHandle(n='ikHandle_l_clavicle',sj=ikJoint_list[0], ee=ikJoint_list[1], sol='ikSCsolver')
+        
+        mc.setAttr((clavicle_ikHandle[0] + '.poleVectorX'), 0)
+        mc.setAttr((clavicle_ikHandle[0] + '.poleVectorY'), 0)
+        mc.setAttr((clavicle_ikHandle[0] + '.poleVectorZ'), 0)
+        #rename ik effector
+        clavicle_ikHandle_effector = mc.listConnections(clavicle_ikHandle, s=True, type='ikEffector')
+        mc.rename(clavicle_ikHandle_effector, 'effector_' + direction + '_arm')
+        #group ik handle
+        clvGrp = mc.group(em=True)
+        clvGrp = mc.rename(clvGrp, clavicle_ikHandle[0] + '_grp')
+        clvGrp_const = mc.parentConstraint(clavicle_ikHandle[0], clvGrp)
+        mc.delete(clvGrp_const)
+        mc.parent(clavicle_ikHandle[0], clvGrp)
+
+        #_____________________ik Clavicle Stretch (single chain solver)___________________________#
+        clavicle_var_loc = mc.spaceLocator(n=ikJoint_list[0] + '_locator')
+        upperArm1_var_loc = mc.spaceLocator(n=ikJoint_list[1] + '_locator')
+        mc.pointConstraint(ikJoint_list[0], clavicle_var_loc)
+        mc.pointConstraint(clavicle_ikHandle[0], upperArm1_var_loc)
+        clv_measerTool = mc.distanceDimension(clavicle_var_loc, upperArm1_var_loc)
+        clv_measerTool_parent = mc.listRelatives(clv_measerTool, p=True)
+        clv_measerTool_parent = mc.rename(clv_measerTool_parent, ('distanceDimension_' + ikJoint_list[0]))
+        mc.connectAttr(clv_measerTool_parent + '.distance', ikJoint_list[1] + '.translateX')
+        clv_measerTool_grp = mc.group(em = True, n=clv_measerTool_parent + '_grp')
+        mc.parent(clv_measerTool_parent, clavicle_var_loc, upperArm1_var_loc, clv_measerTool_grp)
+        #***was getting "cycle" glitch for parentConstraining clavicle locator instead of pointConstraining
+
+        #____________parenting ik shoulder ctrl__________________#
+        # parent constrain shldr joint translation to single solver ik handle grp
+        mc.parentConstraint(ik_shldr_ctrl_list[0], clvGrp, sr=('x','y','z'))
+        #scale constrain ctrl to shldr jnt
         mc.scaleConstraint(ik_shldr_ctrl_list[0], ikJoint_list[1])
         # lock and hide rotation values for shldr control
-        #mc.setAttr((ik_shldr_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
-        #mc.setAttr((ik_shldr_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
-        #mc.setAttr((ik_shldr_ctrl_list[0] + '.rz'), lock=True, keyable=False, channelBox=False)
+        mc.setAttr((ik_shldr_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
+        mc.setAttr((ik_shldr_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
+        mc.setAttr((ik_shldr_ctrl_list[0] + '.rz'), lock=True, keyable=False, channelBox=False)
         
-        
+
         #_________________POLE VECTOR Start___________________#
         #_____________________________________________________#
         pv_group_list = []
@@ -582,22 +690,26 @@ class arm_rig():
             mc.setAttr((ik_group_list[0] + '.visibility'), 1)
             mc.setAttr((pv_group_list[0] + '.visibility'), 1)
             mc.setAttr((ik_shldr_group_list[0] + '.visibility'), 1)
+            mc.setAttr((ik_clav_group_list[0] + '.visibility'), 1)
             mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 0)
 
             mc.setDrivenKeyframe((ik_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((pv_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((ik_shldr_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((ik_clav_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 
             mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 1) ###
             mc.setAttr((ik_group_list[0] + '.visibility'), 0)
             mc.setAttr((pv_group_list[0] + '.visibility'), 0)
             mc.setAttr((ik_shldr_group_list[0] + '.visibility'), 0)
+            mc.setAttr((ik_clav_group_list[0] + '.visibility'), 0)
             mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 1)
 
             mc.setDrivenKeyframe((ik_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((pv_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((ik_shldr_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((ik_clav_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 
 
@@ -623,12 +735,9 @@ class arm_rig():
         #________________________END of FK/IK BLEND______________________________________#
 
 
-       
-
         #_____________________________________________________________________________#
         #____________________________ Twist Jnts______________________________________#
         #_____________________________________________________________________________#
-
 
         #_____ start twist joint_____#
         
@@ -836,7 +945,7 @@ class arm_rig():
             mc.connectAttr( (invert_value + '.outputX'), (arm_dist_ratio + '.input1X'), f=True )
 
         # soft ik, a little less than total length to keep some bend in elbow joint
-        mc.setAttr( (arm_dist_ratio + '.input2X'), (to_elbow_len + to_wrist_len) * 0.994 )
+        mc.setAttr( (arm_dist_ratio + '.input2X'), (to_elbow_len + to_wrist_len) * 0.9935 )
 
         # connect length ratio to apply to x length of elbow and wrist (fraction * distance)
         mc.connectAttr( (arm_dist_ratio + '.outputX'), (ratio_elbow_mult + '.input2X'), f=True )
@@ -864,15 +973,15 @@ class arm_rig():
         mc.connectAttr( (wrist_len_con + '.outColorR'), (ikJoint_list[-1] + '.tx'), f=True )
 
         #_____________twist stretch___________#
-
+        twist_con = []
         for i in arm_twist_list:
             if i != arm_twist_list[0]:
                 # length of joint
                 to_len = mc.getAttr(i + '.tx')
                 # create mult/div nodes for ratio * length
-                ratio_mult = mc.shadingNode('multiplyDivide', asUtility=True, n= direction + i + '_ratio_mult' )
+                ratio_mult = mc.shadingNode('multiplyDivide', asUtility=True, n= direction + '_' + i + '_ratio_mult' )
                 #create condition nodes for if greater than length, to prevent negative stretching
-                len_con = mc.shadingNode('condition', asUtility=True, n=direction + i + '_len_con' )
+                len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_' + i + '_len_con' )
                 #set operation to 'greater than'
                 if direction == 'left':
                     mc.setAttr(len_con + '.operation', 2)
@@ -892,7 +1001,160 @@ class arm_rig():
                 mc.setAttr( (len_con + '.secondTerm'), to_len )
                 #connect stretch lengths to joint translate x
                 mc.connectAttr( (len_con + '.outColorR'), (i + '.tx'), f=True )
+                twist_con.append(len_con)
         
+
+        # ______________________________________________________#
+        # __________________ fk stretchy arm ___________________#
+        # ______________________________________________________#
+        
+        # create ruler tool
+        fk_jnt_ruler_temp = mc.distanceDimension( sp=(0, 0, 0), ep=(0, 0, 10) )
+        fk_jnt_ruler = mc.rename(fk_jnt_ruler_temp, ( direction + '_fk_jnt_rulerShape' ) )
+        # rename transform parent of distanceDimesion tool
+        fk_ruler_loc_list_rel = mc.listRelatives( fk_jnt_ruler, ap=1, type='transform' )
+        fk_ruler_loc_list_parent = mc.rename(fk_ruler_loc_list_rel, direction + '_fk_jnt_ruler')
+
+        # get locators controling length
+        fk_ruler_loc_list = mc.listConnections( fk_jnt_ruler, type='locator' )
+        # rename and hide distance locators
+        fk_arm_loc_0 = mc.rename(fk_ruler_loc_list[0], direction + '_fk_hip_dist_loc')
+        fk_arm_loc_1 = mc.rename(fk_ruler_loc_list[1], direction + '_fk_wrist_dist_loc')
+        # parent constraint measure locators to ctrls (ruler loc is ends of distanceMeasure tool)
+        mc.parentConstraint(fk_ctrl_list[2], fk_arm_loc_0 )
+        mc.parentConstraint(fk_ctrl_list[-1], fk_arm_loc_1 )
+        
+        # make node for stretchy limb
+        fk_arm_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_fk_arm_dist_ratio' )
+        # set mulDiv node to Divide
+        mc.setAttr(fk_arm_dist_ratio + '.operation', 2)
+        # global scale offset multDiv node
+        fk_globalScale_off = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_fk_arm_globalScale_off' )
+        # operation to divide
+        mc.setAttr(fk_globalScale_off + '.operation', 2)
+        
+        # connect arm distance to global scale offset
+        mc.connectAttr( (fk_jnt_ruler + '.distance'), (fk_globalScale_off + '.input1X'), f=True )
+        # connect global ctrl scale X to global scale offset
+        mc.connectAttr( (global_ctrl + '.scaleX'), (fk_globalScale_off + '.input2X'), f=True )
+
+        # connect ruler distance over total distance of joints
+        if direction == 'left':
+            mc.connectAttr( (fk_globalScale_off + '.outputX'), (fk_arm_dist_ratio + '.input1X'), f=True )
+        elif direction == 'right':
+            # (right) invert to negative translate X (since x is up the chain instead of down the chain)
+            fk_invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_fk_arm_invert_value' )
+            mc.setAttr( (fk_invert_value + '.input2X'), -1 )
+            mc.connectAttr( (globalScale_off + '.outputX'), (fk_invert_value + '.input1X'), f=True )
+            mc.connectAttr( (fk_invert_value + '.outputX'), (fk_arm_dist_ratio + '.input1X'), f=True )
+
+        # soft ik, a little less than total length to keep some bend in elbow joint
+        mc.setAttr( (fk_arm_dist_ratio + '.input2X'), to_wrist_len )
+
+        #_____________fk twist stretch___________#
+        fk_twist_con = []
+        for i in arm_twist_list:
+            if i != arm_twist_list[0]:
+                # length of joint
+                fk_to_len = mc.getAttr(i + '.tx')
+                # create mult/div nodes for ratio * length
+                fk_ratio_mult = mc.shadingNode('multiplyDivide', asUtility=True, n= direction + '_' + i + '_fk_ratio_mult' )
+                #create condition nodes for if greater than length, to prevent negative stretching
+                fk_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_' + i + '_fk_len_con' )
+                #set operation to 'greater than'
+                if direction == 'left':
+                    mc.setAttr(fk_len_con + '.operation', 2)
+                #set operation to 'less than'
+                elif direction == 'right':
+                    mc.setAttr(fk_len_con + '.operation', 4)
+
+                # connect length ratio to apply to x length of elbow and wrist (fraction * distance)
+                mc.connectAttr( (fk_arm_dist_ratio + '.outputX'), (fk_ratio_mult + '.input2X'), f=True )
+                # joint length to input 1X
+                mc.setAttr( (fk_ratio_mult + '.input1X'), fk_to_len )
+                # connect mult ratio nodes to condition node (if length greater, then stretch)
+                mc.connectAttr( (fk_ratio_mult + '.outputX'), (fk_len_con + '.colorIfTrueR'), f=True )
+                mc.connectAttr( (fk_ratio_mult + '.outputX'), (fk_len_con + '.firstTerm'), f=True )
+                # add joint lengths to base value, if false
+                mc.setAttr( (fk_len_con + '.colorIfFalseR'), fk_to_len )
+                mc.setAttr( (fk_len_con + '.secondTerm'), fk_to_len )
+                #connect stretch lengths to joint translate x
+                mc.connectAttr( (fk_len_con + '.outColorR'), (i + '.tx'), f=True )
+                # append twist condition to join with blendshape
+                fk_twist_con.append(fk_len_con)
+
+        
+        # blend color twist condition switching
+        blendClr_con_list = []
+        #blend joints together
+        for fk_twst_con, ik_twst_con, twst_jnt in itertools.izip(fk_twist_con, twist_con, arm_twist_list):
+            #create blend color nodes
+            blnd_clrs_con = mc.createNode('blendColors', n= twst_jnt + '_blnd_clrs_con')
+            #translate
+            mc.connectAttr((fk_twst_con + '.outColorR'), (blnd_clrs_con + '.color1R'), f=True)
+            mc.connectAttr((ik_twst_con + '.outColorR'), (blnd_clrs_con + '.color2R'), f=True)
+            mc.connectAttr((blnd_clrs_con + '.outputR'), (twst_jnt + '.translateX'), f=True)
+
+            #append lists for outside loop use
+            blendClr_con_list.append(blnd_clrs_con)
+
+        #_______connect switch control to blendNodes for twist ik vs fk length_______#
+        for blendClr in blendClr_con_list :
+            mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (blendClr + '.blender'), f=True)
+            
+
+        #_________________________________________________________#
+        #______________________ FINGERs___________________________#
+        #_________________________________________________________#
+
+        #______________ Hand Grp_______________________#
+        #______________________________________________#
+
+        hand_grp_list = []
+        hand_grp_offset_list = []
+
+        for jnt in [main_arm_jnts[-1]]:
+            #group
+            myGroup_offset = mc.group(em=True)
+            myGroup = mc.group(myGroup_offset)
+            #rename group
+            myGroup = mc.rename(myGroup, (direction + '_hand_grp'))
+            myGroup_offset = mc.rename(myGroup_offset, (direction + '_hand_grp_offset'))
+            #parent and zero curveGrp to leg_fk_list
+            mc.parent(myGroup, jnt, relative=True)
+            #unparent group (since it has correct position)
+            mc.Unparent(myGroup)
+            #add variable to list to access outside of loop
+            hand_grp_list.append(myGroup)
+            hand_grp_offset_list.append(myGroup_offset)
+
+        # constrain hand group to hand jnt
+        mc.parentConstraint(main_arm_jnts[-1], hand_grp_list[0])
+        mc.scaleConstraint(main_arm_jnts[-1], hand_grp_list[0])
+
+
+        #______________ Create Fingers _______________________#
+        #_____________________________________________________#
+        # finger fk chain and parent to hand grp
+
+        finger_jnt_lists_temp = find_jnts.find_jnts()
+        finger_jnt_lists = finger_jnt_lists_temp.find_finger_jnts('left')
+
+        # 5 colors for 5 fingers
+        color_list = [  (1, 1, 1), (0, 1, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0), 
+                        # in case extra fingers
+                        (1, 1, 1), (0, 1, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)]
+        # cycle through finger jnt lists and create fk chain parented to hand grp
+        for jnt_list in finger_jnt_lists:
+            current_index = finger_jnt_lists.index(jnt_list)
+            finger_ctrl_list = fk_chain.fk_chain()
+            finger_ctrl_list.fk_chain(  jnt_chain = jnt_list, 
+                                        parent_to = hand_grp_list[0],
+                                        ctrl_type='circle',
+                                        size=.5, 
+                                        color_r=round(color_list[current_index][0]), 
+                                        color_g=round(color_list[current_index][1]), 
+                                        color_b=round(color_list[current_index][2]) )
 
         '''
         #_______________________________________________________________#
@@ -908,5 +1170,6 @@ class arm_rig():
         mc.parent(arm_loc_1, myIKGrp)
 
         # return top ik and fk controls to parent to hip
-        return ik_shldr_group_list[0], fk_ctrl_grp_list[0]
+        return ik_clav_group_list[0], ik_shldr_group_list[0], ik_group_list[0], fk_ctrl_grp_list[0]
         '''
+        

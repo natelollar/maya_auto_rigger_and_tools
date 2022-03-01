@@ -269,8 +269,27 @@ class find_jnts():
 
         # return list (jnt_list_info = main joint chain)
         return jnt_list_info, twist_jnts
-        
 
+
+    def find_finger_jnts(self, direction):
+        # clavicle, shoulder, elbow, and wrist
+        # find clavicle
+        clav_jnt = self.l_r_clavicle_jnt(direction)
+
+        wrist_jnt = self.most_children_jnt(clav_jnt)
+
+        finger_base_jnts = mc.listConnections(wrist_jnt, d=1, s=0, type='joint')
+
+        # create list of jnt lists (finger chains)
+        finger_lists = []
+        for jnt in finger_base_jnts:
+            #current_index = finger_base_jnts.index(jnt)
+            finger_jnt_list = mc.listRelatives(jnt, ad=1, ap=0, type='joint')
+            finger_jnt_list.append(jnt)
+            finger_jnt_list.reverse()
+            finger_lists.append(finger_jnt_list)
+   
+        return finger_lists
 
 
 
