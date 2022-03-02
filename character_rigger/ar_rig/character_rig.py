@@ -8,6 +8,7 @@ from . import fk_spine_rig
 from . import extra_rig
 from . import face_rig
 from . import leg_rig
+from . import arm_rig
 
 def character_rig():
     #________________________________________________________________________#
@@ -92,7 +93,7 @@ def character_rig():
     top_ctrls_var.tongue_ctrls(jaw_ctrl_var_info[1])
     
     #________________________________________________________________________#
-
+    
     # left leg ctrls
     # parent to spine root control (global_ctrl for scale offset)
     left_leg_rig = leg_rig.leg_rig()
@@ -153,5 +154,34 @@ def character_rig():
 
     # parent chest offset joint under global control (for organization and global scale)
     mc.parent(chest_blend_offset_info, global_ctrl_info[1])
+
+    
+
+    #________________________________________________________________________#
+    # create l arm ctrls
+    arm_rig_class = arm_rig.arm_rig()
+
+    arm_rig_return = arm_rig_class.arm_rig( direction='left', 
+                                            offset_parent_jnt=chest_blend_offset_info, 
+                                            fk_ctrl_size=12, 
+                                            ik_ctrl_size=10, 
+                                            pv_ctrl_size=1, 
+                                            elbow_dist_mult=13, 
+                                            global_ctrl=global_ctrl_info[1])
+    
+    '''
+    #________________________________________________________________________#
+    # create r arm ctrls
+    arm_rig_class = arm_rig.arm_rig()
+
+    arm_rig_return = arm_rig_class.arm_rig( direction='right', 
+                                            offset_parent_jnt=chest_blend_offset_info, 
+                                            fk_ctrl_size=12, 
+                                            ik_ctrl_size=10, 
+                                            pv_ctrl_size=1, 
+                                            elbow_dist_mult=13, 
+                                            global_ctrl=global_ctrl_info[1])
+    '''
     
     
+
