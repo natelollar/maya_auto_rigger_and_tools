@@ -19,8 +19,10 @@ class arm_rig():
                 fk_ctrl_size, 
                 ik_ctrl_size, 
                 pv_ctrl_size, 
-                elbow_dist_mult, 
+                elbow_dist_mult,
+                to_chest_ctrl, 
                 global_ctrl):
+
         #___________________Find Arm Joints____________________________#
         # create arm joint list
         if direction == 'left':
@@ -289,9 +291,6 @@ class arm_rig():
             #unparent group (since it has correct position)
             mc.Unparent(myGroup)
 
-            #parent grp to global grp to organize
-            mc.parent(myGroup, global_ctrl)
-
             #append grp for outside use
             ik_group_list.append(myGroup)
             ik_ctrl_list.append(myCurve)
@@ -458,15 +457,33 @@ class arm_rig():
         clv_measerTool = mc.distanceDimension(clavicle_var_loc, upperArm1_var_loc)
         clv_measerTool_parent = mc.listRelatives(clv_measerTool, p=True)
         clv_measerTool_parent = mc.rename(clv_measerTool_parent, ('distanceDimension_' + ikJoint_list[0]))
+
+        # scale offset multDiv node
+        clav_scale_off = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_clav_scale_off' )
+        # set operation to divide
+        mc.setAttr( clav_scale_off + '.operation', 2)
+
+        # connect global ctrl scale X to scale offset
+        # _____create expression to multiply all scaling offset ctrls together____#
+        # spine ctrls for scale offset
+        clav_exp_str = ''
+        for ctrl in to_chest_ctrl:
+            clav_exp_str = clav_exp_str + (ctrl + '.scaleX * ')
+
+        #mc.connectAttr( (global_ctrl + '.scaleX'), (fk_globalScale_off + '.input2X'), f=True )
+        mc.expression( s = clav_scale_off + '.input2X = ' + clav_exp_str + global_ctrl + '.scaleX' )
         
         if direction == 'left':
-            mc.connectAttr(clv_measerTool_parent + '.distance', ikJoint_list[1] + '.translateX')
+            mc.connectAttr(clv_measerTool_parent + '.distance', clav_scale_off + '.input1X')
         elif direction == 'right':
             # (right) invert to negative translate X (since x is up the chain instead of down the chain)
             clav_invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_clav_invert_value' )
             mc.setAttr( (clav_invert_value + '.input2X'), -1 )
             mc.connectAttr( (clv_measerTool_parent + '.distance'), (clav_invert_value + '.input1X'), f=True)
-            mc.connectAttr( (clav_invert_value + '.outputX') , ikJoint_list[1] + '.translateX')
+            mc.connectAttr( (clav_invert_value + '.outputX') , clav_scale_off + '.input1X')
+
+        #connect scale offset to tranlate x of shldr jnt
+        mc.connectAttr( (clav_scale_off + '.outputX') , ikJoint_list[1] + '.translateX')
 
         clv_measerTool_grp = mc.group(em = True, n=clv_measerTool_parent + '_grp')
         
@@ -565,9 +582,6 @@ class arm_rig():
 
             # connect scale of elbow and pole vector control (scale constraint creates cyclical error)
             mc.connectAttr( (myCurve + '.scale'), ( ikJoint_list[2] ) + '.scale', f=True)
-
-            #parent grp to global grp to organize
-            mc.parent(myGroup, global_ctrl)
 
             pv_group_list.append(myGroup)
             pv_ctrl_list.append(myCurve)
@@ -1031,9 +1045,13 @@ class arm_rig():
         mc.connectAttr( (fk_jnt_ruler + '.distance'), (fk_globalScale_off + '.input1X'), f=True )
 
         # connect global ctrl scale X to global scale offset
-        # _____create expression to multiply all scaling nodes above multDiv global scale offset____#
-        #mc.connectAttr( (global_ctrl + '.scaleX'), (fk_globalScale_off + '.input2X'), f=True )
+        # _____create expression to multiply all scaling offset ctrls together____#
+        # fk arm scale offset spine ctrls
+        fk_exp_str = ''
+        for ctrl in to_chest_ctrl:
+            fk_exp_str = fk_exp_str + (ctrl + '.scaleX * ')
         mc.expression(  s = fk_globalScale_off + '.input2X = ' + global_ctrl + '.scaleX * ' + 
+                        fk_exp_str +
                         fk_ctrl_list[0] + '.scaleX * ' + 
                         fk_ctrl_list[1] + '.scaleX * ' +
                         fk_ctrl_list[2] + '.scaleX' )
@@ -1168,7 +1186,21 @@ class arm_rig():
         mc.parent(arm_loc_0, myIKGrp)
         mc.parent(arm_loc_1, myIKGrp)
 
-        # return top ik and fk controls to parent to hip
-        return ik_clav_group_list[0], ik_shldr_group_list[0], ik_group_list[0], fk_ctrl_grp_list[0]
+        #____________________________________________________________________________#
+        #__________________chest ctrl/ global ctrl parenting_________________________#
+        #____________________________________________________________________________#
+        # parent ik clav, shlder, and fk clav to chest ctrl
+        mc.parent(ik_clav_group_list[0], ik_shldr_group_list[0], fk_ctrl_grp_list[0], to_chest_ctrl[-1])
+        #parent pole vector grp and wrist ik grp to global ctrl
+        mc.parent(pv_group_list[0], ik_group_list[0], global_ctrl)
+
+        # return top ik and fk controls to parent to chest ctrl (if needed, done above)
+        return  ik_clav_group_list[0], \
+                ik_shldr_group_list[0], \
+                fk_ctrl_grp_list[0], \
+                                  \
+                pv_group_list[0], \
+                ik_group_list[0], \
+                
         
         

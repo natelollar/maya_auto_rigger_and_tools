@@ -139,14 +139,14 @@ def character_rig():
     chest_index = find_jnts.find_jnts()
     chest_index_info = chest_index.find_chest_jnt_index()
 
-    # fk chest control list
-    fk_chest_ctrl_list = fk_spine_rig_info[4]
+    # fk spine joints up to chest control
+    to_chest_ctrl_list = fk_spine_rig_info[4]
 
     # create offset jnt
     # parent constrain offset jnt to fk chest ctrl
     chest_blend_offset = extra_rig.extra_rig ()
     chest_blend_offset_info =  chest_blend_offset.blend_jnt_offset( parent='chest_pos', 
-                                                                    parentTo=fk_chest_ctrl_list[chest_index_info], 
+                                                                    parentTo=to_chest_ctrl_list[chest_index_info], 
                                                                     size=5, 
                                                                     colorR=1, 
                                                                     colorG=0, 
@@ -156,7 +156,7 @@ def character_rig():
     mc.parent(chest_blend_offset_info, global_ctrl_info[1])
 
     
-
+    
     #________________________________________________________________________#
     # create l arm ctrls
     arm_rig_class = arm_rig.arm_rig()
@@ -167,7 +167,9 @@ def character_rig():
                                             ik_ctrl_size=10, 
                                             pv_ctrl_size=1, 
                                             elbow_dist_mult=13, 
-                                            global_ctrl=global_ctrl_info[1])
+                                            to_chest_ctrl=fk_spine_rig_info[4],
+                                            global_ctrl=global_ctrl_info[1] )
+
     
     '''
     #________________________________________________________________________#
@@ -182,6 +184,5 @@ def character_rig():
                                             elbow_dist_mult=13, 
                                             global_ctrl=global_ctrl_info[1])
     '''
-    
     
 
