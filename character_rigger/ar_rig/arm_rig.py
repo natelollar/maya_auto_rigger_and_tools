@@ -355,7 +355,7 @@ class arm_rig():
             mc.setAttr((myGroup + '.rotate'), 0, 0, 0)
 
             #parent grp to global grp to organize
-            mc.parent(myGroup, myIKGrp)
+            #mc.parent(myGroup, myIKGrp)
 
             #append grp for outside use
             ik_shldr_group_list.append(myGroup)
@@ -413,7 +413,7 @@ class arm_rig():
             mc.setAttr((myGroup + '.rotate'), 0, 0, 0)
 
             #parent grp to global grp to organize
-            mc.parent(myGroup, myIKGrp)
+            #mc.parent(myGroup, myIKGrp)
 
             #append grp for outside use
             ik_clav_group_list.append(myGroup)
@@ -427,6 +427,9 @@ class arm_rig():
         mc.setAttr((ik_clav_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
         mc.setAttr((ik_clav_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
         mc.setAttr((ik_clav_ctrl_list[0] + '.rz'), lock=True, keyable=False, channelBox=False)
+
+        # ____________________ grp ik shldr under ik clav___________________#
+        mc.parent(ik_shldr_group_list[0], ik_clav_ctrl_list[0])
 
         
         #__________________________________________________________#
@@ -788,7 +791,7 @@ class arm_rig():
             #joint color
             mc.setAttr('.overrideEnabled', 1)
             mc.setAttr('.overrideRGBColors', 1)
-            mc.setAttr('.overrideColorRGB', 0, 0, 0)
+            mc.setAttr('.overrideColorRGB', 1, 1, 1)
             #rename joint
             #newName = i_betterName.replace(i, twistSkelPrefix)
             myJnt = mc.rename('twist_' + i)
@@ -906,16 +909,16 @@ class arm_rig():
         arm_loc_0 = mc.rename(ruler_loc_list[0], direction + '_shlder_dist_loc')
         arm_loc_1 = mc.rename(ruler_loc_list[1], direction + '_wrist_dist_loc')
         # parent constraint measure locators to ctrls (ruler loc is ends of distanceMeasure tool)
-        mc.parentConstraint(ik_shldr_ctrl_list[0], arm_loc_0 )
-        mc.parentConstraint(ik_ctrl_list[0], arm_loc_1 )
+        mc.pointConstraint(ikJoint_list[1], arm_loc_0 )  #ik_shldr_ctrl_list[0]
+        mc.pointConstraint(ik_ctrl_list[0], arm_loc_1 )   #ik_ctrl_list[0]
         
         # make nodes for stretchy limb
-        arm_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_arm_dist_ratio' )
+        arm_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ikArm_dist_ratio' )
         # set mulDiv node to Divide
         mc.setAttr(arm_dist_ratio + '.operation', 2)
 
         # global scale offset multDiv node
-        globalScale_off = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ik_arm_globalScale_off' )
+        globalScale_off = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ikArm_globalScale_off' )
         # operation to divide
         mc.setAttr(globalScale_off + '.operation', 2)
         # create mult/div nodes for ratio * length
@@ -944,14 +947,14 @@ class arm_rig():
             mc.connectAttr( (globalScale_off + '.outputX'), (arm_dist_ratio + '.input1X'), f=True )
         elif direction == 'right':
             # (right) invert to negative translate X (since x is up the chain instead of down the chain)
-            invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_arm_invert_value' )
+            invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ikArm_invert_value' )
             mc.setAttr( (invert_value + '.input2X'), -1 )
             mc.connectAttr( (globalScale_off + '.outputX'), (invert_value + '.input1X'), f=True )
             mc.connectAttr( (invert_value + '.outputX'), (arm_dist_ratio + '.input1X'), f=True )
 
-
+        # ARM stretch only, twist stretch below
         #___________ik arm stretch scale normalize____________#
-        shin_len_prc = ( (to_wrist_len) / (to_elbow_len + to_wrist_len) )
+        forearm_len_prc = ( (to_wrist_len) / (to_elbow_len + to_wrist_len) )
         # ik arm ctrl scale offset (b/c of fk spine ctrls)
         ik_exp_str = ''
         for ctrl in to_chest_ctrl:
@@ -960,9 +963,9 @@ class arm_rig():
         # soft ik, a little less than total length to keep some bend in elbow joint
         mc.expression ( s = arm_dist_ratio + '.input2X =' + str( (to_elbow_len + to_wrist_len) * 0.994 ) + ' *' + 
                         ik_exp_str + 
-                        '(1 +' '( ( (' + pv_ctrl_list[0] + '.scaleX) - 1) *' + str(shin_len_prc) + ') ) *' +
-                        #pv_ctrl_list[0] + '.scaleX * ' + 
-                        ik_shldr_ctrl_list[0] + '.scaleX * ' +
+                        '(1 +' '( ( (' + pv_ctrl_list[0] + '.scaleX) - 1) *' + str(forearm_len_prc) + ') ) * ' +
+                        # pv_ctrl_list[0] + '.scaleX *' +
+                        ik_shldr_ctrl_list[0] + '.scaleX *' +
                         ik_clav_ctrl_list[0] + '.scaleX' )
 
         #__________________________#
@@ -993,39 +996,83 @@ class arm_rig():
         mc.connectAttr( (elbow_len_con + '.outColorR'), (ikJoint_list[2] + '.tx'), f=True )
         mc.connectAttr( (wrist_len_con + '.outColorR'), (ikJoint_list[-1] + '.tx'), f=True )
         
-        #_____________twist stretch___________#
-        twist_con = []
+
+
+        # ______________________________________________________#
+        # __________________ ik twist stretch ___________________#
+        # ______________________________________________________#
+        
+        # create ruler tool
+        ikTwst_jnt_ruler_temp = mc.distanceDimension( sp=(0, 0, 0), ep=(0, 0, 10) )
+        ikTwst_jnt_ruler = mc.rename(ikTwst_jnt_ruler_temp, ( direction + '_ikTwst_jnt_rulerShape' ) )
+        # rename transform parent of distanceDimesion tool
+        ikTwst_ruler_loc_list_rel = mc.listRelatives( ikTwst_jnt_ruler, ap=1, type='transform' )
+        ikTwst_ruler_loc_list_parent = mc.rename(ikTwst_ruler_loc_list_rel, direction + '_ikTwst_jnt_ruler')
+
+        # get locators controling length
+        ikTwst_ruler_loc_list = mc.listConnections( ikTwst_jnt_ruler, type='locator' )
+        # rename and hide distance locators
+        ikTwst_arm_loc_0 = mc.rename(ikTwst_ruler_loc_list[0], direction + '_ikTwst_elbow_dist_loc')
+        ikTwst_arm_loc_1 = mc.rename(ikTwst_ruler_loc_list[1], direction + '_ikTwst_wrist_dist_loc')
+        # parent constraint measure locators to ctrls (ruler loc is ends of distanceMeasure tool)
+        mc.pointConstraint(ikJoint_list[2], ikTwst_arm_loc_0 )
+        mc.pointConstraint(ik_ctrl_list[0], ikTwst_arm_loc_1 )
+        
+        # make node for stretchy limb
+        ikTwst_arm_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ikTwst_arm_dist_ratio' )
+        # set mulDiv node to Divide
+        mc.setAttr(ikTwst_arm_dist_ratio + '.operation', 2)
+        # global scale offset multDiv node
+        ikTwst_globalScale_off = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ikTwst_arm_globalScale_off' )
+        # operation to divide
+        mc.setAttr(ikTwst_globalScale_off + '.operation', 2)
+        
+        # connect arm distance to global scale offset
+        mc.connectAttr( (ikTwst_jnt_ruler + '.distance'), (ikTwst_globalScale_off + '.input1X'), f=True )
+
+        
+        # connect global ctrl scale X to global scale offset
+        # _____create expression to multiply all scaling offset ctrls together____#
+        # ikTwst arm scale offset spine ctrls
+        ikTwst_exp_str = ''
+        for ctrl in to_chest_ctrl:
+            ikTwst_exp_str = ikTwst_exp_str + (ctrl + '.scaleX * ')
+        mc.expression(  s = ikTwst_globalScale_off + '.input2X = ' + global_ctrl + '.scaleX * ' + 
+                        pv_ctrl_list[0] + '.scaleX' )
+
+
+        # connect ruler distance over total distance of joints
+        if direction == 'left':
+            mc.connectAttr( (ikTwst_globalScale_off + '.outputX'), (ikTwst_arm_dist_ratio + '.input1X'), f=True )
+        elif direction == 'right':
+            # (right) invert to negative translate X (since x is up the chain instead of down the chain)
+            ikTwst_invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ikTwst_arm_invert_value' )
+            mc.setAttr( (ikTwst_invert_value + '.input2X'), -1 )
+            mc.connectAttr( (ikTwst_globalScale_off + '.outputX'), (ikTwst_invert_value + '.input1X'), f=True )
+            mc.connectAttr( (ikTwst_invert_value + '.outputX'), (ikTwst_arm_dist_ratio + '.input1X'), f=True )
+
+        # soft ik, a little less than total length to keep some bend in elbow joint
+        mc.setAttr( (ikTwst_arm_dist_ratio + '.input2X'), to_wrist_len )
+        
+        #_____________ikTwst_ twist stretch___________#
+        ikTwst_ratio_mult_ls = []
         for i in arm_twist_list:
             if i != arm_twist_list[0]:
                 # length of joint
-                to_len = mc.getAttr(i + '.tx')
+                ikTwst_to_len = mc.getAttr(i + '.tx')
                 # create mult/div nodes for ratio * length
-                ratio_mult = mc.shadingNode('multiplyDivide', asUtility=True, n= direction + '_' + i + '_ratio_mult' )
+                ikTwst_ratio_mult = mc.shadingNode('multiplyDivide', asUtility=True, n= direction + '_' + i + '_ikTwst_ratio_mult' )
                 #create condition nodes for if greater than length, to prevent negative stretching
-                len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_' + i + '_len_con' )
-                #set operation to 'greater than'
-                if direction == 'left':
-                    mc.setAttr(len_con + '.operation', 2)
-                #set operation to 'less than'
-                elif direction == 'right':
-                    mc.setAttr(len_con + '.operation', 4)
 
                 # connect length ratio to apply to x length of elbow and wrist (fraction * distance)
-                mc.connectAttr( (arm_dist_ratio + '.outputX'), (ratio_mult + '.input2X'), f=True )
-
-
+                mc.connectAttr( (ikTwst_arm_dist_ratio + '.outputX'), (ikTwst_ratio_mult + '.input2X'), f=True )
                 # joint length to input 1X
-                mc.setAttr( (ratio_mult + '.input1X'), to_len )
-                # connect mult ratio nodes to condition node (if length greater, then stretch)
-                mc.connectAttr( (ratio_mult + '.outputX'), (len_con + '.colorIfTrueR'), f=True )
-                mc.connectAttr( (ratio_mult + '.outputX'), (len_con + '.firstTerm'), f=True )
-                # add joint lengths to base value, if false
-                mc.setAttr( (len_con + '.colorIfFalseR'), to_len )
-                mc.setAttr( (len_con + '.secondTerm'), to_len )
-                #connect stretch lengths to joint translate x
-                mc.connectAttr( (len_con + '.outColorR'), (i + '.tx'), f=True )
-                twist_con.append(len_con)
-        
+                mc.setAttr( (ikTwst_ratio_mult + '.input1X'), ikTwst_to_len )
+
+                # append twist condition to join with blendshape
+                ikTwst_ratio_mult_ls.append(ikTwst_ratio_mult)
+
+
         
         # ______________________________________________________#
         # __________________ fk stretchy arm ___________________#
@@ -1085,7 +1132,7 @@ class arm_rig():
         mc.setAttr( (fk_arm_dist_ratio + '.input2X'), to_wrist_len )
         
         #_____________fk twist stretch___________#
-        fk_twist_con = []
+        fk_ratio_mult_ls = []
         for i in arm_twist_list:
             if i != arm_twist_list[0]:
                 # length of joint
@@ -1093,41 +1140,26 @@ class arm_rig():
                 # create mult/div nodes for ratio * length
                 fk_ratio_mult = mc.shadingNode('multiplyDivide', asUtility=True, n= direction + '_' + i + '_fk_ratio_mult' )
                 #create condition nodes for if greater than length, to prevent negative stretching
-                fk_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_' + i + '_fk_len_con' )
-                #set operation to 'greater than'
-                if direction == 'left':
-                    mc.setAttr(fk_len_con + '.operation', 2)
-                #set operation to 'less than'
-                elif direction == 'right':
-                    mc.setAttr(fk_len_con + '.operation', 4)
                 
                 # connect length ratio to apply to x length of elbow and wrist (fraction * distance)
                 mc.connectAttr( (fk_arm_dist_ratio + '.outputX'), (fk_ratio_mult + '.input2X'), f=True )
                 # joint length to input 1X
                 mc.setAttr( (fk_ratio_mult + '.input1X'), fk_to_len )
-                # connect mult ratio nodes to condition node (if length greater, then stretch)
-                mc.connectAttr( (fk_ratio_mult + '.outputX'), (fk_len_con + '.colorIfTrueR'), f=True )
-                mc.connectAttr( (fk_ratio_mult + '.outputX'), (fk_len_con + '.firstTerm'), f=True )
-                
-                # add joint lengths to base value, if false
-                mc.setAttr( (fk_len_con + '.colorIfFalseR'), fk_to_len )
-                mc.setAttr( (fk_len_con + '.secondTerm'), fk_to_len )
-                mc.connectAttr( (fk_len_con + '.outColorR'), (i + '.tx'), f=True )
 
                 # append twist condition to join with blendshape
-                fk_twist_con.append(fk_len_con)
+                fk_ratio_mult_ls.append(fk_ratio_mult)
 
         
         # blend color twist condition switching
         blendClr_con_list = []
         #blend joints together
         # arm_twist_list[1:] b/c first uneeded jnt already removed from other lists
-        for fk_twst_con, ik_twst_con, twst_jnt in itertools.izip(fk_twist_con, twist_con, arm_twist_list[1:]):
+        for fk_ratio, ikTwst_ratio, twst_jnt in itertools.izip(fk_ratio_mult_ls, ikTwst_ratio_mult_ls, arm_twist_list[1:]):
             #create blend color nodes
             blnd_clrs_con = mc.createNode('blendColors', n= twst_jnt + '_blnd_clrs_con')
-            #translate
-            mc.connectAttr((fk_twst_con + '.outColorR'), (blnd_clrs_con + '.color1R'), f=True)
-            mc.connectAttr((ik_twst_con + '.outColorR'), (blnd_clrs_con + '.color2R'), f=True)
+            #connect twist blend color nodes to children
+            mc.connectAttr((fk_ratio + '.outputX'), (blnd_clrs_con + '.color1R'), f=True)
+            mc.connectAttr((ikTwst_ratio + '.outputX'), (blnd_clrs_con + '.color2R'), f=True)
             mc.connectAttr((blnd_clrs_con + '.outputR'), (twst_jnt + '.translateX'), f=True)
 
             #append lists for outside loop use
@@ -1136,7 +1168,7 @@ class arm_rig():
         #_______connect switch control to blendNodes for twist ik vs fk length_______#
         for blendClr in blendClr_con_list :
             mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (blendClr + '.blender'), f=True)
-            
+        
         
         #_________________________________________________________#
         #______________________ FINGERs___________________________#
@@ -1193,21 +1225,31 @@ class arm_rig():
         #__________________visibility, grouping_________________________#
         #_______________________________________________________________#
         # hide dist loc and tool
-        mc.setAttr(ruler_loc_list_parent + '.visibility', 0)
-        mc.setAttr(arm_loc_0 + '.visibility', 0)
-        mc.setAttr(arm_loc_1 + '.visibility', 0)
+        #mc.setAttr(ruler_loc_list_parent + '.visibility', 0)
+        #mc.setAttr(arm_loc_0 + '.visibility', 0)
+        #mc.setAttr(arm_loc_1 + '.visibility', 0)
+        # hide dist loc and tool
+        mc.setAttr(fk_ruler_loc_list_parent + '.visibility', 0)
+        mc.setAttr(fk_arm_loc_0 + '.visibility', 0)
+        mc.setAttr(fk_arm_loc_1 + '.visibility', 0)
+        # hide fk joint
+        mc.setAttr(fkJoint_list[0] + '.visibility', 0)
         #parent grp to global grp to organize
         mc.parent(ruler_loc_list_parent, myIKGrp)
         mc.parent(arm_loc_0, myIKGrp)
         mc.parent(arm_loc_1, myIKGrp)
 
+        # default arm to ik
+        mc.setAttr(switch_ctrl_list[0] + '.fk_ik_blend', 0)
+
         #____________________________________________________________________________#
         #__________________chest ctrl/ global ctrl parenting_________________________#
         #____________________________________________________________________________#
         # parent ik clav, shlder, and fk clav to chest ctrl
-        mc.parent(ik_clav_group_list[0], ik_shldr_group_list[0], fk_ctrl_grp_list[0], to_chest_ctrl[-1])
+        mc.parent(ik_clav_group_list[0], fk_ctrl_grp_list[0], to_chest_ctrl[-1])  # ik_shldr_group_list[0],
         #parent pole vector grp and wrist ik grp to global ctrl
         mc.parent(pv_group_list[0], ik_group_list[0], global_ctrl)
+
 
         # return top ik and fk controls to parent to chest ctrl (if needed, done above)
         return  ik_clav_group_list[0], \

@@ -54,7 +54,7 @@ def character_rig():
 
     # parent spine offset JOINT under global control (for organization and global scale)
     mc.parent(spine_blend_offset_info, global_ctrl_info[1])
-
+    '''
     #________________________________________________________________________#
 
     # fk jaw ctrl
@@ -112,7 +112,7 @@ def character_rig():
     # fk hip to spine root ctrl
     mc.parent(left_leg_rig_info[1], fk_spine_rig_info[1])
 
-    '''
+    
     #________________________________________________________________________#
 
     # right leg ctrls
