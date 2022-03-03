@@ -147,7 +147,14 @@ class leg_rig():
 
 
     # create leg rig ('global_ctrl' for scale offset)
-    def create_fk_ik_leg(self, direction, offset_parent_jnt, fk_ctrl_size, ik_ctrl_size, pv_ctrl_size, knee_dist_mult, global_ctrl):
+    def create_fk_ik_leg(self, direction, 
+    offset_parent_jnt, 
+    fk_ctrl_size, 
+    ik_ctrl_size, 
+    pv_ctrl_size, 
+    knee_dist_mult,
+    spine_root_ctrl, 
+    global_ctrl):
         # find leg joints using method from own class
         jnt_info = self.find_leg_jnts(direction)
         leg_chain = jnt_info[0]
@@ -470,6 +477,7 @@ class leg_rig():
         #_________________POLE VECTOR Start___________________#
         #_____________________________________________________#
         pv_group_list = []
+        pv_ctrl_list = []
         for i in range(0,1):
             #create pyramid curve______
             myCurve = mc.curve(d=1, p=[ (0, 5, -5), 
@@ -559,6 +567,7 @@ class leg_rig():
             mc.parent(myGroup, global_ctrl)
 
             pv_group_list.append(myGroup)
+            pv_ctrl_list.append(myCurve)
 
 
         #______________________________________________________________________________#
@@ -933,8 +942,25 @@ class leg_rig():
             mc.connectAttr( (globalScale_off + '.outputX'), (invert_value + '.input1X'), f=True )
             mc.connectAttr( (invert_value + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
 
+        #__________#
+        # must create expression to account for offset of elbow and wrist length when scaling
+        # must normalize pole vector scale since it only scales lower leg
+        # find the shin length scale percentage of total length
+        # shin length percentage
+        shin_len_prc = ( (to_ankle_len) / (to_knee_len + to_ankle_len) )
+        # get difference of scale - 1
+        shin_len_prc_diff = mc.getAttr(pv_ctrl_list[0] + '.scaleX') - 1 # not used, only in expression below
+        # multiply difference by percentage of total length, then add back to one (should acount for scale down)
+        pv_shin_scale = 1 + (shin_len_prc_diff * shin_len_prc)  # not used, only in expression below
+
         # soft ik, a little less than total length to keep some bend in knee joint
-        mc.setAttr( (leg_dist_ratio + '.input2X'), (to_knee_len + to_ankle_len) * 0.994 )
+        mc.expression ( s = leg_dist_ratio + '.input2X =' + str( (to_knee_len + to_ankle_len) * 0.994 ) + ' *' + 
+                        # shin length amount of pv scale
+                        '(1 +' '( ( (' + pv_ctrl_list[0] + '.scaleX) - 1) *' + str(shin_len_prc) + ') ) *' +
+                        spine_root_ctrl + '.scaleX * ' + 
+                        ik_hip_ctrl_list[0] + '.scaleX' )
+        #_____________#
+
 
         # connect length ratio to apply to x length of knee and ankle (fraction * distance)
         mc.connectAttr( (leg_dist_ratio + '.outputX'), (ratio_knee_mult + '.input2X'), f=True )

@@ -913,6 +913,7 @@ class arm_rig():
         arm_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_arm_dist_ratio' )
         # set mulDiv node to Divide
         mc.setAttr(arm_dist_ratio + '.operation', 2)
+
         # global scale offset multDiv node
         globalScale_off = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ik_arm_globalScale_off' )
         # operation to divide
@@ -937,10 +938,6 @@ class arm_rig():
         mc.connectAttr( (ik_jnt_ruler + '.distance'), (globalScale_off + '.input1X'), f=True )
         # connect global ctrl scale X to global scale offset
         mc.connectAttr( (global_ctrl + '.scaleX'), (globalScale_off + '.input2X'), f=True )
-        #mc.expression(  s = globalScale_off + '.input2X = ' + global_ctrl + '.scaleX * ' + 
-                         #pv_ctrl_list[0] + '.scaleX * ' + 
-                         #ik_shldr_ctrl_list[0] + '.scaleX')
-                         #ik_clav_ctrl_list[0] + '.scaleX' )
 
         # connect ruler distance over total distance of joints
         if direction == 'left':
@@ -952,8 +949,24 @@ class arm_rig():
             mc.connectAttr( (globalScale_off + '.outputX'), (invert_value + '.input1X'), f=True )
             mc.connectAttr( (invert_value + '.outputX'), (arm_dist_ratio + '.input1X'), f=True )
 
+
+        #___________ik arm stretch scale normalize____________#
+        shin_len_prc = ( (to_wrist_len) / (to_elbow_len + to_wrist_len) )
+        # ik arm ctrl scale offset (b/c of fk spine ctrls)
+        ik_exp_str = ''
+        for ctrl in to_chest_ctrl:
+            ik_exp_str = ik_exp_str + (ctrl + '.scaleX * ')
+        # must create expression to account for offset of elbow and wrist length when scaling
         # soft ik, a little less than total length to keep some bend in elbow joint
-        mc.setAttr( (arm_dist_ratio + '.input2X'), (to_elbow_len + to_wrist_len) * 0.9935 )
+        mc.expression ( s = arm_dist_ratio + '.input2X =' + str( (to_elbow_len + to_wrist_len) * 0.994 ) + ' *' + 
+                        ik_exp_str + 
+                        '(1 +' '( ( (' + pv_ctrl_list[0] + '.scaleX) - 1) *' + str(shin_len_prc) + ') ) *' +
+                        #pv_ctrl_list[0] + '.scaleX * ' + 
+                        ik_shldr_ctrl_list[0] + '.scaleX * ' +
+                        ik_clav_ctrl_list[0] + '.scaleX' )
+
+        #__________________________#
+
 
         # connect length ratio to apply to x length of elbow and wrist (fraction * distance)
         mc.connectAttr( (arm_dist_ratio + '.outputX'), (ratio_elbow_mult + '.input2X'), f=True )
@@ -999,6 +1012,8 @@ class arm_rig():
 
                 # connect length ratio to apply to x length of elbow and wrist (fraction * distance)
                 mc.connectAttr( (arm_dist_ratio + '.outputX'), (ratio_mult + '.input2X'), f=True )
+
+
                 # joint length to input 1X
                 mc.setAttr( (ratio_mult + '.input1X'), to_len )
                 # connect mult ratio nodes to condition node (if length greater, then stretch)
