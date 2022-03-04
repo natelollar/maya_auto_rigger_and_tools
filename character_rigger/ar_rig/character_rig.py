@@ -54,7 +54,7 @@ def character_rig():
 
     # parent spine offset JOINT under global control (for organization and global scale)
     mc.parent(spine_blend_offset_info, global_ctrl_info[1])
-    '''
+    
     #________________________________________________________________________#
 
     # fk jaw ctrl
@@ -124,6 +124,7 @@ def character_rig():
                                                         ik_ctrl_size=12,
                                                         pv_ctrl_size=1,
                                                         knee_dist_mult=10,
+                                                        spine_root_ctrl=fk_spine_rig_info[1],
                                                         global_ctrl=global_ctrl_info[1])
 
     # parent fk and ik hip controls under spine root control
@@ -132,7 +133,7 @@ def character_rig():
     # fk hip to spine root ctrl
     mc.parent(right_leg_rig_info[1], fk_spine_rig_info[1])
     
-    '''
+    
     #________________________________________________________________________#
     # create offset joints for blend color arms
 
@@ -172,7 +173,7 @@ def character_rig():
                                             global_ctrl=global_ctrl_info[1] )
 
     
-    '''
+    
     #________________________________________________________________________#
     # create r arm ctrls
     arm_rig_class = arm_rig.arm_rig()
@@ -183,7 +184,8 @@ def character_rig():
                                             ik_ctrl_size=10, 
                                             pv_ctrl_size=1, 
                                             elbow_dist_mult=13, 
+                                            to_chest_ctrl=fk_spine_rig_info[4],
                                             global_ctrl=global_ctrl_info[1])
-    '''
+    
     
 
