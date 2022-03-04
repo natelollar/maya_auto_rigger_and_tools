@@ -21,7 +21,8 @@ class arm_rig():
                 pv_ctrl_size, 
                 elbow_dist_mult,
                 to_chest_ctrl, 
-                global_ctrl):
+                global_ctrl,
+                global_misc_grp):
 
         #___________________Find Arm Joints____________________________#
         # create arm joint list
@@ -221,8 +222,8 @@ class arm_rig():
         #_____________________________________#
         #______________IK Ctrls_______________#
         #_____________________________________#
-        #group for organization
-        myIKGrp = mc.group(em=True, n = direction + '_arm_ik_grp')
+        # overall group for organization
+        myArmGrp = mc.group(em=True, n = direction + '_arm_grp')
         
         #___________create IK HANDLE____________#
 
@@ -236,11 +237,8 @@ class arm_rig():
 
         mc.rename(ikHandle_effector_var, ikHandle_var[0] + '_effector')
 
-        #hide ik handle
-        mc.setAttr(ikHandle_var[0] + '.visibility', 0)
-
         #parent ik handle global grp to organize
-        mc.parent(ikHandle_var[0], myIKGrp)
+        mc.parent(ikHandle_var[0], myArmGrp)
 
 
         #___________ik wrist CTRL____________#
@@ -355,7 +353,7 @@ class arm_rig():
             mc.setAttr((myGroup + '.rotate'), 0, 0, 0)
 
             #parent grp to global grp to organize
-            #mc.parent(myGroup, myIKGrp)
+            #mc.parent(myGroup, myArmGrp)
 
             #append grp for outside use
             ik_shldr_group_list.append(myGroup)
@@ -413,7 +411,7 @@ class arm_rig():
             mc.setAttr((myGroup + '.rotate'), 0, 0, 0)
 
             #parent grp to global grp to organize
-            #mc.parent(myGroup, myIKGrp)
+            #mc.parent(myGroup, myArmGrp)
 
             #append grp for outside use
             ik_clav_group_list.append(myGroup)
@@ -437,7 +435,7 @@ class arm_rig():
         #__________________________________________________________#
 
         #create single chain ikHandle for clavicle________
-        clavicle_ikHandle = mc.ikHandle(n=direction + 'ikHndl_clv',sj=ikJoint_list[0], ee=ikJoint_list[1], sol='ikSCsolver')
+        clavicle_ikHandle = mc.ikHandle(n=direction + '_ikHndl_clv',sj=ikJoint_list[0], ee=ikJoint_list[1], sol='ikSCsolver')
         
         mc.setAttr((clavicle_ikHandle[0] + '.poleVectorX'), 0)
         mc.setAttr((clavicle_ikHandle[0] + '.poleVectorY'), 0)
@@ -455,6 +453,7 @@ class arm_rig():
         #_____________________ik Clavicle Stretch (single chain solver)___________________________#
         clavicle_var_loc = mc.spaceLocator(n=ikJoint_list[0] + '_locator')
         upperArm1_var_loc = mc.spaceLocator(n=ikJoint_list[1] + '_locator')
+        #***was getting "cycle" glitch for parentConstraining clavicle locator instead of pointConstraining
         mc.pointConstraint(ikJoint_list[0], clavicle_var_loc)
         mc.pointConstraint(clavicle_ikHandle[0], upperArm1_var_loc)
         clv_measerTool = mc.distanceDimension(clavicle_var_loc, upperArm1_var_loc)
@@ -488,10 +487,10 @@ class arm_rig():
         #connect scale offset to tranlate x of shldr jnt
         mc.connectAttr( (clav_scale_off + '.outputX') , ikJoint_list[1] + '.translateX')
 
-        clv_measerTool_grp = mc.group(em = True, n=clv_measerTool_parent + '_grp')
-        
+        # create grp for ctrls and measure tool for organization
+        clv_measerTool_grp = mc.group(em = True, n= direction + '_clav_measure_grp')
         mc.parent(clv_measerTool_parent, clavicle_var_loc, upperArm1_var_loc, clv_measerTool_grp)
-        #***was getting "cycle" glitch for parentConstraining clavicle locator instead of pointConstraining
+
         
         #____________parenting ik shoulder ctrl__________________#
         # parent constrain shldr joint translation to single solver ik handle grp
@@ -776,7 +775,6 @@ class arm_rig():
         mc.setAttr( arm_endTwist_jnt + '.segmentScaleCompensate', 0 )
 
         
-        
         #_______create arm mid twist joints_______
 
         arm_twist_list = []
@@ -868,7 +866,7 @@ class arm_rig():
         arm_ikHandle_effector = mc.listConnections(arm_twist_ikHandle, s=True, type='ikEffector')
         arm_ikHandle_curve = mc.listConnections(arm_twist_ikHandle, s=True, type='nurbsCurve')
         arm_ikHandle_effector_newName = mc.rename(arm_ikHandle_effector, direction + '_effector_arm_twist')
-        arm_ikHandle_curve_newName = mc.rename(arm_ikHandle_curve, 'curve_arm_twist')
+        arm_ikHandle_curve_newName = mc.rename(arm_ikHandle_curve, direction + '_curve_arm_twist')
         #set up advanced twist controls for ik spline 
         mc.setAttr(arm_twist_ikHandle[0] + '.dTwistControlEnable', 1)
         mc.setAttr(arm_twist_ikHandle[0] + '.dWorldUpType', 4)
@@ -1225,22 +1223,61 @@ class arm_rig():
         #__________________visibility, grouping_________________________#
         #_______________________________________________________________#
         # hide dist loc and tool
-        #mc.setAttr(ruler_loc_list_parent + '.visibility', 0)
-        #mc.setAttr(arm_loc_0 + '.visibility', 0)
-        #mc.setAttr(arm_loc_1 + '.visibility', 0)
+        mc.setAttr(ruler_loc_list_parent + '.visibility', 0)
+        mc.setAttr(arm_loc_0 + '.visibility', 0)
+        mc.setAttr(arm_loc_1 + '.visibility', 0)
+        # hide ik handle
+        mc.setAttr(ikHandle_var[0] + '.visibility', 0)
+        # hide ik twist measure tool and locators
+        mc.setAttr(ikTwst_ruler_loc_list_parent + '.visibility', 0)
+        mc.setAttr(ikTwst_arm_loc_0 + '.visibility', 0)
+        mc.setAttr(ikTwst_arm_loc_1 + '.visibility', 0)
+        # hide arm twst ik handle
+        mc.setAttr(arm_twist_ikHandle[0] + '.visibility', 0)
+        mc.setAttr(arm_ikHandle_curve_newName + '.visibility', 0)
         # hide dist loc and tool
         mc.setAttr(fk_ruler_loc_list_parent + '.visibility', 0)
         mc.setAttr(fk_arm_loc_0 + '.visibility', 0)
         mc.setAttr(fk_arm_loc_1 + '.visibility', 0)
-        # hide fk joint
-        mc.setAttr(fkJoint_list[0] + '.visibility', 0)
+        # hide clavicle measure tool, locators, ik handle
+        mc.setAttr(clv_measerTool_parent + '.visibility', 0)
+        mc.setAttr(clavicle_var_loc[0] + '.visibility', 0)
+        mc.setAttr(upperArm1_var_loc[0] + '.visibility', 0)
+        mc.setAttr(clv_measerTool_grp + '.visibility', 0)
+        mc.setAttr(clvGrp + '.visibility', 0)
+        mc.setAttr(clavicle_ikHandle[0] + '.visibility', 0)
+        # hide twist jnts
+        mc.setAttr(arm_startTwist_jnt + '.visibility', 0)
+        mc.setAttr(arm_endTwist_jnt + '.visibility', 0)
+        mc.setAttr(arm_twist_list[0] + '.visibility', 0)
         #parent grp to global grp to organize
-        mc.parent(ruler_loc_list_parent, myIKGrp)
-        mc.parent(arm_loc_0, myIKGrp)
-        mc.parent(arm_loc_1, myIKGrp)
-
+        mc.parent(ruler_loc_list_parent, myArmGrp)
+        mc.parent(arm_loc_0, myArmGrp)
+        mc.parent(arm_loc_1, myArmGrp)
         # default arm to ik
         mc.setAttr(switch_ctrl_list[0] + '.fk_ik_blend', 0)
+
+        
+        #parent under my ik grp
+        mc.parent(  clvGrp,
+                    hand_grp_list,
+                    switch_ctrl_grp_list[0],
+                    clv_measerTool_grp,
+                    arm_startTwist_jnt,
+                    arm_endTwist_jnt,
+                    arm_twist_list[0],
+                    arm_ikHandle_curve_newName,
+                    arm_twist_ikHandle[0],
+                    ikTwst_arm_loc_0,
+                    ikTwst_arm_loc_1,
+                    ikTwst_ruler_loc_list_parent,
+                    fk_arm_loc_0,
+                    fk_arm_loc_1,
+                    fk_ruler_loc_list_parent,
+                    myArmGrp )
+
+        # parent under global misc grp
+        mc.parent(myArmGrp, global_misc_grp)
 
         #____________________________________________________________________________#
         #__________________chest ctrl/ global ctrl parenting_________________________#
@@ -1251,13 +1288,13 @@ class arm_rig():
         mc.parent(pv_group_list[0], ik_group_list[0], global_ctrl)
 
 
-        # return top ik and fk controls to parent to chest ctrl (if needed, done above)
+        # return top ik and fk controls to parent to chest ctrl (if needed, though done above)
         return  ik_clav_group_list[0], \
                 ik_shldr_group_list[0], \
                 fk_ctrl_grp_list[0], \
                                   \
                 pv_group_list[0], \
-                ik_group_list[0], \
+                ik_group_list[0] 
                 
         
         

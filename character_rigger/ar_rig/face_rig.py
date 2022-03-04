@@ -159,7 +159,8 @@ class face_rig():
                                                 colorR=1, 
                                                 colorG=0, 
                                                 colorB=1)
-
+        # mid face grp list
+        mid_face_ctrl_grps = []
         for i in mid_jnt_list:
             mid_face_ctrl = fk_ctrl.fk_ctrl()
             mid_face_ctrl_info = mid_face_ctrl.single_fk_sphere_ctrl(   jnt=i, 
@@ -172,8 +173,10 @@ class face_rig():
             # parent constrain mid face ctrl grp between head and jaw
             mc.parentConstraint(parent_to_head, parent_to_jaw, mid_face_ctrl_info[0], mo=1)
             mc.scaleConstraint(parent_to_head, parent_to_jaw, mid_face_ctrl_info[0], mo=1)
+            # append grps to list
+            mid_face_ctrl_grps.append(mid_face_ctrl_info[0])
 
-        return top_face_jnts, mid_jnt_list
+        return top_face_jnts, mid_jnt_list, mid_face_ctrl_grps
 
                 
 

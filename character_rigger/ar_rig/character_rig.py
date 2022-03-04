@@ -54,7 +54,9 @@ def character_rig():
 
     # parent spine offset JOINT under global control (for organization and global scale)
     mc.parent(spine_blend_offset_info, global_ctrl_info[1])
-    
+    # hide blend joint and blend leg joints as result
+    mc.setAttr(spine_blend_offset_info + '.visibility', 0)
+
     #________________________________________________________________________#
 
     # fk jaw ctrl
@@ -71,13 +73,17 @@ def character_rig():
     
     #________________________________________________________________________#
 
-    # top face ctrls
+    # top face ctrls/ mid face ctrls
     #parent to spine top (head) control
     top_ctrls_var = face_rig.face_rig()
     top_ctrls_info = top_ctrls_var.top_face_ctrls(  parent_to_head = fk_spine_rig_info[3], 
                                                     parent_to_jaw = jaw_ctrl_var_info[1], 
                                                     mid_ctrls = 2)
-
+    # create extra grp for mid face ctrls
+    character_misc_grp = mc.group(em=1, n='character_misc_grp')
+    face_grp = mc.group(em=1, n='face_grp')
+    mc.parent(top_ctrls_info[2], face_grp)
+    mc.parent(face_grp, character_misc_grp)
     #________________________________________________________________________#
 
     # ear ctrls
@@ -111,7 +117,9 @@ def character_rig():
     mc.parent(left_leg_rig_info[0], fk_spine_rig_info[1])
     # fk hip to spine root ctrl
     mc.parent(left_leg_rig_info[1], fk_spine_rig_info[1])
-
+    # parent other grps to global misc grp
+    mc.parent(left_leg_rig_info[2], character_misc_grp)
+    
     
     #________________________________________________________________________#
 
@@ -132,7 +140,8 @@ def character_rig():
     mc.parent(right_leg_rig_info[0], fk_spine_rig_info[1])
     # fk hip to spine root ctrl
     mc.parent(right_leg_rig_info[1], fk_spine_rig_info[1])
-    
+    # parent other grps to global misc grp
+    mc.parent(right_leg_rig_info[2], character_misc_grp)
     
     #________________________________________________________________________#
     # create offset joints for blend color arms
@@ -156,7 +165,8 @@ def character_rig():
 
     # parent chest offset joint under global control (for organization and global scale)
     mc.parent(chest_blend_offset_info, global_ctrl_info[1])
-    
+    # hide blend joint and blend arm joints as result
+    mc.setAttr(chest_blend_offset_info + '.visibility', 0)
     
     
     #________________________________________________________________________#
@@ -170,9 +180,9 @@ def character_rig():
                                             pv_ctrl_size=1, 
                                             elbow_dist_mult=13, 
                                             to_chest_ctrl=fk_spine_rig_info[4],
-                                            global_ctrl=global_ctrl_info[1] )
+                                            global_ctrl=global_ctrl_info[1],
+                                            global_misc_grp=character_misc_grp )
 
-    
     
     #________________________________________________________________________#
     # create r arm ctrls
@@ -185,7 +195,13 @@ def character_rig():
                                             pv_ctrl_size=1, 
                                             elbow_dist_mult=13, 
                                             to_chest_ctrl=fk_spine_rig_info[4],
-                                            global_ctrl=global_ctrl_info[1])
-    
+                                            global_ctrl=global_ctrl_info[1],
+                                            global_misc_grp=character_misc_grp)
+
+
+    #________________________________________________________________________#
+    # grp misc and global ctrl grp in final grp
+    final_grp = mc.group(em=1, n='character_all_grp')
+    mc.parent( global_ctrl_info[0], character_misc_grp, final_grp )
     
 

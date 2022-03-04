@@ -332,7 +332,7 @@ class leg_rig():
         #_____________________________________#
         ikJoint_list_noFoot = ikJoint_list[0:-1]
         #group for organization
-        myIKGrp = mc.group(em=True, n= direction + '_arm_ik_grp')
+        myLegGrp = mc.group(em=True, n= direction + '_leg_grp')
         
         #___________create IK HANDLE____________#
 
@@ -350,7 +350,7 @@ class leg_rig():
         mc.setAttr(ikHandle_var[0] + '.visibility', 0)
 
         #parent ik handle global grp to organize
-        mc.parent(ikHandle_var[0], myIKGrp)
+        mc.parent(ikHandle_var[0], myLegGrp)
 
 
         #___________ik handle CTRL____________#
@@ -458,7 +458,7 @@ class leg_rig():
             mc.Unparent(myGroup)
 
             #parent grp to global grp to organize
-            mc.parent(myGroup, myIKGrp)
+            mc.parent(myGroup, myLegGrp)
 
             #append grp for outside use
             ik_hip_group_list.append(myGroup)
@@ -579,13 +579,13 @@ class leg_rig():
         for i in range(0,1):
             #name circle curves
             if direction == 'left':
-                switchCurveA_name = 'l_switch_ctrl'
-                switchCurveB_name = 'l_switch_ctrlA'
-                switchCurveC_name = 'l_switch_ctrlB'
+                switchCurveA_name = 'l_legSwtch_ctrl'
+                switchCurveB_name = 'l_legSwtch_ctrlA'
+                switchCurveC_name = 'l_legSwtch_ctrlB'
             if direction == 'right':
-                switchCurveA_name = 'r_switch_ctrl'
-                switchCurveB_name = 'r_switch_ctrlA'
-                switchCurveC_name = 'r_switch_ctrlB'
+                switchCurveA_name = 'r_legSwtch_ctrl'
+                switchCurveB_name = 'r_legSwtch_ctrlA'
+                switchCurveC_name = 'r_legSwtch_ctrlB'
 
             #create nurbs circle
             switchCurveA = mc.circle(n=switchCurveA_name, ch=False, r=3, nr=(0,1,0))
@@ -987,9 +987,9 @@ class leg_rig():
         mc.connectAttr( (knee_len_con + '.outColorR'), (ikJoint_list_noFoot[int(roughMedian-1.0)] + '.tx'), f=True )
         mc.connectAttr( (ankle_len_con + '.outColorR'), (ikJoint_list_noFoot[-1] + '.tx'), f=True )
 
-        #___________________________________________#
-        #___________________________________________#
-        #___________________________________________#
+        #___________________________________________________________________#
+        #___________________Visibility and Parenting________________________#
+        #___________________________________________________________________#
         # set ankle reverse foot control to invisible (not needed to be seen)
         mc.setAttr(ftCtrl_grp_list[0] + '.visibility', 0)
         # hide dist loc and tool
@@ -997,12 +997,18 @@ class leg_rig():
         mc.setAttr(leg_loc_0 + '.visibility', 0)
         mc.setAttr(leg_loc_1 + '.visibility', 0)
         #parent grp to global grp to organize
-        mc.parent(ruler_loc_list_parent, myIKGrp)
-        mc.parent(leg_loc_0, myIKGrp)
-        mc.parent(leg_loc_1, myIKGrp)
+        mc.parent(ruler_loc_list_parent, myLegGrp)
+        mc.parent(leg_loc_0, myLegGrp)
+        mc.parent(leg_loc_1, myLegGrp)
         # delete foot locators (rather than hide)
         mc.delete(rvFoot_loc_list)
 
+        # parent switch grp to main leg grp
+        mc.parent(switch_ctrl_grp_list, myLegGrp)
+
+        # set default to ik leg
+        mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0)
+
         # return top ik and fk controls to parent to hip
-        return ik_hip_group_list[0], fk_ctrl_grp_list[0]
+        return ik_hip_group_list[0], fk_ctrl_grp_list[0], myLegGrp
 
