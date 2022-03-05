@@ -1,3 +1,4 @@
+from distutils import version
 import maya.cmds as mc
 import itertools
 
@@ -96,16 +97,17 @@ class face_rig():
         
         for i in bot_face_jnts:
             bot_face_ctrl = fk_ctrl.fk_ctrl()
-            bot_face_ctrl.single_fk_sphere_ctrl(jnt=i, 
+            bot_face_ctrl.single_fk_curve_ctrl(jnt=i, 
                                                 parent_to=parent_to,
                                                 size=1,
-                                                mat_name='nurbs_sphere_green_mat',
-                                                colorR=0, 
+                                                version='box',
+                                                colorR=.5, 
                                                 colorG=1, 
                                                 colorB=0)
         
 
-
+    #________________________________________________#
+    #________________________________________________#
     #top face controls w/ mid ctrls (parented to head)
     def top_face_ctrls(self, parent_to_head='', parent_to_jaw='', mid_ctrls=0):
         # find head joint
@@ -134,41 +136,45 @@ class face_rig():
         #get position of face jnts
         y_pos_list = []
         for i in top_face_jnts:
-            pos = mc.xform(i, q=True , ws=True, t=True)
+            pos = mc.xform(i, q=True , ws=True, t=True, a=True)
+            # y pos to find lowest ws value 
             y_pos = pos[1]
             y_pos_list.append(y_pos)
-
-        mid_jnt_list = []
-        for i in range(mid_ctrls):
-            # get index of joint with lowest y value position
-            low_y_val_ind = y_pos_list.index(min(y_pos_list))
-            # get joint name with lowest y value
-            low_y_val_jnt = [top_face_jnts[low_y_val_ind]]
-            # add lowest y to to mid_jnt_list
-            mid_jnt_list.append(low_y_val_jnt[0])
-            # delete lowest y from top_face_jnts ('remove' better than 'pop' for some reason)
-            top_face_jnts.remove(low_y_val_jnt[0])
+        
+        # combine y_pos and top face jnt lst
+        zip_y_pos = zip(y_pos_list, top_face_jnts)
+        #sort lists from smallest to greatest Y pos
+        sort_zip_y_pos = sorted(zip_y_pos)
+        # create sorted list with just face jnts
+        sorted_top_face_jnts = [somVar for i, somVar in sort_zip_y_pos]
+        # get just jnts with lowest y positions
+        mid_jnt_list = sorted_top_face_jnts[:mid_ctrls]
+        # new face jnt list without mid face jnts
+        new_top_face_jnts = sorted_top_face_jnts[mid_ctrls:]
 
         
-        for i in top_face_jnts:
+        # create nurbs ctrl for each top face jnt
+        for i in new_top_face_jnts:
             top_face_ctrl = fk_ctrl.fk_ctrl()
-            top_face_ctrl.single_fk_sphere_ctrl(jnt=i, 
+            top_face_ctrl.single_fk_curve_ctrl(jnt=i, 
                                                 parent_to=parent_to_head, 
-                                                mat_name='nurbs_sphere_magenta_mat',
+                                                version='box',
                                                 size=1,
                                                 colorR=1, 
-                                                colorG=0, 
-                                                colorB=1)
+                                                colorG=.5, 
+                                                colorB=0)
+
         # mid face grp list
         mid_face_ctrl_grps = []
+        # create ctrl for the mid face jnts
         for i in mid_jnt_list:
             mid_face_ctrl = fk_ctrl.fk_ctrl()
-            mid_face_ctrl_info = mid_face_ctrl.single_fk_sphere_ctrl(   jnt=i, 
+            mid_face_ctrl_info = mid_face_ctrl.single_fk_curve_ctrl(    jnt=i, 
                                                                         parent_to='', 
-                                                                        mat_name='nurbs_sphere_blue_mat',
+                                                                        version='box',
                                                                         size=1,
                                                                         colorR=0, 
-                                                                        colorG=0, 
+                                                                        colorG=.5, 
                                                                         colorB=1)
             # parent constrain mid face ctrl grp between head and jaw
             mc.parentConstraint(parent_to_head, parent_to_jaw, mid_face_ctrl_info[0], mo=1)
@@ -177,14 +183,10 @@ class face_rig():
             mid_face_ctrl_grps.append(mid_face_ctrl_info[0])
 
         return top_face_jnts, mid_jnt_list, mid_face_ctrl_grps
-
-                
-
-
         
-
-
-
+                
+    #________________________________________________#
+    #________________________________________________#
     def ear_ctrls(self, parent_to):
         # find head joint
         head_jnt_temp = find_jnts.find_jnts()
@@ -228,9 +230,9 @@ class face_rig():
                                                         parent_to='', 
                                                         version='box', 
                                                         size=3, 
-                                                        colorR=1, 
-                                                        colorG=0, 
-                                                        colorB=0)
+                                                        colorR=0, 
+                                                        colorG=0.2, 
+                                                        colorB=1)
             r_ear_grp_list.append(jnt_var_info[0])
             r_ear_ctrl_list.append(jnt_var_info[1])
         # varaiable for top grp before removed
@@ -255,9 +257,9 @@ class face_rig():
                                                         parent_to='', 
                                                         version='box', 
                                                         size=3, 
-                                                        colorR=1, 
-                                                        colorG=0, 
-                                                        colorB=0)
+                                                        colorR=0, 
+                                                        colorG=0.2, 
+                                                        colorB=1)
             l_ear_grp_list.append(jnt_var_info[0])
             l_ear_ctrl_list.append(jnt_var_info[1])
         # varaiable for top grp before removed

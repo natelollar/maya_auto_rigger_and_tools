@@ -82,7 +82,10 @@ def character_rig():
     # create extra grp for mid face ctrls
     character_misc_grp = mc.group(em=1, n='character_misc_grp')
     face_grp = mc.group(em=1, n='face_grp')
-    mc.parent(top_ctrls_info[2], face_grp)
+    #if mid face ctrls exist
+    if top_ctrls_info[2] == True:
+        mc.parent(top_ctrls_info[2], face_grp)
+    #parent top face ctrls to top head
     mc.parent(face_grp, character_misc_grp)
     #________________________________________________________________________#
 
