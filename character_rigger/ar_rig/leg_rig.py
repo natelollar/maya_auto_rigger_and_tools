@@ -147,14 +147,15 @@ class leg_rig():
 
 
     # create leg rig ('global_ctrl' for scale offset)
-    def create_fk_ik_leg(self, direction, 
-    offset_parent_jnt, 
-    fk_ctrl_size, 
-    ik_ctrl_size, 
-    pv_ctrl_size, 
-    knee_dist_mult,
-    spine_root_ctrl, 
-    global_ctrl):
+    def create_fk_ik_leg(   self, 
+                            direction, 
+                            offset_parent_jnt, 
+                            fk_ctrl_size, 
+                            ik_ctrl_size, 
+                            pv_ctrl_size, 
+                            knee_dist_mult,
+                            spine_root_ctrl, 
+                            global_ctrl):
         # find leg joints using method from own class
         jnt_info = self.find_leg_jnts(direction)
         leg_chain = jnt_info[0]
@@ -628,9 +629,9 @@ class leg_rig():
 
             #_______move ctrl shapes in -z_______#
             if direction == 'left':
-                mc.setAttr((switchCurveA[0] + '.ty'), -40)
+                mc.setAttr((switchCurveA[0] + '.tx'), -40)
             elif direction == 'right':
-                mc.setAttr((switchCurveA[0] + '.ty'), 40)
+                mc.setAttr((switchCurveA[0] + '.tx'), 40)
             mc.xform (switchCurveA, ws=True, piv= (0, 0, 0))
             mc.makeIdentity(switchCurveA, apply=True)
 
@@ -721,6 +722,7 @@ class leg_rig():
         #____________________________________________________#
         # create locators for reverse foot if not exist, also declare locator list
         if direction == 'right':
+            '''
             # if any of the locators don't exist, create them
             if  mc.objExists('right_loc_ankle') == False or \
                 mc.objExists('right_loc_toe') == False or \
@@ -728,7 +730,8 @@ class leg_rig():
                 mc.objExists('right_loc_heel') == False or \
                 mc.objExists('right_loc_outer_foot') == False or \
                 mc.objExists('right_loc_inner_foot') == False:
-                self.rev_foot_locators('right')
+                '''
+            self.rev_foot_locators('right')
             # declare locator list          
             rvFoot_loc_list = ( 'right_loc_ankle', 
                                 'right_loc_toe', 
@@ -737,6 +740,7 @@ class leg_rig():
                                 'right_loc_outer_foot', 
                                 'right_loc_inner_foot')
         elif direction == 'left':
+            '''
             # if any of the locators don't exist, create them
             if  mc.objExists('left_loc_ankle') == False or \
                 mc.objExists('left_loc_toe') == False or \
@@ -744,7 +748,8 @@ class leg_rig():
                 mc.objExists('left_loc_heel') == False or \
                 mc.objExists('left_loc_outer_foot') == False or \
                 mc.objExists('left_loc_inner_foot') == False:
-                self.rev_foot_locators('left')
+                '''
+            self.rev_foot_locators('left')
             # declare locator list          
             rvFoot_loc_list = ( 'left_loc_ankle', 
                                 'left_loc_toe', 
@@ -1000,9 +1005,10 @@ class leg_rig():
         mc.parent(ruler_loc_list_parent, myLegGrp)
         mc.parent(leg_loc_0, myLegGrp)
         mc.parent(leg_loc_1, myLegGrp)
-        # delete foot locators (rather than hide)
+        # delete or hide foot locators
+        #for i in rvFoot_loc_list: mc.setAttr(i + '.visibility', 0)
         mc.delete(rvFoot_loc_list)
-
+        
         # parent switch grp to main leg grp
         mc.parent(switch_ctrl_grp_list, myLegGrp)
 

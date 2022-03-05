@@ -170,7 +170,7 @@ class face_rig():
         for i in mid_jnt_list:
             mid_face_ctrl = fk_ctrl.fk_ctrl()
             mid_face_ctrl_info = mid_face_ctrl.single_fk_curve_ctrl(    jnt=i, 
-                                                                        parent_to='', 
+                                                                        parent_to=parent_to_head, 
                                                                         version='box',
                                                                         size=1,
                                                                         colorR=0, 
@@ -231,7 +231,7 @@ class face_rig():
                                                         version='box', 
                                                         size=3, 
                                                         colorR=0, 
-                                                        colorG=0.2, 
+                                                        colorG=0.5, 
                                                         colorB=1)
             r_ear_grp_list.append(jnt_var_info[0])
             r_ear_ctrl_list.append(jnt_var_info[1])
@@ -258,7 +258,7 @@ class face_rig():
                                                         version='box', 
                                                         size=3, 
                                                         colorR=0, 
-                                                        colorG=0.2, 
+                                                        colorG=0.5, 
                                                         colorB=1)
             l_ear_grp_list.append(jnt_var_info[0])
             l_ear_ctrl_list.append(jnt_var_info[1])
