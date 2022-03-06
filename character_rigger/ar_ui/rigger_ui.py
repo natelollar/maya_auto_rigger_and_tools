@@ -1,7 +1,12 @@
 import maya.cmds as mc
 
+import os
+
 from ..tabs import modeling
 from ..tabs import rigging
+from ..tabs import animation
+from ..tabs import color_slider
+
 
 class rigger_ui_class():
 
@@ -43,10 +48,35 @@ class rigger_ui_class():
         myTabs = mc.tabLayout()
 
 
+        #________________________________Auto Rig Tab @mkr _______________________________#
+        #__________________________________________________________________________#
+        # rigging tab column
+        auto_rig_tab = mc.columnLayout()
+
+        # Red Seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0,1))
+        mc.setParent("..")
+
+        # create_fk_chain, create_ik_limb, create_fk_ik_limb
+        mc.rowLayout(numberOfColumns = 5)
+        mc.symbolButton(  
+                    image= os.path.abspath(os.path.join(__file__, "..", "..", "icons/", "RIG.jpg") ),
+                    h=75, 
+                    w=142, 
+                    command = 'character_rigger.ar_ui.rigger_ui.rigger_ui_class().test_method()', 
+                    bgc = (0,0,1), 
+                    statusBarMessage='RIG TEST')
+        mc.setParent("..")
+
+        #parent column to tab
+        mc.setParent('..')
+
+
 
         #________________________________Rigging Tab @mkr _______________________________#
         #__________________________________________________________________________#
-        #tab Rigging
+        # rigging tab column
         rigging_tab = mc.columnLayout()
 
         # Red Seperator
@@ -54,7 +84,7 @@ class rigger_ui_class():
         mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0.4,0,0))
         mc.setParent("..")
 
-        # Button Row 1
+        # create_fk_chain, create_ik_limb, create_fk_ik_limb
         mc.rowLayout(numberOfColumns = 5)
         mc.button(  label='FK Chain \n ~~~~~~~~ \n Select Joints', 
                     h=75, 
@@ -78,12 +108,12 @@ class rigger_ui_class():
                     statusBarMessage='Select 3 or More Joints in Order, Oriented for Main Axis X')
         mc.setParent('..')
 
-        # Red Seperator
+        # red seperator
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0.4,0,0))
         mc.setParent("..")
 
-        # Button Row 2
+        # simple_blend_joints, blend_joint_chain, rev_foot_locators
         mc.rowLayout(numberOfColumns = 8)
         mc.button(  label='Simple Blend Joints \n ~~~~~~~~ \n Select FK, IK, then Bind Jnt', 
                     h=75, 
@@ -127,12 +157,12 @@ class rigger_ui_class():
         
         mc.setParent('..')
 
-        # Red Seperator
+        # red seperator
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0.4,0,0))
         mc.setParent("..")
 
-        # Button Row 3
+        # nurbs_curve_cube, nurbs_curve_sphere, nurbs_curve_arrow
         mc.rowLayout(numberOfColumns = 5)
         mc.button(  label='Nurbs Curve Cube', 
                     h=75, 
@@ -156,7 +186,7 @@ class rigger_ui_class():
                     statusBarMessage='Create nurbs arrow with groups.')
         mc.setParent('..')
 
-        # Red Seperator
+        # red seperator
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0.4,0,0))
         mc.setParent("..")
@@ -169,12 +199,12 @@ class rigger_ui_class():
         #__________________________________________________________________________#
         animation_tab = mc.columnLayout()
 
-        # Green Seperator
+        # green seperator
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.5,0.25))
         mc.setParent("..")
 
-        # Buttons Row
+        # create_locator, multi_parent_const, reset_ctrls
         mc.rowLayout(numberOfColumns = 5)
         mc.button(  label='create LOCATOR', 
                     h=75, 
@@ -198,12 +228,12 @@ class rigger_ui_class():
                     statusBarMessage='Reset Translation, Rotation, and Scale to ZERO')
         mc.setParent('..')
 
-        # Green Seperator
+        # green seperator
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.5,0.25))
         mc.setParent("..")
 
-        # Buttons Row
+        # green seperators
         mc.rowLayout(numberOfColumns = 5)
         mc.separator(style='none', w=142, h=2)
         mc.separator(style='none', w=10, h=2, bgc=(0,0.5,0.25))
@@ -211,7 +241,7 @@ class rigger_ui_class():
         mc.separator(style='none', w=10, h=2, bgc=(0,0.5,0.25))
         mc.setParent('..')
 
-        # Green Seperator
+        # green seperator
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = 'Mirror Controls or Objects:', height=20, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.5,0.25))
         mc.setParent("..")
@@ -231,7 +261,6 @@ class rigger_ui_class():
 
         # Text Input Row
         mc.rowLayout(numberOfColumns = 15)
-
         mc.textField('l_hip_text', width=40, h=24, text='l_')
         mc.textField('r_hip_text', width=40, h=24, text='r_')
         mc.separator(style='none', w=10, h=23, bgc=(0,0.5,0.25))
@@ -254,7 +283,7 @@ class rigger_ui_class():
         mc.textField('rotateZ_text', width=40, h=24, text='-1')
         mc.setParent('..')
 
-        # Green Seperator
+        # green seperator
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.5,0.25))
         mc.setParent("..")
@@ -334,12 +363,12 @@ class rigger_ui_class():
 
         color_tab = mc.columnLayout()
 
-        # Blue Seperator
+        # blue seperator
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = ' Change Color of Selection "Shapes"', height=20, width=454, align='left', font = 'fixedWidthFont', bgc=(0,0.2,0.5))
         mc.setParent("..")
 
-        #shape color slider
+        # shape color slider
         mc.rowLayout(numberOfColumns = 2)
         mc.intSlider('slider_value', 
         w=200, 
@@ -373,7 +402,7 @@ class rigger_ui_class():
         mc.text(label = ' Change "WIRE" Color of Selection (Shapes)', height=20, width=454, align='left', font = 'fixedWidthFont', bgc=(.1,0.4,0))
         mc.setParent("..")
 
-        #wire color slider
+        # wire color slider (shape)
         mc.rowLayout(numberOfColumns = 2)
         mc.intSlider('wire_slider_value', 
         w=200, 
@@ -390,7 +419,7 @@ class rigger_ui_class():
         mc.text(label = ' Change "WIRE" Color of Selection (Transforms)', height=20, width=454, align='left', font = 'fixedWidthFont', bgc=(.1,0.4,0))
         mc.setParent("..")
 
-        #wire color slider
+        # wire color slider (transform)
         mc.rowLayout(numberOfColumns = 2)
         mc.intSlider('wireT_slider_value', 
         w=200, 
@@ -407,7 +436,7 @@ class rigger_ui_class():
         mc.text(label = ' Change "Outliner" Color of Selection', height=20, width=454, align='left', font = 'fixedWidthFont', bgc=(.1,0.1,0.1))
         mc.setParent("..")
 
-        #wire color slider
+        # outliner color slider
         mc.rowLayout(numberOfColumns = 2)
         mc.intSlider('outliner_slider_value', 
         w=200, 
@@ -419,16 +448,14 @@ class rigger_ui_class():
         mc.iconTextButton('outliner_color', w=55, bgc=(0.5, 0.5, 0.5))
         mc.setParent('..')
 
-
         #parent column to tab
         mc.setParent('..')
-
 
 
         #_________________Tab Layout/ UI End___________________#
 
         #tabs layout
-        mc.tabLayout(myTabs, edit=True, tabLabel=[(modeling_tab, 'Modeling'), (rigging_tab, 'Rigging'), (animation_tab, 'Animation'), (color_tab, 'Color')], bs='none')
+        mc.tabLayout(myTabs, edit=True, tabLabel=[ (auto_rig_tab, 'Auto Rig'), (modeling_tab, 'Modeling'), (rigging_tab, 'Rigging'), (animation_tab, 'Animation'), (color_tab, 'Color')], bs='none')
 
         #Show UI Window
         mc.showWindow()
@@ -436,7 +463,13 @@ class rigger_ui_class():
 
 
 
-
+    def test_method(self):
+        import os
+        print(__file__)
+        print(os.path.join(os.path.dirname(__file__), '..'))
+        print(os.path.dirname(os.path.realpath(__file__)))
+        print(os.path.abspath(os.path.dirname(__file__)))
+        print( os.path.abspath(os.path.join(__file__, "..", "icons/", "my_image.png") ) )
 
 
 
