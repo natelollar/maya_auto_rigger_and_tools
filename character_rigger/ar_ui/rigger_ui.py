@@ -7,6 +7,8 @@ from ..tabs import rigging
 from ..tabs import animation
 from ..tabs import color_slider
 
+from ..ar_rig import character_rig
+
 
 class rigger_ui_class():
 
@@ -22,59 +24,69 @@ class rigger_ui_class():
         #main layout creation
         myForm = mc.formLayout()
 
-        myColumn = mc.columnLayout(bgc=(0.1,0,0.1))
+        myColumn = mc.columnLayout( bgc=(0.1,0,0.1) )
 
         #_______Beginning Title_______#
         #to create border around edge
         mc.formLayout(myForm, edit=True, attachForm=[(myColumn, 'top', 10),(myColumn, 'bottom', 10),(myColumn, 'left', 10),(myColumn, 'right', 10)])
 
-        # Red Seperator
-        mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0.4,0,0))
-        mc.setParent("..")
-
         #'Nate Tools!'
         mc.rowLayout( numberOfColumns=1)
-        mc.text(label = 'Nate Tools!', height=20, width=454, align='center', bgc=(0.4,.5,0), font='boldLabelFont', statusBarMessage='Nate Tools!')
-        mc.setParent("..")
-
-        # Red Seperator
-        mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0.4,0,0))
+        mc.text(label = 'Nate Tools!', height=20, width=454, align='center', bgc=(0.4,.7,0), font='boldLabelFont', statusBarMessage='Nate Tools!')
         mc.setParent("..")
 
         #_________________________declare Tabs____________________________________#
         #Insert Tabs
         myTabs = mc.tabLayout()
 
-
-        #________________________________Auto Rig Tab @mkr _______________________________#
+        #________________________________Auto Rig Tab @mkg _______________________________#
         #__________________________________________________________________________#
         # rigging tab column
+       
         auto_rig_tab = mc.columnLayout()
 
-        # Red Seperator
-        mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0,1))
+        auto_rig_form = mc.formLayout(numberOfDivisions=100)
+
+
+        auto_rig_s1 = mc.separator(style='none', w=454, h=10, bgc=(0,.448,1) )
+        auto_rig_s2 = mc.separator(style='none', w=464, h=10, bgc=(0,.448,1) )
+        auto_rig_s3 = mc.separator(style='none', h=265, w=10, bgc=(0,.448,1) )
+        auto_rig_s4 = mc.separator(style='none', h=265, w=10, bgc=(0,.448,1) )
+
+        auto_rig_b1 = mc.symbolButton(  image = os.path.abspath( os.path.join(__file__, "..", "..", "icons/", "RIG_ME.png") ),
+                                        h=130, 
+                                        w=230, 
+                                        command = 'character_rigger.ar_rig.character_rig.character_rig()',
+                                        statusBarMessage='Auto Rig Character.  No Joint Names Required. Must have tongue, bot face joints, and top face joints.'
+                                    )
+        # mc.radioCollection()
+        # auto_rig_b2 = mc.radioButton( label='choose this', bgc=(0,.448,1) )
+        # auto_rig_b3 = mc.radioButton( label='choose this', bgc=(0,.448,1) )
+        # auto_rig_b4 = mc.radioButton( label='choose this', bgc=(0,.448,1) )
+                                    
+        
+        mc.formLayout(  auto_rig_form,
+                        edit=True, 
+                        attachForm=[(auto_rig_s1 , 'top', 0),(auto_rig_s1 , 'left', 0),
+                                    (auto_rig_s2 , 'top', 265),(auto_rig_s2 , 'left', 0),
+                                    (auto_rig_s3 , 'top', 0),(auto_rig_s3 , 'left', 0),
+                                    (auto_rig_s4 , 'top', 0),(auto_rig_s4 , 'left', 454),
+                                    (auto_rig_b1 , 'top', 70),(auto_rig_b1 , 'left', 115)
+                                    #(auto_rig_b2 , 'top', 12),(auto_rig_b2 , 'left', 12),
+                                    #(auto_rig_b3 , 'top', 35),(auto_rig_b3 , 'left', 12),
+                                    #(auto_rig_b4 , 'top', 58),(auto_rig_b4 , 'left', 12) 
+                                    ]
+                        )
+        
         mc.setParent("..")
 
-        # create_fk_chain, create_ik_limb, create_fk_ik_limb
-        mc.rowLayout(numberOfColumns = 5)
-        mc.symbolButton(  
-                    image= os.path.abspath(os.path.join(__file__, "..", "..", "icons/", "RIG.jpg") ),
-                    h=75, 
-                    w=142, 
-                    command = 'character_rigger.ar_ui.rigger_ui.rigger_ui_class().test_method()', 
-                    bgc = (0,0,1), 
-                    statusBarMessage='RIG TEST')
-        mc.setParent("..")
 
         #parent column to tab
         mc.setParent('..')
 
 
 
-        #________________________________Rigging Tab @mkr _______________________________#
+        #________________________________Rigging Tab @mkg _______________________________#
         #__________________________________________________________________________#
         # rigging tab column
         rigging_tab = mc.columnLayout()
@@ -228,22 +240,10 @@ class rigger_ui_class():
                     statusBarMessage='Reset Translation, Rotation, and Scale to ZERO')
         mc.setParent('..')
 
-        # green seperator
-        mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.5,0.25))
-        mc.setParent("..")
-
-        # green seperators
-        mc.rowLayout(numberOfColumns = 5)
-        mc.separator(style='none', w=142, h=2)
-        mc.separator(style='none', w=10, h=2, bgc=(0,0.5,0.25))
-        mc.separator(style='none', w=142, h=2)
-        mc.separator(style='none', w=10, h=2, bgc=(0,0.5,0.25))
-        mc.setParent('..')
 
         # green seperator
         mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = 'Mirror Controls or Objects:', height=20, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.5,0.25))
+        mc.text(label = 'M I R R O R  Controls', height=20, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
         mc.setParent("..")
 
         # Text Label Row
@@ -259,24 +259,29 @@ class rigger_ui_class():
         mc.text(label = 'rot Z*', width=40, height=24, bgc=(0.2,0,0.2), align='center', font = 'boldLabelFont', statusBarMessage='Rotate Z Multiplier')
         mc.setParent('..')
 
+        # green seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.setParent("..")
+
         # Text Input Row
         mc.rowLayout(numberOfColumns = 15)
         mc.textField('l_hip_text', width=40, h=24, text='l_')
         mc.textField('r_hip_text', width=40, h=24, text='r_')
-        mc.separator(style='none', w=10, h=23, bgc=(0,0.5,0.25))
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
 
-        mc.button(label='Mirror Ctrls', 
+        mc.button(  label='M I R R O R', 
                     w=80, 
                     command = 'character_rigger.tabs.animation.animation_class().mirror_ctrls()', 
                     bgc = (0.1,0.5,0.1), 
                     statusBarMessage=   'Select LEFT Controls/ Objects to Mirror, \
                                         Or Mirror Selected if No Opposite Conrols/ Objects Exist')
-        mc.separator(style='none', w=10, h=23, bgc=(0,0.5,0.25))
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
 
         mc.textField('translateX_text', width=40, h=24, text='-1')
         mc.textField('translateY_text', width=40, h=24, text='1')
         mc.textField('translateZ_text', width=40, h=24, text='1')
-        mc.separator(style='none', w=10, h=23, bgc=(0,0.5,0.25))
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
 
         mc.textField('rotateX_text', width=40, h=24, text='1')
         mc.textField('rotateY_text', width=40, h=24, text='-1')
@@ -285,7 +290,7 @@ class rigger_ui_class():
 
         # green seperator
         mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.5,0.25))
+        mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
         mc.setParent("..")
 
         #parent column to tab
@@ -462,7 +467,7 @@ class rigger_ui_class():
 
 
 
-
+'''
     def test_method(self):
         import os
         print(__file__)
@@ -470,7 +475,7 @@ class rigger_ui_class():
         print(os.path.dirname(os.path.realpath(__file__)))
         print(os.path.abspath(os.path.dirname(__file__)))
         print( os.path.abspath(os.path.join(__file__, "..", "icons/", "my_image.png") ) )
-
+'''
 
 
 
