@@ -1,0 +1,619 @@
+////  Set Selection Tool .....//////
+
+/// Tool Itself, not needed code ///
+
+string $toolMake = "makeTool";
+
+/// Tool Name ///
+
+string $toolNM = "Set Selection Tool";
+
+/// delete previous open windows of tool, so it doesn't keep opening ///
+
+if ( `window -exists $toolMake` )
+{
+    deleteUI $toolMake;
+}
+
+/// tool window, must declare $variable at tool end ///
+
+window -title $toolNM -width 100 -height 100 $toolMake;
+
+//  column layout allow for framelaouyt to stick together?, making a colum of rows (framelayouts?) /////////
+
+columnLayout  -adjustableColumn true;
+
+/// window layout row #0    Selection SET Commands///
+
+frameLayout -label "Selection Set Commands" -collapsable true -collapse false;
+
+rowColumnLayout -numberOfColumns 9  -rowSpacing 2 3;
+
+textField -text "all_ctrl_set" happySetTxt;
+
+symbolButton -image "nate_tool_icons/reset.png" -command "zero_out_set";
+
+symbolButton -image "nate_tool_icons/rand.png" -command "explode_set";
+
+symbolButton -image "nate_tool_icons/select.png" -command "select_set";
+
+symbolButton -image "nate_tool_icons/visible.png" -command "toggle_visible";
+
+textField -text "3" happySetTrans;
+
+textField -text "0" happySetRot;
+
+textField -text "1" happySetScaleA;
+
+textField -text "1" happySetScaleB;
+
+
+
+/// window layout row #1 ///
+
+
+textField -text "main_move_ctrl_set" happySetTxt1;
+
+symbolButton -image "nate_tool_icons/reset.png" -command "zero_out_set1";
+
+symbolButton -image "nate_tool_icons/rand.png" -command "explode_set1";
+
+symbolButton -image "nate_tool_icons/select.png" -command "select_set1";
+
+symbolButton -image "nate_tool_icons/visible.png" -command "toggle_visible1";
+
+textField -text "5" happySetTrans1;
+
+textField -text "0" happySetRot1;
+
+textField -text "1" happySetScaleA1;
+
+textField -text "1" happySetScaleB1;
+
+/// window layout row #2 ///
+
+
+textField -text "L_fingers_set" happySetTxt2;
+
+symbolButton -image "nate_tool_icons/reset.png" -command "zero_out_set2";
+
+symbolButton -image "nate_tool_icons/rand.png" -command "explode_set2";
+
+symbolButton -image "nate_tool_icons/select.png" -command "select_set2";
+
+symbolButton -image "nate_tool_icons/visible.png" -command "toggle_visible2";
+
+textField -text "0" happySetTrans2;
+
+textField -text "7" happySetRot2;
+
+textField -text "1" happySetScaleA2;
+
+textField -text "1" happySetScaleB2;
+
+
+
+setParent $toolMake;
+
+///   Mirror Commands ////
+
+///   Mirror Commands ROW #0 ////
+
+frameLayout -label "Mirror Commands (Or Just Multiply Solo Objects)" -collapsable true -collapse false;
+
+rowColumnLayout -numberOfColumns 9  -rowSpacing 2 3;
+
+textField -text "L_" selectionText;
+
+textField -text "R_" mirrorText;
+
+symbolButton -image "nate_tool_icons/mirror.png" -command "mirror_selected_ctrl";
+
+textField -text "1.0" mirrorText_tx;
+textField -text "1.0" mirrorText_ty;
+textField -text "1.0" mirrorText_tz;
+textField -text "1.0" mirrorText_rx;
+textField -text "1.0" mirrorText_ry;
+textField -text "1.0" mirrorText_rz;
+
+///   Mirror Commands ROW #1 ////
+
+
+textField -text "L_" selectionText1;
+
+textField -text "R_" mirrorText1;
+
+symbolButton -image "nate_tool_icons/mirror.png" -command "mirror_selected_ctrl1";
+
+textField -text "-1.0" mirrorText_tx1;
+textField -text "-1.0" mirrorText_ty1;
+textField -text "-1.0" mirrorText_tz1;
+textField -text "1.0" mirrorText_rx1;
+textField -text "1.0" mirrorText_ry1;
+textField -text "1.0" mirrorText_rz1;
+
+
+///   Mirror Commands ROW #2 ////
+
+
+textField -text "L_" selectionText2;
+
+textField -text "R_" mirrorText2;
+
+symbolButton -image "nate_tool_icons/mirror.png" -command "mirror_selected_ctrl2";
+
+textField -text "-1.0" mirrorText_tx2;
+textField -text "1.0" mirrorText_ty2;
+textField -text "1.0" mirrorText_tz2;
+textField -text "1.0" mirrorText_rx2;
+textField -text "1.0" mirrorText_ry2;
+textField -text "1.0" mirrorText_rz2;
+
+
+
+setParent $toolMake;
+
+///  show tool window ///
+
+showWindow $toolMake;
+
+
+/////////......... ROW ZERO ............ ////////////
+
+/// reset set command ///
+
+proc zero_out_set ()
+{
+string $NM = `textField -q -text happySetTxt`;
+
+select -r -add $NM;
+
+string $heaven[] = `ls -selection`;
+print $heaven;
+
+for ($i in $heaven) {
+        setAttr ($i + ".translateX") 0;
+        setAttr ($i + ".translateY") 0;
+        setAttr ($i + ".translateZ") 0;
+        setAttr ($i + ".rotateX") 0;
+        setAttr ($i + ".rotateY") 0;
+        setAttr ($i + ".rotateZ") 0;
+        setAttr ($i + ".scaleX") 1;
+        setAttr ($i + ".scaleY") 1;
+        setAttr ($i + ".scaleZ") 1;
+    }  
+    
+setFocus("MayaWindow");
+
+}
+
+/// "select" set command ///
+
+proc select_set ()
+{
+    
+string $NM = `textField -q -text happySetTxt`;
+
+select -r -add $NM;
+
+setFocus("MayaWindow");
+
+}
+
+
+/// randomize translation, rotation, scale///
+
+
+proc explode_set ()
+{
+float $ZT = `textField -q -text happySetTrans`;
+float $ZR = `textField -q -text happySetRot`;
+float $ZSA = `textField -q -text happySetScaleA`;
+float $ZSB = `textField -q -text happySetScaleB`;
+
+string $NM = `textField -q -text happySetTxt`;
+
+select -r -add $NM;
+
+string $heaven[] = `ls -selection`;
+print $heaven;
+
+for ($u in $heaven) {
+    setAttr ($u + ".translateX") (rand( -$ZT, $ZT ));
+    setAttr ($u + ".translateY") (rand( -$ZT, $ZT ));
+    setAttr ($u + ".translateZ") (rand( -$ZT, $ZT ));
+    setAttr ($u + ".rotateX") (rand( -$ZR , $ZR ));
+    setAttr ($u + ".rotateY") (rand( -$ZR , $ZR ));
+    setAttr ($u + ".rotateZ") (rand( -$ZR , $ZR ));
+    setAttr ($u + ".scaleX") (rand( $ZSA , $ZSB ));
+    setAttr ($u + ".scaleY") (rand( $ZSA , $ZSB ));
+    setAttr ($u + ".scaleZ") (rand( $ZSA , $ZSB ));
+    }  
+    
+setFocus("MayaWindow");
+
+}
+
+
+///// toggle visibility command //////
+
+proc toggle_visible ()
+{
+
+string $NM = `textField -q -text happySetTxt`;
+
+select -r -add $NM;
+
+string $heaven[] = `ls -selection`;
+print $heaven;
+
+for ($i in $heaven)
+    {
+    int $yar = getAttr ($i + ".visibility");
+        if ($yar == 1)
+            {
+            setAttr ($i + ".visibility") 0;
+            }
+            else
+            {
+                setAttr ($i + ".visibility") 1;
+            }
+    }
+
+setFocus("MayaWindow");
+
+}
+
+///..............ROW ONE.............same stuff////////////////////
+
+/// reset set command ///
+
+proc zero_out_set1 ()
+{
+string $NM = `textField -q -text happySetTxt1`;
+
+select -r -add $NM;
+
+string $heaven[] = `ls -selection`;
+print $heaven;
+
+for ($i in $heaven) {
+        setAttr ($i + ".translateX") 0;
+        setAttr ($i + ".translateY") 0;
+        setAttr ($i + ".translateZ") 0;
+        setAttr ($i + ".rotateX") 0;
+        setAttr ($i + ".rotateY") 0;
+        setAttr ($i + ".rotateZ") 0;
+        setAttr ($i + ".scaleX") 1;
+        setAttr ($i + ".scaleY") 1;
+        setAttr ($i + ".scaleZ") 1;
+    }  
+    
+setFocus("MayaWindow");
+
+}
+
+/// select set command ///
+
+proc select_set1 ()
+{
+    
+string $NM = `textField -q -text happySetTxt1`;
+
+select -r -add $NM;
+
+setFocus("MayaWindow");
+
+}
+
+
+/// randomize translation, rotation, scale///
+
+
+proc explode_set1 ()
+{
+float $ZT = `textField -q -text happySetTrans1`;
+float $ZR = `textField -q -text happySetRot1`;
+float $ZSA = `textField -q -text happySetScaleA1`;
+float $ZSB = `textField -q -text happySetScaleB1`;
+
+string $NM = `textField -q -text happySetTxt1`;
+
+select -r -add $NM;
+
+string $heaven[] = `ls -selection`;
+print $heaven;
+
+for ($u in $heaven) {
+    setAttr ($u + ".translateX") (rand( -$ZT, $ZT ));
+    setAttr ($u + ".translateY") (rand( -$ZT, $ZT ));
+    setAttr ($u + ".translateZ") (rand( -$ZT, $ZT ));
+    setAttr ($u + ".rotateX") (rand( -$ZR , $ZR ));
+    setAttr ($u + ".rotateY") (rand( -$ZR , $ZR ));
+    setAttr ($u + ".rotateZ") (rand( -$ZR , $ZR ));
+    setAttr ($u + ".scaleX") (rand( $ZSA , $ZSB ));
+    setAttr ($u + ".scaleY") (rand( $ZSA , $ZSB ));
+    setAttr ($u + ".scaleZ") (rand( $ZSA , $ZSB ));
+    }  
+    
+setFocus("MayaWindow");
+
+}
+
+
+///// toggle visibility command //////
+
+proc toggle_visible1 ()
+{
+
+string $NM = `textField -q -text happySetTxt1`;
+
+select -r -add $NM;
+
+string $heaven[] = `ls -selection`;
+print $heaven;
+
+for ($i in $heaven)
+    {
+    int $yar = getAttr ($i + ".visibility");
+        if ($yar == 1)
+            {
+            setAttr ($i + ".visibility") 0;
+            }
+            else
+            {
+                setAttr ($i + ".visibility") 1;
+            }
+    }
+
+setFocus("MayaWindow");
+
+}
+
+
+///..............ROW TWO.............same stuff////////////////////
+
+/// reset set command ///
+
+proc zero_out_set2 ()
+{
+string $NM = `textField -q -text happySetTxt2`;
+
+select -r -add $NM;
+
+string $heaven[] = `ls -selection`;
+print $heaven;
+
+for ($i in $heaven) {
+        setAttr ($i + ".translateX") 0;
+        setAttr ($i + ".translateY") 0;
+        setAttr ($i + ".translateZ") 0;
+        setAttr ($i + ".rotateX") 0;
+        setAttr ($i + ".rotateY") 0;
+        setAttr ($i + ".rotateZ") 0;
+        setAttr ($i + ".scaleX") 1;
+        setAttr ($i + ".scaleY") 1;
+        setAttr ($i + ".scaleZ") 1;
+    }  
+    
+setFocus("MayaWindow");
+
+}
+
+/// select set command ///
+
+proc select_set2 ()
+{
+    
+string $NM = `textField -q -text happySetTxt2`;
+
+select -r -add $NM;
+
+setFocus("MayaWindow");
+
+}
+
+
+/// randomize translation, rotation, scale///
+
+
+proc explode_set2 ()
+{
+float $ZT = `textField -q -text happySetTrans2`;
+float $ZR = `textField -q -text happySetRot2`;
+float $ZSA = `textField -q -text happySetScaleA2`;
+float $ZSB = `textField -q -text happySetScaleB2`;
+
+string $NM = `textField -q -text happySetTxt2`;
+
+select -r -add $NM;
+
+string $heaven[] = `ls -selection`;
+print $heaven;
+
+for ($u in $heaven) {
+    setAttr ($u + ".translateX") (rand( -$ZT, $ZT ));
+    setAttr ($u + ".translateY") (rand( -$ZT, $ZT ));
+    setAttr ($u + ".translateZ") (rand( -$ZT, $ZT ));
+    setAttr ($u + ".rotateX") (rand( -$ZR , $ZR ));
+    setAttr ($u + ".rotateY") (rand( -$ZR , $ZR ));
+    setAttr ($u + ".rotateZ") (rand( -$ZR , $ZR ));
+    setAttr ($u + ".scaleX") (rand( $ZSA , $ZSB ));
+    setAttr ($u + ".scaleY") (rand( $ZSA , $ZSB ));
+    setAttr ($u + ".scaleZ") (rand( $ZSA , $ZSB ));
+    }  
+    
+setFocus("MayaWindow");
+
+}
+
+
+///// toggle visibility command //////
+
+proc toggle_visible2 ()
+{
+
+string $NM = `textField -q -text happySetTxt2`;
+
+select -r -add $NM;
+
+string $heaven[] = `ls -selection`;
+print $heaven;
+
+for ($i in $heaven)
+    {
+    int $yar = getAttr ($i + ".visibility");
+        if ($yar == 1)
+            {
+            setAttr ($i + ".visibility") 0;
+            }
+            else
+            {
+                setAttr ($i + ".visibility") 1;
+            }
+    }
+
+setFocus("MayaWindow");
+
+}
+
+
+///////////////////////// ...........   Mirror Commands ............////////////////////
+
+
+///////////////////////// ...........   Mirror Selected Controls #0 ............////////////////////
+
+proc mirror_selected_ctrl ()
+{
+    
+string $alpha[] =`ls -selection`;
+
+string $Lalpha = `textField -query -text selectionText`;
+
+string $Ralpha = `textField -query -text mirrorText`;
+
+////////    get text field values, for the For Loops ///////
+float $mTtx = `textField -query -text mirrorText_tx`;
+float $mTty = `textField -query -text mirrorText_ty`;
+float $mTtz = `textField -query -text mirrorText_tz`;
+float $mTrx = `textField -query -text mirrorText_rx`;
+float $mTry = `textField -query -text mirrorText_ry`;
+float $mTrz = `textField -query -text mirrorText_rz`;
+
+////  mirrioring values of ctrls with correct prefix
+    for ($i in $alpha)
+    {
+        ////switching L_R_ prefix
+        string $subVar = `substitute $Lalpha $i $Ralpha`;
+        ////copy attributes over to opposite object, to subVar
+        copyAttr -values -attribute translateX -attribute translateY -attribute translateZ -attribute rotateX -attribute rotateY -attribute rotateZ $i $subVar;
+        //// get opposite side values 
+        float $subVarTX = getAttr ($subVar + ".translateX");
+        float $subVarTY = getAttr ($subVar + ".translateY");
+        float $subVarTZ = getAttr ($subVar + ".translateZ");
+        float $subVarRX = getAttr ($subVar + ".rotateX");
+        float $subVarRY = getAttr ($subVar + ".rotateY");
+        float $subVarRZ = getAttr ($subVar + ".rotateZ");
+        ///// multiply trans, and rotation, by text fields to reverse etc
+        setAttr ($subVar + ".translateX") ($subVarTX * $mTtx);
+        setAttr ($subVar + ".translateY") ($subVarTY * $mTty);
+        setAttr ($subVar + ".translateZ") ($subVarTZ * $mTtz);
+        setAttr ($subVar + ".rotateX") ($subVarRX * $mTrx);
+        setAttr ($subVar + ".rotateY") ($subVarRY * $mTry);
+        setAttr ($subVar + ".rotateZ") ($subVarRZ * $mTrz);
+    }
+setFocus("MayaWindow");
+}
+
+
+///////////////////////// ...........   Mirror Selected Controls #1 ............////////////////////
+
+proc mirror_selected_ctrl1 ()
+{
+    
+string $alpha[] =`ls -selection`;
+
+string $Lalpha = `textField -query -text selectionText1`;
+
+string $Ralpha = `textField -query -text mirrorText1`;
+
+////////    get text field values, for the For Loops ///////
+float $mTtx = `textField -query -text mirrorText_tx1`;
+float $mTty = `textField -query -text mirrorText_ty1`;
+float $mTtz = `textField -query -text mirrorText_tz1`;
+float $mTrx = `textField -query -text mirrorText_rx1`;
+float $mTry = `textField -query -text mirrorText_ry1`;
+float $mTrz = `textField -query -text mirrorText_rz1`;
+
+////  mirrioring values of ctrls with correct prefix
+    for ($i in $alpha)
+    {
+        ////switching L_R_ prefix
+        string $subVar = `substitute $Lalpha $i $Ralpha`;
+        ////copy attributes over to opposite object, to subVar
+        copyAttr -values -attribute translateX -attribute translateY -attribute translateZ -attribute rotateX -attribute rotateY -attribute rotateZ $i $subVar;
+        //// get opposite side values 
+        float $subVarTX = getAttr ($subVar + ".translateX");
+        float $subVarTY = getAttr ($subVar + ".translateY");
+        float $subVarTZ = getAttr ($subVar + ".translateZ");
+        float $subVarRX = getAttr ($subVar + ".rotateX");
+        float $subVarRY = getAttr ($subVar + ".rotateY");
+        float $subVarRZ = getAttr ($subVar + ".rotateZ");
+        ///// multiply trans, and rotation, by text fields to reverse etc
+        setAttr ($subVar + ".translateX") ($subVarTX * $mTtx);
+        setAttr ($subVar + ".translateY") ($subVarTY * $mTty);
+        setAttr ($subVar + ".translateZ") ($subVarTZ * $mTtz);
+        setAttr ($subVar + ".rotateX") ($subVarRX * $mTrx);
+        setAttr ($subVar + ".rotateY") ($subVarRY * $mTry);
+        setAttr ($subVar + ".rotateZ") ($subVarRZ * $mTrz);
+    }
+setFocus("MayaWindow");
+}
+
+
+
+///////////////////////// ...........   Mirror Selected Controls #2 ............////////////////////
+
+proc mirror_selected_ctrl2 ()
+{
+    
+string $alpha[] =`ls -selection`;
+
+string $Lalpha = `textField -query -text selectionText2`;
+
+string $Ralpha = `textField -query -text mirrorText2`;
+
+////////    get text field values, for the For Loops ///////
+float $mTtx = `textField -query -text mirrorText_tx2`;
+float $mTty = `textField -query -text mirrorText_ty2`;
+float $mTtz = `textField -query -text mirrorText_tz2`;
+float $mTrx = `textField -query -text mirrorText_rx2`;
+float $mTry = `textField -query -text mirrorText_ry2`;
+float $mTrz = `textField -query -text mirrorText_rz2`;
+
+////  mirrioring values of ctrls with correct prefix
+    for ($i in $alpha)
+    {
+        ////switching L_R_ prefix
+        string $subVar = `substitute $Lalpha $i $Ralpha`;
+        ////copy attributes over to opposite object, to subVar
+        copyAttr -values -attribute translateX -attribute translateY -attribute translateZ -attribute rotateX -attribute rotateY -attribute rotateZ $i $subVar;
+        //// get opposite side values 
+        float $subVarTX = getAttr ($subVar + ".translateX");
+        float $subVarTY = getAttr ($subVar + ".translateY");
+        float $subVarTZ = getAttr ($subVar + ".translateZ");
+        float $subVarRX = getAttr ($subVar + ".rotateX");
+        float $subVarRY = getAttr ($subVar + ".rotateY");
+        float $subVarRZ = getAttr ($subVar + ".rotateZ");
+        ///// multiply trans, and rotation, by text fields to reverse etc
+        setAttr ($subVar + ".translateX") ($subVarTX * $mTtx);
+        setAttr ($subVar + ".translateY") ($subVarTY * $mTty);
+        setAttr ($subVar + ".translateZ") ($subVarTZ * $mTtz);
+        setAttr ($subVar + ".rotateX") ($subVarRX * $mTrx);
+        setAttr ($subVar + ".rotateY") ($subVarRY * $mTry);
+        setAttr ($subVar + ".rotateZ") ($subVarRZ * $mTrz);
+    }
+setFocus("MayaWindow");
+}
+
+///////..........
