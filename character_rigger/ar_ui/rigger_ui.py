@@ -179,21 +179,21 @@ class rigger_ui_class():
         mc.button(  label='create LOCATOR', 
                     h=75, 
                     w=142, 
-                    command = 'create_locator()', 
+                    command = 'character_rigger.tabs.animation.animation_class().create_locator()', 
                     bgc = (0.8,0.8,0), 
                     statusBarMessage='Create large locator')
         mc.separator(style='none', w=10, h=75, bgc=(0,0.5,0.25))
         mc.button(  label='Multi-Parent Const \n ~~~~~~~~ \n Parent Ctrls to Locator \n To Move In Worldspace', 
                     h=75, 
                     w=142, 
-                    command = 'multi_parent_const()', 
+                    command = 'character_rigger.tabs.animation.animation_class().multi_parent_const()', 
                     bgc = (0.5,0.1,0.1), 
                     statusBarMessage='Select Locator Last/ Exectute/ Key Ctrls/ then delete Locator (constraints will auto delete with locator)')
         mc.separator(style='none', w=10, h=75, bgc=(0,0.5,0.25))
         mc.button(  label='RESET Ctrls', 
                     h=75, 
                     w=142, 
-                    command = 'reset_ctrls()', 
+                    command = 'character_rigger.tabs.animation.animation_class().reset_ctrls()', 
                     bgc = (0.1,0.1,0.5), 
                     statusBarMessage='Reset Translation, Rotation, and Scale to ZERO')
         mc.setParent('..')
@@ -229,18 +229,26 @@ class rigger_ui_class():
         mc.text(label = 'rot Z*', width=40, height=24, bgc=(0.2,0,0.2), align='center', font = 'boldLabelFont', statusBarMessage='Rotate Z Multiplier')
         mc.setParent('..')
 
-
         # Text Input Row
         mc.rowLayout(numberOfColumns = 15)
-        mc.textField('l_hip_text', width=40, h=24, text='L_')
-        mc.textField('r_hip_text', width=40, h=24, text='R_')
+
+        mc.textField('l_hip_text', width=40, h=24, text='l_')
+        mc.textField('r_hip_text', width=40, h=24, text='r_')
         mc.separator(style='none', w=10, h=23, bgc=(0,0.5,0.25))
-        mc.button(label='Mirror Ctrls', w=80, command = 'mirror_ctrls()', bgc = (0.1,0.5,0.1), statusBarMessage='Select LEFT Controls/ Objects to Mirror, Or Mirror Selected if No Opposite Conrols/ Objects Exist')
+
+        mc.button(label='Mirror Ctrls', 
+                    w=80, 
+                    command = 'character_rigger.tabs.animation.animation_class().mirror_ctrls()', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage=   'Select LEFT Controls/ Objects to Mirror, \
+                                        Or Mirror Selected if No Opposite Conrols/ Objects Exist')
         mc.separator(style='none', w=10, h=23, bgc=(0,0.5,0.25))
+
         mc.textField('translateX_text', width=40, h=24, text='-1')
         mc.textField('translateY_text', width=40, h=24, text='1')
         mc.textField('translateZ_text', width=40, h=24, text='1')
         mc.separator(style='none', w=10, h=23, bgc=(0,0.5,0.25))
+
         mc.textField('rotateX_text', width=40, h=24, text='1')
         mc.textField('rotateY_text', width=40, h=24, text='-1')
         mc.textField('rotateZ_text', width=40, h=24, text='-1')
@@ -333,7 +341,13 @@ class rigger_ui_class():
 
         #shape color slider
         mc.rowLayout(numberOfColumns = 2)
-        mc.intSlider('slider_value', w=200, minValue=0, max=5, value=0, step=1, dc='slider_move()')
+        mc.intSlider('slider_value', 
+        w=200, 
+        minValue=0, 
+        max=5, 
+        value=0, 
+        step=1, 
+        dc = 'character_rigger.tabs.color_slider.color_class().slider_move()' )
         mc.iconTextButton('color', w=55, bgc=(0.5, 0.5, 0.5))
         mc.setParent('..')
 
@@ -344,7 +358,13 @@ class rigger_ui_class():
 
         #transform color slider
         mc.rowLayout(numberOfColumns = 2)
-        mc.intSlider('transform_slider_value', w=200, minValue=0, max=5, value=0, step=1, dc='transform_slider_move()')
+        mc.intSlider('transform_slider_value', 
+        w=200, 
+        minValue=0, 
+        max=5, 
+        value=0, 
+        step=1, 
+        dc='character_rigger.tabs.color_slider.color_class().transform_slider_move()')
         mc.iconTextButton('transform_color', w=55, bgc=(0.5, 0.5, 0.5))
         mc.setParent('..')
 
@@ -355,7 +375,13 @@ class rigger_ui_class():
 
         #wire color slider
         mc.rowLayout(numberOfColumns = 2)
-        mc.intSlider('wire_slider_value', w=200, minValue=0, max=5, value=0, step=1, dc='wire_slider_move()')
+        mc.intSlider('wire_slider_value', 
+        w=200, 
+        minValue=0, 
+        max=5, 
+        value=0, 
+        step=1, 
+        dc='character_rigger.tabs.color_slider.color_class().wire_slider_move()')
         mc.iconTextButton('wire_color', w=55, bgc=(0.5, 0.5, 0.5))
         mc.setParent('..')
 
@@ -366,7 +392,13 @@ class rigger_ui_class():
 
         #wire color slider
         mc.rowLayout(numberOfColumns = 2)
-        mc.intSlider('wireT_slider_value', w=200, minValue=0, max=5, value=0, step=1, dc='wireT_slider_move()')
+        mc.intSlider('wireT_slider_value', 
+        w=200, 
+        minValue=0, 
+        max=5, 
+        value=0, 
+        step=1, 
+        dc='character_rigger.tabs.color_slider.color_class().wireT_slider_move()')
         mc.iconTextButton('wireT_color', w=55, bgc=(0.5, 0.5, 0.5))
         mc.setParent('..')
 
@@ -377,7 +409,13 @@ class rigger_ui_class():
 
         #wire color slider
         mc.rowLayout(numberOfColumns = 2)
-        mc.intSlider('outliner_slider_value', w=200, minValue=0, max=5, value=0, step=1, dc='outliner_slider_move()')
+        mc.intSlider('outliner_slider_value', 
+        w=200, 
+        minValue=0, 
+        max=5, 
+        value=0, 
+        step=1, 
+        dc='character_rigger.tabs.color_slider.color_class().outliner_slider_move()')
         mc.iconTextButton('outliner_color', w=55, bgc=(0.5, 0.5, 0.5))
         mc.setParent('..')
 
@@ -398,13 +436,6 @@ class rigger_ui_class():
 
 
 
-'''
-#_________________Modeling Tab Methods __________________________#
-#________________________________________________________________#
-    def create_random(self):
-        i = modeling.modeling_class()
-        i.create_random()
-'''
 
 
 

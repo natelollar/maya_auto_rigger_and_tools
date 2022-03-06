@@ -1,4 +1,4 @@
 import rigging
 import modeling
 import animation
-import color
+import color_slider
