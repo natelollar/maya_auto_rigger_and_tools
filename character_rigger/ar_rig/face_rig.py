@@ -10,7 +10,7 @@ from ..ar_tools import fk_ctrl
 # fk jaw ctrl
 class face_rig():
 
-    def jaw_ctrl(self, parent_to):
+    def jaw_ctrl(self, parent_to, ctrl_size):
         # find head joint
         head_jnt_temp = find_jnts.find_jnts()
         head_jnt = head_jnt_temp.find_head_jnt()
@@ -23,6 +23,7 @@ class face_rig():
         jaw_ctrl_info = jaw_ctrl_var.single_fk_ctrl(   jnt=jaw_jnt, 
                                                         parent_to=parent_to, 
                                                         normal=[0,1,0], 
+                                                        size = ctrl_size,
                                                         colorR=0, 
                                                         colorG=1, 
                                                         colorB=0)
@@ -30,7 +31,7 @@ class face_rig():
         return jaw_ctrl_info[0], jaw_ctrl_info[1]
 
 
-    def tongue_ctrls(self, parent_to):
+    def tongue_ctrls(self, ctrl_size, parent_to):
         # find head joint
         head_jnt_temp = find_jnts.find_jnts()
         head_jnt = head_jnt_temp.find_head_jnt()
@@ -54,7 +55,7 @@ class face_rig():
             jnt_var_info = jnt_var.single_fk_curve_ctrl(jnt=jnt, 
                                                         parent_to='', 
                                                         version='box', 
-                                                        size=3, 
+                                                        size=ctrl_size, 
                                                         colorR=1, 
                                                         colorG=0, 
                                                         colorB=0)
@@ -77,7 +78,7 @@ class face_rig():
         return tongue_top_grp
 
 
-    def bot_face_ctrls(self, parent_to):
+    def bot_face_ctrls(self, ctrl_size, parent_to):
         # find head joint
         head_jnt_temp = find_jnts.find_jnts()
         head_jnt = head_jnt_temp.find_head_jnt()
@@ -99,7 +100,7 @@ class face_rig():
             bot_face_ctrl = fk_ctrl.fk_ctrl()
             bot_face_ctrl.single_fk_curve_ctrl(jnt=i, 
                                                 parent_to=parent_to,
-                                                size=1,
+                                                size=ctrl_size,
                                                 version='box',
                                                 colorR=.5, 
                                                 colorG=1, 
@@ -109,7 +110,7 @@ class face_rig():
     #________________________________________________#
     #________________________________________________#
     #top face controls w/ mid ctrls (parented to head)
-    def top_face_ctrls(self, parent_to_head='', parent_to_jaw='', mid_ctrls=0):
+    def top_face_ctrls(self, ctrl_size, parent_to_head='', parent_to_jaw='', mid_ctrls=0):
         # find head joint
         head_jnt_temp = find_jnts.find_jnts()
         head_jnt = head_jnt_temp.find_head_jnt()
@@ -159,7 +160,7 @@ class face_rig():
             top_face_ctrl.single_fk_curve_ctrl(jnt=i, 
                                                 parent_to=parent_to_head, 
                                                 version='box',
-                                                size=1,
+                                                size=ctrl_size,
                                                 colorR=1, 
                                                 colorG=.5, 
                                                 colorB=0)
@@ -172,7 +173,7 @@ class face_rig():
             mid_face_ctrl_info = mid_face_ctrl.single_fk_curve_ctrl(    jnt=i, 
                                                                         parent_to=parent_to_head, 
                                                                         version='box',
-                                                                        size=1,
+                                                                        size=ctrl_size,
                                                                         colorR=0, 
                                                                         colorG=.5, 
                                                                         colorB=1)
@@ -187,7 +188,7 @@ class face_rig():
                 
     #________________________________________________#
     #________________________________________________#
-    def ear_ctrls(self, parent_to):
+    def ear_ctrls(self, ctrl_size, parent_to):
         # find head joint
         head_jnt_temp = find_jnts.find_jnts()
         head_jnt = head_jnt_temp.find_head_jnt()
@@ -229,7 +230,7 @@ class face_rig():
             jnt_var_info = jnt_var.single_fk_curve_ctrl(jnt=jnt, 
                                                         parent_to='', 
                                                         version='box', 
-                                                        size=3, 
+                                                        size=ctrl_size, 
                                                         colorR=0, 
                                                         colorG=0.5, 
                                                         colorB=1)
@@ -256,7 +257,7 @@ class face_rig():
             jnt_var_info = jnt_var.single_fk_curve_ctrl(jnt=jnt, 
                                                         parent_to='', 
                                                         version='box', 
-                                                        size=3, 
+                                                        size=ctrl_size, 
                                                         colorR=0, 
                                                         colorG=0.5, 
                                                         colorB=1)

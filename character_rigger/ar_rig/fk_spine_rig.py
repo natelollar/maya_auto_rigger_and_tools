@@ -9,7 +9,7 @@ from ..ar_functions import nurbs_ctrl
 
 class fk_spine_rig_class():
     #fk spine rig
-    def fk_spine_rig_meth(self):
+    def fk_spine_rig_meth(self, ctrl_size):
         #get spine root and head joitns
         spine_root_temp = find_jnts.find_jnts()
         spine_root = spine_root_temp.find_spine_root()
@@ -24,7 +24,7 @@ class fk_spine_rig_class():
         fk_ctrl_grp_list = []
         fk_ctrl_list = []
         for i in sel_spine:
-            make_curve = nurbs_ctrl.nurbs_ctrl( i + '_ctrl', 4.5, 1, 0, 0)
+            make_curve = nurbs_ctrl.nurbs_ctrl( i + '_ctrl', ctrl_size, 1, 0, 0)
             make_curve_info = make_curve.circle_ctrl()
             curveGroup = make_curve_info[0]
             nurbsCurve = make_curve_info[1]

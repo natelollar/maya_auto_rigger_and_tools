@@ -10,7 +10,10 @@ class auto_rig_options():
     def auto_rig_options(self):
         # lowest jnts in y of upper face jnts
         midFace_jnt_amnt = mc.textField('midFace_jnt_amnt_text', query=True, text=True)
-        pass
+        
+        control_size = mc.textField('global_ctrl_size_text', query=True, text=True)
+
+        return midFace_jnt_amnt, control_size
 
     '''
     def midFace_jnt_amount(self):

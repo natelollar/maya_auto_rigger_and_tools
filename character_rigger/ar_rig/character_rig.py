@@ -2,6 +2,7 @@
 
 import maya.cmds as mc
 
+from ..tabs import auto_rig
 from ..ar_functions import find_jnts
 from ..ar_functions import nurbs_ctrl
 from . import fk_spine_rig
@@ -12,10 +13,18 @@ from . import arm_rig
 
 def character_rig():
     #________________________________________________________________________#
+    # return auto_rig ui tab info
+    auto_rig_tab_info = auto_rig.auto_rig_options().auto_rig_options()
+    # generally lip corners and maybe mid cheek joints
+    mid_jnt_amount = auto_rig_tab_info[0]
+    # general scaling for physical size of controls
+    control_size = auto_rig_tab_info[1]
+
+    #________________________________________________________________________#
 
     # global control
     global_ctrl_var = nurbs_ctrl.nurbs_ctrl(name='character_global_ctrl', 
-                                            size=1, 
+                                            size= (1 * float(control_size) ), 
                                             colorR=1, 
                                             colorG=1, 
                                             colorB=0 )
@@ -26,7 +35,7 @@ def character_rig():
 
     # fk spine controls, including fk neck controls 
     fk_spine_rig_var = fk_spine_rig.fk_spine_rig_class()
-    fk_spine_rig_info = fk_spine_rig_var.fk_spine_rig_meth()
+    fk_spine_rig_info = fk_spine_rig_var.fk_spine_rig_meth (ctrl_size = (4.5 * float(control_size) ) )
 
     # parent top spine ctrl group under global control
     mc.parent(fk_spine_rig_info[0], global_ctrl_info[1])
@@ -47,7 +56,7 @@ def character_rig():
     spine_blend_offset = extra_rig.extra_rig ()
     spine_blend_offset_info =  spine_blend_offset.blend_jnt_offset( parent='spine_root_pos', 
                                                                     parentTo=fk_spine_rig_info[1], 
-                                                                    size=5, 
+                                                                    size =5, 
                                                                     colorR=1, 
                                                                     colorG=0, 
                                                                     colorB=0)
@@ -62,23 +71,27 @@ def character_rig():
     # fk jaw ctrl
     #parent to spine top (head) control
     jaw_ctrl_var = face_rig.face_rig()
-    jaw_ctrl_var_info = jaw_ctrl_var.jaw_ctrl(fk_spine_rig_info[3])
+    jaw_ctrl_var_info = jaw_ctrl_var.jaw_ctrl(  parent_to = fk_spine_rig_info[3], 
+                                                ctrl_size = (2.5 * float(control_size) ) 
+                                                )
 
     #________________________________________________________________________#
 
     # bot face ctrls
     # parent to jaw control
     bot_ctrls_var = face_rig.face_rig()
-    bot_ctrls_var.bot_face_ctrls(jaw_ctrl_var_info[1])
+    bot_ctrls_var.bot_face_ctrls(   ctrl_size = (1 * float(control_size) ) , 
+                                    parent_to = jaw_ctrl_var_info[1])
     
     #________________________________________________________________________#
 
     # top face ctrls/ mid face ctrls
     #parent to spine top (head) control
     top_ctrls_var = face_rig.face_rig()
-    top_ctrls_info = top_ctrls_var.top_face_ctrls(  parent_to_head = fk_spine_rig_info[3], 
+    top_ctrls_info = top_ctrls_var.top_face_ctrls(  ctrl_size = (1 * float(control_size) ),
+                                                    parent_to_head = fk_spine_rig_info[3], 
                                                     parent_to_jaw = jaw_ctrl_var_info[1], 
-                                                    mid_ctrls = 2)
+                                                    mid_ctrls = int(mid_jnt_amount) )
     # create extra grp for mid face ctrls
     character_misc_grp = mc.group(em=1, n='character_misc_grp')
     face_grp = mc.group(em=1, n='face_grp')
@@ -87,19 +100,22 @@ def character_rig():
         mc.parent(top_ctrls_info[2], face_grp)
     #parent top face ctrls to top head
     mc.parent(face_grp, character_misc_grp)
+
     #________________________________________________________________________#
 
     # ear ctrls
     #parent to spine top (head) control
     top_ctrls_var = face_rig.face_rig()
-    top_ctrls_var.ear_ctrls(fk_spine_rig_info[3])
+    top_ctrls_var.ear_ctrls(ctrl_size = (3 * float( control_size ) ), 
+                            parent_to = fk_spine_rig_info[3])
 
     #________________________________________________________________________#
 
     # tongue ctrls
     # parent to jaw controls
     top_ctrls_var = face_rig.face_rig()
-    top_ctrls_var.tongue_ctrls(jaw_ctrl_var_info[1])
+    top_ctrls_var.tongue_ctrls( ctrl_size = (3 * float( control_size ) ), 
+                                parent_to=jaw_ctrl_var_info[1] )
     
     #________________________________________________________________________#
     
@@ -108,10 +124,13 @@ def character_rig():
     left_leg_rig = leg_rig.leg_rig()
     left_leg_rig_info = left_leg_rig.create_fk_ik_leg(  direction='left',
                                                         offset_parent_jnt=spine_blend_offset_info,
-                                                        fk_ctrl_size=12,
-                                                        ik_ctrl_size=12,
-                                                        pv_ctrl_size=1,
-                                                        knee_dist_mult=10,
+                                                        swch_ctrl_dist = (40 * float(control_size) ),
+                                                        toe_wiggle_size = (2 * float(control_size) ),
+                                                        rev_foot_size = (3 * float(control_size) ),
+                                                        fk_ctrl_size = (12 * float(control_size) ),
+                                                        ik_ctrl_size = (12 * float(control_size) ),
+                                                        pv_ctrl_size = (1 * float(control_size) ),
+                                                        knee_dist_mult = (20 * float(control_size) ),
                                                         spine_root_ctrl=fk_spine_rig_info[1],
                                                         global_ctrl=global_ctrl_info[1] )
 
@@ -131,10 +150,13 @@ def character_rig():
     right_leg_rig = leg_rig.leg_rig()
     right_leg_rig_info = right_leg_rig.create_fk_ik_leg(direction='right',
                                                         offset_parent_jnt=spine_blend_offset_info,
-                                                        fk_ctrl_size=12,
-                                                        ik_ctrl_size=12,
-                                                        pv_ctrl_size=1,
-                                                        knee_dist_mult=10,
+                                                        swch_ctrl_dist = (40 * float(control_size) ),
+                                                        toe_wiggle_size = (2 * float(control_size) ),
+                                                        rev_foot_size = (3 * float(control_size) ),
+                                                        fk_ctrl_size = (12 * float(control_size) ),
+                                                        ik_ctrl_size = (12 * float(control_size) ),
+                                                        pv_ctrl_size = (1 * float(control_size) ),
+                                                        knee_dist_mult = (20 * float(control_size) ),
                                                         spine_root_ctrl=fk_spine_rig_info[1],
                                                         global_ctrl=global_ctrl_info[1])
 
@@ -178,10 +200,13 @@ def character_rig():
 
     arm_rig_return = arm_rig_class.arm_rig( direction='left', 
                                             offset_parent_jnt=chest_blend_offset_info, 
-                                            fk_ctrl_size=12, 
-                                            ik_ctrl_size=10, 
-                                            pv_ctrl_size=1, 
-                                            elbow_dist_mult=13, 
+                                            swch_ctrl_size = (3 * float(control_size) ),
+                                            swch_ctrl_dist = (35 * float(control_size) ),
+                                            finger_size = (0.4 * float(control_size) ),
+                                            fk_ctrl_size = (12 * float(control_size) ),
+                                            ik_ctrl_size = (10 * float(control_size) ),
+                                            pv_ctrl_size = (1 * float(control_size) ), 
+                                            elbow_dist_mult = (10 * float(control_size) ), 
                                             to_chest_ctrl=fk_spine_rig_info[4],
                                             global_ctrl=global_ctrl_info[1],
                                             global_misc_grp=character_misc_grp )
@@ -193,10 +218,13 @@ def character_rig():
 
     arm_rig_return = arm_rig_class.arm_rig( direction='right', 
                                             offset_parent_jnt=chest_blend_offset_info, 
-                                            fk_ctrl_size=12, 
-                                            ik_ctrl_size=10, 
-                                            pv_ctrl_size=1, 
-                                            elbow_dist_mult=13, 
+                                            finger_size = (0.4 * float(control_size) ),
+                                            swch_ctrl_size = (3 * float(control_size) ),
+                                            swch_ctrl_dist = (35 * float(control_size) ),
+                                            fk_ctrl_size = (12 * float(control_size) ),
+                                            ik_ctrl_size = (10 * float(control_size) ),
+                                            pv_ctrl_size = (1 * float(control_size) ), 
+                                            elbow_dist_mult = (10 * float(control_size) ), 
                                             to_chest_ctrl=fk_spine_rig_info[4],
                                             global_ctrl=global_ctrl_info[1],
                                             global_misc_grp=character_misc_grp)

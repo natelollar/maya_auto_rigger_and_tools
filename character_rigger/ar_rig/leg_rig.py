@@ -150,6 +150,9 @@ class leg_rig():
     def create_fk_ik_leg(   self, 
                             direction, 
                             offset_parent_jnt, 
+                            swch_ctrl_dist,
+                            toe_wiggle_size,
+                            rev_foot_size,
                             fk_ctrl_size, 
                             ik_ctrl_size, 
                             pv_ctrl_size, 
@@ -589,7 +592,7 @@ class leg_rig():
                 switchCurveC_name = 'r_legSwtch_ctrlB'
 
             #create nurbs circle
-            switchCurveA = mc.circle(n=switchCurveA_name, ch=False, r=3, nr=(0,1,0))
+            switchCurveA = mc.circle(n=switchCurveA_name, ch=False, r=rev_foot_size, nr=(0,1,0))
             #create variable for nurbs circle shape
             switchCurveA_shape = mc.listRelatives(switchCurveA, s=True)
             #color nurbs circle shape
@@ -598,7 +601,7 @@ class leg_rig():
             mc.setAttr((switchCurveA_shape[0] + '.overrideColorRGB'), 0, .5, 1)
 
             #create 2nd nurbs circle
-            switchCurveB = mc.circle(n=switchCurveB_name, ch=False, r=3, nr=(0,0,0))
+            switchCurveB = mc.circle(n=switchCurveB_name, ch=False, r=rev_foot_size, nr=(0,0,0))
             #create variable for 2nd nurbs circle shape
             switchCurveB_shape = mc.listRelatives(switchCurveB, s=True)
             #color 2nd nurbs circle shape
@@ -611,7 +614,7 @@ class leg_rig():
             mc.delete(switchCurveB)
 
             #create 3rd nurbs circle
-            switchCurveC = mc.circle(n=switchCurveC_name, ch=False, r=3, nr=(1,0,0))
+            switchCurveC = mc.circle(n=switchCurveC_name, ch=False, r=rev_foot_size, nr=(1,0,0))
             #create variable for 3rd nurbs circle shape
             switchCurveC_shape = mc.listRelatives(switchCurveC, s=True)
             #color 3rd nurbs circle shape
@@ -629,9 +632,9 @@ class leg_rig():
 
             #_______move ctrl shapes in -z_______#
             if direction == 'left':
-                mc.setAttr((switchCurveA[0] + '.tx'), -40)
+                mc.setAttr((switchCurveA[0] + '.tx'), -(swch_ctrl_dist))
             elif direction == 'right':
-                mc.setAttr((switchCurveA[0] + '.tx'), 40)
+                mc.setAttr((switchCurveA[0] + '.tx'), (swch_ctrl_dist))
             mc.xform (switchCurveA, ws=True, piv= (0, 0, 0))
             mc.makeIdentity(switchCurveA, apply=True)
 
@@ -768,7 +771,7 @@ class leg_rig():
             locCurveC_name = i.replace('loc_', 'ftCtrl_') + 'B'
 
             #create nurbs circle
-            locCurveA = mc.circle(n=locCurveA_name, ch=False, r=3, nr=(0,1,0))
+            locCurveA = mc.circle(n=locCurveA_name, ch=False, r=rev_foot_size, nr=(0,1,0))
             #create variable for nurbs circle shape
             locCurveA_shape = mc.listRelatives(locCurveA, s=True)
             #color nurbs circle shape
@@ -777,7 +780,7 @@ class leg_rig():
             mc.setAttr((locCurveA_shape[0] + ".overrideColorRGB"), .5, 1, 0)
 
             #create 2nd nurbs circle
-            locCurveB = mc.circle(n=locCurveB_name, ch=False, r=3, nr=(0,0,0))
+            locCurveB = mc.circle(n=locCurveB_name, ch=False, r=rev_foot_size, nr=(0,0,0))
             #create variable for 2nd nurbs circle shape
             locCurveB_shape = mc.listRelatives(locCurveB, s=True)
             #color 2nd nurbs circle shape
@@ -790,7 +793,7 @@ class leg_rig():
             mc.delete(locCurveB)
 
             #create 3rd nurbs circle
-            locCurveC = mc.circle(n=locCurveC_name, ch=False, r=3, nr=(1,0,0))
+            locCurveC = mc.circle(n=locCurveC_name, ch=False, r=rev_foot_size, nr=(1,0,0))
             #create variable for 3rd nurbs circle shape
             locCurveC_shape = mc.listRelatives(locCurveC, s=True)
             #color 3rd nurbs circle shape
@@ -846,6 +849,10 @@ class leg_rig():
                                         ])
             #curve size
             mc.setAttr((myCurve + '.scale'), 4.5, 3, 6)
+            #freeze transforms
+            mc.makeIdentity(myCurve, apply=True)
+            # scale again after shape created
+            mc.setAttr((myCurve + '.scale'), toe_wiggle_size, toe_wiggle_size, toe_wiggle_size)
             #freeze transforms
             mc.makeIdentity(myCurve, apply=True)
             #select curve box's shape

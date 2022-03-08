@@ -16,6 +16,9 @@ class arm_rig():
     def arm_rig(self, 
                 direction, 
                 offset_parent_jnt, 
+                swch_ctrl_size,
+                swch_ctrl_dist,
+                finger_size,
                 fk_ctrl_size, 
                 ik_ctrl_size, 
                 pv_ctrl_size, 
@@ -607,7 +610,7 @@ class arm_rig():
                 switchCurveC_name = 'r_armSwch_ctrlB'
 
             #create nurbs circle
-            switchCurveA = mc.circle(n=switchCurveA_name, ch=False, r=3, nr=(0,1,0))
+            switchCurveA = mc.circle(n=switchCurveA_name, ch=False, r=swch_ctrl_size, nr=(0,1,0))
             #create variable for nurbs circle shape
             switchCurveA_shape = mc.listRelatives(switchCurveA, s=True)
             #color nurbs circle shape
@@ -616,7 +619,7 @@ class arm_rig():
             mc.setAttr((switchCurveA_shape[0] + '.overrideColorRGB'), 0, .5, 1)
 
             #create 2nd nurbs circle
-            switchCurveB = mc.circle(n=switchCurveB_name, ch=False, r=3, nr=(0,0,0))
+            switchCurveB = mc.circle(n=switchCurveB_name, ch=False, r=swch_ctrl_size, nr=(0,0,0))
             #create variable for 2nd nurbs circle shape
             switchCurveB_shape = mc.listRelatives(switchCurveB, s=True)
             #color 2nd nurbs circle shape
@@ -629,7 +632,7 @@ class arm_rig():
             mc.delete(switchCurveB)
 
             #create 3rd nurbs circle
-            switchCurveC = mc.circle(n=switchCurveC_name, ch=False, r=3, nr=(1,0,0))
+            switchCurveC = mc.circle(n=switchCurveC_name, ch=False, r=swch_ctrl_size, nr=(1,0,0))
             #create variable for 3rd nurbs circle shape
             switchCurveC_shape = mc.listRelatives(switchCurveC, s=True)
             #color 3rd nurbs circle shape
@@ -647,9 +650,9 @@ class arm_rig():
 
             #_______move ctrl shapes in -z_______#
             if direction == 'left':
-                mc.setAttr((switchCurveA[0] + '.tz'), -35)
+                mc.setAttr((switchCurveA[0] + '.tz'), -(swch_ctrl_dist) )
             elif direction == 'right':
-                mc.setAttr((switchCurveA[0] + '.tz'), 35)
+                mc.setAttr((switchCurveA[0] + '.tz'), (swch_ctrl_dist) )
             mc.xform (switchCurveA, ws=True, piv= (0, 0, 0))
             mc.makeIdentity(switchCurveA, apply=True)
 
@@ -1213,7 +1216,7 @@ class arm_rig():
             finger_ctrl_list.fk_chain(  jnt_chain = jnt_list, 
                                         parent_to = hand_grp_offset_list[0],
                                         ctrl_type='circle',
-                                        size=0.5, 
+                                        size=finger_size, 
                                         color_r=1, 
                                         color_g=1, 
                                         color_b=0 )
