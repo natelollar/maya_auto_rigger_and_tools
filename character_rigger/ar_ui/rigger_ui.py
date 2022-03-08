@@ -60,11 +60,17 @@ class rigger_ui_class():
                                         command = 'character_rigger.ar_rig.character_rig.character_rig()',
                                         statusBarMessage='Auto Rig Character.  No Joint Names Required. Must have tongue, bot face joints, and top face joints.'
                                     )
-        auto_rig_b2 = mc.button(label='Reverse Foot Locators', 
-                                h=48, 
-                                w=150, 
-                                command = 'print("____B2______")', 
-                                bgc = (.1,.5,0), 
+        auto_rig_b2 = mc.button(label='L \n Rev Foot \n Locators', 
+                                h=50, 
+                                w=60, 
+                                command = 'character_rigger.tabs.auto_rig.auto_rig_options().rev_foot_adj("left")', 
+                                bgc = (.2,.5,0), 
+                                statusBarMessage='Only needed if want to adjust rev ft loc positions and not in scene yet.')
+        auto_rig_b3 = mc.button(label='R \n Rev Foot \n Locators', 
+                                h=50, 
+                                w=60, 
+                                command = 'character_rigger.tabs.auto_rig.auto_rig_options().rev_foot_adj("right")',
+                                bgc = (0,.5,.2), 
                                 statusBarMessage='Only needed if want to adjust rev ft loc positions and not in scene yet.')
         # corner lips
         auto_rig_text1 = mc.text(   label = 'Mid Face Jnts:', width=85, height=24, bgc=(0.4,0,0.4), align='center', font = 'boldLabelFont', 
@@ -101,7 +107,8 @@ class rigger_ui_class():
                                     (auto_rig_s3 , 'top', 0),(auto_rig_s3 , 'left', 0),
                                     (auto_rig_s4 , 'top', 0),(auto_rig_s4 , 'left', 454),
                                     (auto_rig_b1 , 'top', 70),(auto_rig_b1 , 'left', 115),
-                                    (auto_rig_b2 , 'top', 15),(auto_rig_b2 , 'left', 300),
+                                    (auto_rig_b2 , 'top', 15),(auto_rig_b2 , 'left', 325),
+                                    (auto_rig_b3 , 'top', 15),(auto_rig_b3 , 'left', 390),
                                     (auto_rig_text1 , 'top', 20),(auto_rig_text1 , 'left', 20),
                                     (auto_rig_textF1 , 'top', 20),(auto_rig_textF1 , 'left', 110),
                                     (auto_rig_text2 , 'top', 50),(auto_rig_text2 , 'left', 20),

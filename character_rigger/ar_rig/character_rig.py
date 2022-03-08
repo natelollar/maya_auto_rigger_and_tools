@@ -123,6 +123,7 @@ def character_rig():
     # parent to spine root control (global_ctrl for scale offset)
     left_leg_rig = leg_rig.leg_rig()
     left_leg_rig_info = left_leg_rig.create_fk_ik_leg(  direction='left',
+                                                        ft_loc_dist = (10 * float(control_size) ),
                                                         offset_parent_jnt=spine_blend_offset_info,
                                                         swch_ctrl_dist = (40 * float(control_size) ),
                                                         toe_wiggle_size = (2 * float(control_size) ),
@@ -149,6 +150,7 @@ def character_rig():
     # parent to spine root control
     right_leg_rig = leg_rig.leg_rig()
     right_leg_rig_info = right_leg_rig.create_fk_ik_leg(direction='right',
+                                                        ft_loc_dist = (10 * float(control_size) ),
                                                         offset_parent_jnt=spine_blend_offset_info,
                                                         swch_ctrl_dist = (40 * float(control_size) ),
                                                         toe_wiggle_size = (2 * float(control_size) ),

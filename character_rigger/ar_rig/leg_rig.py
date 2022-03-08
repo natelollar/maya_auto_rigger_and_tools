@@ -28,7 +28,7 @@ class leg_rig():
 
 
     #reverse foot rig locators
-    def rev_foot_locators( self, direction ):
+    def rev_foot_locators( self, direction, ft_loc_dist ):
 
         jnt_info = self.find_leg_jnts(direction)
         leg_chain = jnt_info[0]
@@ -82,10 +82,10 @@ class leg_rig():
             mc.setAttr((loc_toe_end[0] + '.translate'), toe_jnt_pos[0], 0, toe_jnt_pos[2])
             mc.setAttr((loc_toe_end[0] + '.rotate'), toe_jnt_rot[0], toe_jnt_rot[1], toe_jnt_rot[2])
             if direction == 'left':
-                mc.move( 0, 16, 0, (loc_toe_end[0]), r=1, os=1, wd=1)
+                mc.move( (ft_loc_dist), 0, 0, (loc_toe_end[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_toe_end[0] + '.ty'),  0)  #set at gound level
             if direction == 'right':
-                mc.move( 0, -16, 0, (loc_toe_end[0]), r=1, os=1, wd=1)
+                mc.move( -(ft_loc_dist), 0, 0, (loc_toe_end[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_toe_end[0] + '.ty'),  0)  #set at gound level
         else:
             print(direction + '_loc_toe_end' + ' Already Exists!')
@@ -100,10 +100,10 @@ class leg_rig():
             mc.setAttr((loc_heel[0] + '.translate'), ankle_jnt_pos[0], 0, ankle_jnt_pos[2])
             mc.setAttr((loc_heel[0] + '.rotate'), ankle_jnt_rot[0], ankle_jnt_rot[1], ankle_jnt_rot[2])
             if direction == 'left':
-                mc.move( 0, -15, 0, (loc_heel[0]), r=1, os=1, wd=1)
+                mc.move( -(ft_loc_dist), 0, 0, (loc_heel[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_heel[0] + '.ty'),  0)  #set at gound level
             if direction == 'right':
-                mc.move( 0, 15, 0, (loc_heel[0]), r=1, os=1, wd=1)
+                mc.move( (ft_loc_dist), 0, 0, (loc_heel[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_heel[0] + '.ty'),  0) #set at gound level
         else:
             print(direction + '_loc_heel' + ' Already Exists!')
@@ -118,10 +118,10 @@ class leg_rig():
             mc.setAttr((loc_outer_foot[0] + '.translate'), toe_jnt_pos[0], 0, toe_jnt_pos[2])
             mc.setAttr((loc_outer_foot[0] + '.rotate'), toe_jnt_rot[0], toe_jnt_rot[1], toe_jnt_rot[2])
             if direction == 'left':
-                mc.move( 0, 0, -15, (loc_outer_foot[0]), r=1, os=1, wd=1)
+                mc.move( 0, 0, -(ft_loc_dist), (loc_outer_foot[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_outer_foot[0] + '.ty'),  0)  #set at gound level
             if direction == 'right':
-                mc.move( 0, 0, 15, (loc_outer_foot[0]), r=1, os=1, wd=1)
+                mc.move( 0, 0, (ft_loc_dist), (loc_outer_foot[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_outer_foot[0] + '.ty'),  0)  #set at gound level
         else:
             print(direction + '_loc_outer_foot' + ' Already Exists!')
@@ -136,10 +136,10 @@ class leg_rig():
             mc.setAttr((loc_inner_foot[0] + '.translate'), toe_jnt_pos[0], 0, toe_jnt_pos[2])
             mc.setAttr((loc_inner_foot[0] + '.rotate'), toe_jnt_rot[0], toe_jnt_rot[1], toe_jnt_rot[2])
             if direction == 'left':
-                mc.move( 0, 0, 15, (loc_inner_foot[0]), r=1, os=1, wd=1)
+                mc.move( 0, 0, (ft_loc_dist), (loc_inner_foot[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_inner_foot[0] + '.ty'),  0)  #set at gound level
             if direction == 'right':
-                mc.move( 0, 0, -15, (loc_inner_foot[0]), r=1, os=1, wd=1)
+                mc.move( 0, 0, -(ft_loc_dist), (loc_inner_foot[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_inner_foot[0] + '.ty'),  0)  #set at gound level
         else:
             print(direction + '_loc_inner_foot' + ' Already Exists!')
@@ -149,6 +149,7 @@ class leg_rig():
     # create leg rig ('global_ctrl' for scale offset)
     def create_fk_ik_leg(   self, 
                             direction, 
+                            ft_loc_dist,
                             offset_parent_jnt, 
                             swch_ctrl_dist,
                             toe_wiggle_size,
@@ -723,18 +724,10 @@ class leg_rig():
 
         #_________________Reverse Foot Rig___________________#
         #____________________________________________________#
+
         # create locators for reverse foot if not exist, also declare locator list
         if direction == 'right':
-            '''
-            # if any of the locators don't exist, create them
-            if  mc.objExists('right_loc_ankle') == False or \
-                mc.objExists('right_loc_toe') == False or \
-                mc.objExists('right_loc_toe_end') == False or \
-                mc.objExists('right_loc_heel') == False or \
-                mc.objExists('right_loc_outer_foot') == False or \
-                mc.objExists('right_loc_inner_foot') == False:
-                '''
-            self.rev_foot_locators('right')
+            self.rev_foot_locators(direction ='right', ft_loc_dist = ft_loc_dist)
             # declare locator list          
             rvFoot_loc_list = ( 'right_loc_ankle', 
                                 'right_loc_toe', 
@@ -743,16 +736,7 @@ class leg_rig():
                                 'right_loc_outer_foot', 
                                 'right_loc_inner_foot')
         elif direction == 'left':
-            '''
-            # if any of the locators don't exist, create them
-            if  mc.objExists('left_loc_ankle') == False or \
-                mc.objExists('left_loc_toe') == False or \
-                mc.objExists('left_loc_toe_end') == False or \
-                mc.objExists('left_loc_heel') == False or \
-                mc.objExists('left_loc_outer_foot') == False or \
-                mc.objExists('left_loc_inner_foot') == False:
-                '''
-            self.rev_foot_locators('left')
+            self.rev_foot_locators(direction ='left', ft_loc_dist = ft_loc_dist)
             # declare locator list          
             rvFoot_loc_list = ( 'left_loc_ankle', 
                                 'left_loc_toe', 
@@ -1013,8 +997,8 @@ class leg_rig():
         mc.parent(leg_loc_0, myLegGrp)
         mc.parent(leg_loc_1, myLegGrp)
         # delete or hide foot locators
-        #for i in rvFoot_loc_list: mc.setAttr(i + '.visibility', 0)
-        mc.delete(rvFoot_loc_list)
+        for i in rvFoot_loc_list: mc.setAttr(i + '.visibility', 0)
+        #mc.delete(rvFoot_loc_list)
         
         # parent switch grp to main leg grp
         mc.parent(switch_ctrl_grp_list, myLegGrp)
