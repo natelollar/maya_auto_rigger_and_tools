@@ -60,6 +60,34 @@ class rigger_ui_class():
                                         command = 'character_rigger.ar_rig.character_rig.character_rig()',
                                         statusBarMessage='Auto Rig Character.  No Joint Names Required. Must have tongue, bot face joints, and top face joints.'
                                     )
+        auto_rig_b2 = mc.button(label='Reverse Foot Locators', 
+                                h=48, 
+                                w=150, 
+                                command = 'print("____B2______")', 
+                                bgc = (.1,.5,0), 
+                                statusBarMessage='Only needed if want to adjust rev ft loc positions and not in scene yet.')
+        # corner lips
+        auto_rig_text1 = mc.text(   label = 'Mid Face Jnts:', width=85, height=24, bgc=(0.4,0,0.4), align='center', font = 'boldLabelFont', 
+                                    statusBarMessage='Amount of Mid Face Joints to be weighted between top face and bot face jnts. First 2 mid joints might be the lip corners.  Then the next 2 lowest top face joints, might be the cheeks.')
+        auto_rig_textF1 = mc.textField( 'midFace_jnt_amnt_text', width=40, h=24, text='2', bgc=(.2,0,.2), 
+                                        statusBarMessage='Amount of Mid Face Joints to be weighted between top face and bot face jnts.  First 2 mid joints might be the lip corners.  Then the next lowest top face joints, might be the cheeks.' )
+        auto_rig_text2 = mc.text(   label = 'Control Size:', width=85, height=24, bgc=(0.4,0,0.4), align='center', font = 'boldLabelFont', 
+                                    statusBarMessage='')
+        auto_rig_textF2 = mc.textField( 'global_ctrl_size_text', width=40, h=24, text='1', bgc=(.2,0,.2), 
+                                        statusBarMessage='' )
+        headJnts_checkbox = mc.checkBox('alpha_checkbox', 
+                                        label='Head Jnts', 
+                                        ofc='check_value()', 
+                                        onc='check_value()', 
+                                        value=True, 
+                                        bgc=(.4,0,.4), 
+                                        width=85, 
+                                        height=24,
+                                        statusBarMessage='If unchecked, will not look for face joints.' +  
+                                        ' For instance, uncheck if mocap skeleton with only top head joint and no face joints, ear joints, or tongue joints.' )
+
+        
+        
         # mc.radioCollection()
         # auto_rig_b2 = mc.radioButton( label='choose this', bgc=(0,.448,1) )
         # auto_rig_b3 = mc.radioButton( label='choose this', bgc=(0,.448,1) )
@@ -72,7 +100,13 @@ class rigger_ui_class():
                                     (auto_rig_s2 , 'top', 265),(auto_rig_s2 , 'left', 0),
                                     (auto_rig_s3 , 'top', 0),(auto_rig_s3 , 'left', 0),
                                     (auto_rig_s4 , 'top', 0),(auto_rig_s4 , 'left', 454),
-                                    (auto_rig_b1 , 'top', 70),(auto_rig_b1 , 'left', 115)
+                                    (auto_rig_b1 , 'top', 70),(auto_rig_b1 , 'left', 115),
+                                    (auto_rig_b2 , 'top', 15),(auto_rig_b2 , 'left', 300),
+                                    (auto_rig_text1 , 'top', 20),(auto_rig_text1 , 'left', 20),
+                                    (auto_rig_textF1 , 'top', 20),(auto_rig_textF1 , 'left', 110),
+                                    (auto_rig_text2 , 'top', 50),(auto_rig_text2 , 'left', 20),
+                                    (auto_rig_textF2 , 'top', 50),(auto_rig_textF2 , 'left', 110),
+                                    (headJnts_checkbox , 'top', 20),(headJnts_checkbox , 'left', 180)
                                     #(auto_rig_b2 , 'top', 12),(auto_rig_b2 , 'left', 12),
                                     #(auto_rig_b3 , 'top', 35),(auto_rig_b3 , 'left', 12),
                                     #(auto_rig_b4 , 'top', 58),(auto_rig_b4 , 'left', 12) 
