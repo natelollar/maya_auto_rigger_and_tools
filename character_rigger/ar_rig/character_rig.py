@@ -2,7 +2,7 @@
 
 import maya.cmds as mc
 
-from ..tabs import auto_rig
+from ..tabs import auto_rig_tab
 from ..ar_functions import find_jnts
 from ..ar_functions import nurbs_ctrl
 from . import fk_spine_rig
@@ -14,11 +14,17 @@ from . import arm_rig
 def character_rig():
     #________________________________________________________________________#
     # return auto_rig ui tab info
-    auto_rig_tab_info = auto_rig.auto_rig_options().auto_rig_options()
+    auto_rig_tab_info = auto_rig_tab.auto_rig_options().auto_rig_options()
     # generally lip corners and maybe mid cheek joints
     mid_jnt_amount = auto_rig_tab_info[0]
     # general scaling for physical size of controls
     control_size = auto_rig_tab_info[1]
+    # get boolean value of headJnt checkbox
+    headJnts_checkbox = auto_rig_tab_info[2]
+
+    #________________________________________________________________________#
+    #create grp for item organization
+    character_misc_grp = mc.group(em=1, n='character_misc_grp')
 
     #________________________________________________________________________#
 
@@ -66,56 +72,60 @@ def character_rig():
     # hide blend joint and blend leg joints as result
     mc.setAttr(spine_blend_offset_info + '.visibility', 0)
 
-    #________________________________________________________________________#
-
-    # fk jaw ctrl
-    #parent to spine top (head) control
-    jaw_ctrl_var = face_rig.face_rig()
-    jaw_ctrl_var_info = jaw_ctrl_var.jaw_ctrl(  parent_to = fk_spine_rig_info[3], 
-                                                ctrl_size = (2.5 * float(control_size) ) 
-                                                )
 
     #________________________________________________________________________#
-
-    # bot face ctrls
-    # parent to jaw control
-    bot_ctrls_var = face_rig.face_rig()
-    bot_ctrls_var.bot_face_ctrls(   ctrl_size = (1 * float(control_size) ) , 
-                                    parent_to = jaw_ctrl_var_info[1])
-    
+    # head joints on/ off
+    if headJnts_checkbox == True:
     #________________________________________________________________________#
+        # fk jaw ctrl
+        #parent to spine top (head) control
+        jaw_ctrl_var = face_rig.face_rig()
+        jaw_ctrl_var_info = jaw_ctrl_var.jaw_ctrl(  parent_to = fk_spine_rig_info[3], 
+                                                    ctrl_size = (2.5 * float(control_size) ) 
+                                                    )
 
-    # top face ctrls/ mid face ctrls
-    #parent to spine top (head) control
-    top_ctrls_var = face_rig.face_rig()
-    top_ctrls_info = top_ctrls_var.top_face_ctrls(  ctrl_size = (1 * float(control_size) ),
-                                                    parent_to_head = fk_spine_rig_info[3], 
-                                                    parent_to_jaw = jaw_ctrl_var_info[1], 
-                                                    mid_ctrls = int(mid_jnt_amount) )
-    # create extra grp for mid face ctrls
-    character_misc_grp = mc.group(em=1, n='character_misc_grp')
-    face_grp = mc.group(em=1, n='face_grp')
-    #if mid face ctrls exist
-    if top_ctrls_info[2] == True:
-        mc.parent(top_ctrls_info[2], face_grp)
-    #parent top face ctrls to top head
-    mc.parent(face_grp, character_misc_grp)
+        #________________________________________________________________________#
 
-    #________________________________________________________________________#
+        # bot face ctrls
+        # parent to jaw control
+        bot_ctrls_var = face_rig.face_rig()
+        bot_ctrls_var.bot_face_ctrls(   ctrl_size = (1 * float(control_size) ) , 
+                                        parent_to = jaw_ctrl_var_info[1])
+        
+        #________________________________________________________________________#
 
-    # ear ctrls
-    #parent to spine top (head) control
-    top_ctrls_var = face_rig.face_rig()
-    top_ctrls_var.ear_ctrls(ctrl_size = (3 * float( control_size ) ), 
-                            parent_to = fk_spine_rig_info[3])
+        # top face ctrls/ mid face ctrls
+        #parent to spine top (head) control
+        top_ctrls_var = face_rig.face_rig()
+        top_ctrls_info = top_ctrls_var.top_face_ctrls(  ctrl_size = (1 * float(control_size) ),
+                                                        parent_to_head = fk_spine_rig_info[3], 
+                                                        parent_to_jaw = jaw_ctrl_var_info[1], 
+                                                        mid_ctrls = int(mid_jnt_amount) )
+        # create extra grp for mid face ctrls
+        face_grp = mc.group(em=1, n='face_grp')
+        #if mid face ctrls exist
+        if top_ctrls_info[2] == True:
+            mc.parent(top_ctrls_info[2], face_grp)
+        #parent top face ctrls to top head
+        mc.parent(face_grp, character_misc_grp)
 
-    #________________________________________________________________________#
+        #________________________________________________________________________#
 
-    # tongue ctrls
-    # parent to jaw controls
-    top_ctrls_var = face_rig.face_rig()
-    top_ctrls_var.tongue_ctrls( ctrl_size = (3 * float( control_size ) ), 
-                                parent_to=jaw_ctrl_var_info[1] )
+        # ear ctrls
+        #parent to spine top (head) control
+        top_ctrls_var = face_rig.face_rig()
+        top_ctrls_var.ear_ctrls(ctrl_size = (3 * float( control_size ) ), 
+                                parent_to = fk_spine_rig_info[3])
+
+        #________________________________________________________________________#
+
+        # tongue ctrls
+        # parent to jaw controls
+        top_ctrls_var = face_rig.face_rig()
+        top_ctrls_var.tongue_ctrls( ctrl_size = (3 * float( control_size ) ), 
+                                    parent_to=jaw_ctrl_var_info[1] )
+    elif headJnts_checkbox == False:
+        pass
     
     #________________________________________________________________________#
     
@@ -174,17 +184,16 @@ def character_rig():
     # create offset joints for blend color arms
 
     # find chest jnt index
-    chest_index = find_jnts.find_jnts()
-    chest_index_info = chest_index.find_chest_jnt_index()
+    chest_index = find_jnts.find_jnts().find_chest_jnt_index()
 
     # fk spine joints up to chest control
-    to_chest_ctrl_list = fk_spine_rig_info[4]
+    to_chest_ctrl  = extra_rig.extra_rig ().to_chest_ctrl(fk_spine_rig_info[4])
 
     # create offset jnt
     # parent constrain offset jnt to fk chest ctrl
     chest_blend_offset = extra_rig.extra_rig ()
     chest_blend_offset_info =  chest_blend_offset.blend_jnt_offset( parent='chest_pos', 
-                                                                    parentTo=to_chest_ctrl_list[chest_index_info], 
+                                                                    parentTo=to_chest_ctrl[chest_index], 
                                                                     size=5, 
                                                                     colorR=1, 
                                                                     colorG=0, 
@@ -195,7 +204,7 @@ def character_rig():
     # hide blend joint and blend arm joints as result
     mc.setAttr(chest_blend_offset_info + '.visibility', 0)
     
-    
+
     #________________________________________________________________________#
     # create l arm ctrls
     arm_rig_class = arm_rig.arm_rig()
@@ -209,7 +218,7 @@ def character_rig():
                                             ik_ctrl_size = (10 * float(control_size) ),
                                             pv_ctrl_size = (1 * float(control_size) ), 
                                             elbow_dist_mult = (10 * float(control_size) ), 
-                                            to_chest_ctrl=fk_spine_rig_info[4],
+                                            to_chest_ctrl=to_chest_ctrl,
                                             global_ctrl=global_ctrl_info[1],
                                             global_misc_grp=character_misc_grp )
 
@@ -227,7 +236,7 @@ def character_rig():
                                             ik_ctrl_size = (10 * float(control_size) ),
                                             pv_ctrl_size = (1 * float(control_size) ), 
                                             elbow_dist_mult = (10 * float(control_size) ), 
-                                            to_chest_ctrl=fk_spine_rig_info[4],
+                                            to_chest_ctrl=to_chest_ctrl,
                                             global_ctrl=global_ctrl_info[1],
                                             global_misc_grp=character_misc_grp)
 

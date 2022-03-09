@@ -60,6 +60,10 @@ class extra_rig():
 
         return myJoint
 
-    def single_fk_ctrl(self):
-        pass
+    # find spine ctrls up to and including chest ctrl
+    def to_chest_ctrl(self, fk_ctrl_list):
+        chest_jnt_index = find_jnts.find_jnts().find_chest_jnt_index()
 
+        to_chest_ctrl = fk_ctrl_list[:(chest_jnt_index + 1)]
+
+        return to_chest_ctrl

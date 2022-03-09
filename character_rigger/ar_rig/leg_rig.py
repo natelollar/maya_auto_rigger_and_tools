@@ -227,7 +227,6 @@ class leg_rig():
         currentIndex = -1
         for i in ikJoint_list:
             currentIndex += 1
-            print (currentIndex)
             if i != ikJoint_list[0]:
                 mc.parent(ikJoint_list[currentIndex], ikJoint_list[currentIndex-1])
         

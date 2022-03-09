@@ -63,13 +63,13 @@ class rigger_ui_class():
         auto_rig_b2 = mc.button(label='L \n Rev Foot \n Locators', 
                                 h=50, 
                                 w=60, 
-                                command = 'character_rigger.tabs.auto_rig.auto_rig_options().rev_foot_adj("left")', 
+                                command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().rev_foot_adj("left")', 
                                 bgc = (.2,.5,0), 
                                 statusBarMessage='Only needed if want to adjust rev ft loc positions and not in scene yet.')
         auto_rig_b3 = mc.button(label='R \n Rev Foot \n Locators', 
                                 h=50, 
                                 w=60, 
-                                command = 'character_rigger.tabs.auto_rig.auto_rig_options().rev_foot_adj("right")',
+                                command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().rev_foot_adj("right")',
                                 bgc = (0,.5,.2), 
                                 statusBarMessage='Only needed if want to adjust rev ft loc positions and not in scene yet.')
         # corner lips
@@ -81,24 +81,21 @@ class rigger_ui_class():
                                     statusBarMessage='')
         auto_rig_textF2 = mc.textField( 'global_ctrl_size_text', width=40, h=24, text='0.5', bgc=(.2,0,.2), 
                                         statusBarMessage='' )
-        headJnts_checkbox = mc.checkBox('alpha_checkbox', 
+        headJnts_checkbox = mc.checkBox('headJnts_checkbox', 
                                         label='Head Jnts', 
-                                        ofc='check_value()', 
-                                        onc='check_value()', 
                                         value=True, 
                                         bgc=(.4,0,.4), 
-                                        width=85, 
+                                        width=115, 
                                         height=24,
                                         statusBarMessage='If unchecked, will not look for face joints.' +  
                                         ' For instance, uncheck if mocap skeleton with only top head joint and no face joints, ear joints, or tongue joints.' )
-
-        
-        
-        # mc.radioCollection()
-        # auto_rig_b2 = mc.radioButton( label='choose this', bgc=(0,.448,1) )
-        # auto_rig_b3 = mc.radioButton( label='choose this', bgc=(0,.448,1) )
-        # auto_rig_b4 = mc.radioButton( label='choose this', bgc=(0,.448,1) )
-                                    
+        twstJnts_checkbox = mc.checkBox('twstJnts_checkbox', 
+                                        label='ForeArm Twst Jnts', 
+                                        value=True, 
+                                        bgc=(.4,0,.4), 
+                                        width=115, 
+                                        height=24,
+                                        statusBarMessage='')
         
         mc.formLayout(  auto_rig_form,
                         edit=True, 
@@ -106,14 +103,15 @@ class rigger_ui_class():
                                     (auto_rig_s2 , 'top', 265),(auto_rig_s2 , 'left', 0),
                                     (auto_rig_s3 , 'top', 0),(auto_rig_s3 , 'left', 0),
                                     (auto_rig_s4 , 'top', 0),(auto_rig_s4 , 'left', 454),
-                                    (auto_rig_b1 , 'top', 70),(auto_rig_b1 , 'left', 115),
+                                    (auto_rig_b1 , 'top', 90),(auto_rig_b1 , 'left', 115),
                                     (auto_rig_b2 , 'top', 15),(auto_rig_b2 , 'left', 325),
                                     (auto_rig_b3 , 'top', 15),(auto_rig_b3 , 'left', 390),
                                     (auto_rig_text1 , 'top', 20),(auto_rig_text1 , 'left', 20),
                                     (auto_rig_textF1 , 'top', 20),(auto_rig_textF1 , 'left', 110),
                                     (auto_rig_text2 , 'top', 50),(auto_rig_text2 , 'left', 20),
                                     (auto_rig_textF2 , 'top', 50),(auto_rig_textF2 , 'left', 110),
-                                    (headJnts_checkbox , 'top', 20),(headJnts_checkbox , 'left', 180)
+                                    (headJnts_checkbox , 'top', 50),(headJnts_checkbox , 'left', 180),
+                                    (twstJnts_checkbox , 'top', 20),(twstJnts_checkbox , 'left', 180)
                                     #(auto_rig_b2 , 'top', 12),(auto_rig_b2 , 'left', 12),
                                     #(auto_rig_b3 , 'top', 35),(auto_rig_b3 , 'left', 12),
                                     #(auto_rig_b4 , 'top', 58),(auto_rig_b4 , 'left', 12) 
