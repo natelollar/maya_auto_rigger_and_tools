@@ -1,4 +1,5 @@
 # ui 
+from calendar import c
 import maya.cmds as mc
 
 import os
@@ -48,12 +49,12 @@ class rigger_ui_class():
 
         auto_rig_form = mc.formLayout(numberOfDivisions=100)
 
-
+        #seperators
         auto_rig_s1 = mc.separator(style='none', w=454, h=10, bgc=(0,.448,1) )
         auto_rig_s2 = mc.separator(style='none', w=464, h=10, bgc=(0,.448,1) )
         auto_rig_s3 = mc.separator(style='none', h=265, w=10, bgc=(0,.448,1) )
         auto_rig_s4 = mc.separator(style='none', h=265, w=10, bgc=(0,.448,1) )
-
+        # buttons
         auto_rig_b1 = mc.symbolButton(  image = os.path.abspath( os.path.join(__file__, "..", "..", "icons/", "RIG_ME.png") ),
                                         h=130, 
                                         w=230, 
@@ -72,6 +73,29 @@ class rigger_ui_class():
                                 command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().rev_foot_adj("right")',
                                 bgc = (0,.5,.2), 
                                 statusBarMessage='Only needed if want to adjust rev ft loc positions and not in scene yet.')
+        auto_rig_b4 = mc.button(label='Jnt Ori/ Rot Axis', 
+                                ann='Show Joint Orient & Rotate Axis & Rotate Order.',
+                                h=25, 
+                                w=100, 
+                                command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().show_orient_axis()',
+                                bgc = (.5,.1,0), 
+                                statusBarMessage='Reveal Rotate Axis, Joint Orient, & Rotate Order in channel box.  Rotate Axis should be 0. Regular rotation should be 0. Rotation values should be in Joint Orient.')
+        auto_rig_b5 = mc.button(label='Locator/s for Axis', 
+                                ann='Create & parent locator under joint.',
+                                h=25, 
+                                w=100, 
+                                command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().jnt_loc_axis()',
+                                bgc = (.5,.2,0), 
+                                statusBarMessage='Creare locator parented under selected joint to help align axis.' )
+        auto_rig_b6 = mc.button(label='Show Local Axis', 
+                                ann='Show local axis for hierarchy.',
+                                h=25, 
+                                w=100, 
+                                command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().disp_local_axis()',
+                                bgc = (.5,.3,0), 
+                                statusBarMessage='Show local axis for hierarchy.' )
+        
+        # text fields
         # corner lips
         auto_rig_text1 = mc.text(   label = 'Mid Face Jnts:', width=85, height=24, bgc=(0.4,0,0.4), align='center', font = 'boldLabelFont', 
                                     statusBarMessage='Amount of Mid Face Joints to be weighted between top face and bot face jnts. First 2 mid joints might be the lip corners.  Then the next 2 lowest top face joints, might be the cheeks.')
@@ -81,6 +105,7 @@ class rigger_ui_class():
                                     statusBarMessage='')
         auto_rig_textF2 = mc.textField( 'global_ctrl_size_text', width=40, h=24, text='0.5', bgc=(.2,0,.2), 
                                         statusBarMessage='' )
+        # check boxes
         headJnts_checkbox = mc.checkBox('headJnts_checkbox', 
                                         label='Head Jnts', 
                                         value=True, 
@@ -96,29 +121,34 @@ class rigger_ui_class():
                                         width=115, 
                                         height=24,
                                         statusBarMessage='Uncheck if no forearm twist jnts.  Also, wrist jnt should be parented to elbow, not twist jnt end (a current rig limitation.)')
-        
+        # rigger tab ui layout
         mc.formLayout(  auto_rig_form,
-                        edit=True, 
+                        edit=True,  # seperators
                         attachForm=[(auto_rig_s1 , 'top', 0),(auto_rig_s1 , 'left', 0),
                                     (auto_rig_s2 , 'top', 265),(auto_rig_s2 , 'left', 0),
                                     (auto_rig_s3 , 'top', 0),(auto_rig_s3 , 'left', 0),
                                     (auto_rig_s4 , 'top', 0),(auto_rig_s4 , 'left', 454),
+                                    # buttons
                                     (auto_rig_b1 , 'top', 90),(auto_rig_b1 , 'left', 115),
                                     (auto_rig_b2 , 'top', 15),(auto_rig_b2 , 'left', 325),
                                     (auto_rig_b3 , 'top', 15),(auto_rig_b3 , 'left', 390),
+                                    (auto_rig_b4 , 'top', 235),(auto_rig_b4 , 'left', 15),
+                                    (auto_rig_b5 , 'top', 235),(auto_rig_b5 , 'left', 120),
+                                    (auto_rig_b6 , 'top', 235),(auto_rig_b6 , 'left', 225),
+                                    # text fields
                                     (auto_rig_text1 , 'top', 20),(auto_rig_text1 , 'left', 20),
                                     (auto_rig_textF1 , 'top', 20),(auto_rig_textF1 , 'left', 110),
                                     (auto_rig_text2 , 'top', 50),(auto_rig_text2 , 'left', 20),
                                     (auto_rig_textF2 , 'top', 50),(auto_rig_textF2 , 'left', 110),
+                                    # checkboxes
                                     (headJnts_checkbox , 'top', 50),(headJnts_checkbox , 'left', 180),
                                     (twstJnts_checkbox , 'top', 20),(twstJnts_checkbox , 'left', 180)
                                     ]
                         )
-        
+        # parent for layout to column
         mc.setParent("..")
 
-
-        #parent column to tab
+        # parent column to tab
         mc.setParent('..')
 
         #________________________________Rigging Tab @mkg _______________________________#
@@ -372,13 +402,14 @@ class rigger_ui_class():
         mc.setParent("..")
 
         # create HUMAN model, Polygon ARCH 
-        mc.rowLayout(numberOfColumns = 4)
-        mc.button(  label='create HUMAN model', 
+        mc.rowLayout(numberOfColumns = 6)
+        mc.button(  label='MULTI OBJ Export \n \/ \n \/ \n \/', 
                     h=75, 
                     w=142, 
-                    command = 'character_rigger.tabs.modeling.modeling_class().create_human()', 
-                    bgc = (.25,.2,.2), 
-                    statusBarMessage='Imports Default Human Sculpting Base' )
+                    command = 'character_rigger.tabs.modeling.modeling_class().mult_obj_exp()', 
+                    bgc = (.5,0,.5), 
+                    statusBarMessage='Select multiple objects to export.')
+        
         mc.separator(style='none', w=10, h=75, bgc=(0,0.2,0.4))
         mc.button(  label='Make Polygon ARCH \n (No Undo)', 
                     h=75, 
@@ -387,12 +418,35 @@ class rigger_ui_class():
                     bgc = (.5,.2,0), 
                     statusBarMessage='Create Basic Polygonal Arch (1st One Created Does Not Support Undo Currently)')
         mc.separator(style='none', w=10, h=75, bgc=(0,0.2,0.4))
+        mc.button(  label='create HUMAN model', 
+                    h=75, 
+                    w=142, 
+                    command = 'character_rigger.tabs.modeling.modeling_class().create_human()', 
+                    bgc = (.25,.2,.2), 
+                    statusBarMessage='Imports Default Human Sculpting Base' )
         mc.setParent('..')
+
 
         # blue seperator
         mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=10, width=310, align='center', font = 'fixedWidthFont', bgc=(0,0.2,0.4))
+        mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.2,0.4))
         mc.setParent("..")
+
+        # obj export text field
+        def_text_var = os.path.abspath( os.path.join(__file__, "..", "..", "..", "..", "..", "..", "..", "downloads/") )
+        mc.rowLayout(numberOfColumns = 1)
+        mc.textFieldButtonGrp(  'obj_exp_text',
+                                label = '  OBJ Export Path:', # title
+                                cl3 = ['left', 'left', 'left'], # alignment of 3 columns (title, text, button)
+                                height=30, 
+                                width=454, 
+                                text= def_text_var ,
+                                #bgc=(.5,0,.5), #background color
+                                cw3 = [95,305,60], # width of the 3 columns 
+                                buttonLabel='Browse', # button label
+                                buttonCommand= 'character_rigger.tabs.modeling.modeling_class().browse_files()' ) 
+        mc.setParent("..")
+
 
         #parent column to tab
         mc.setParent('..')
@@ -413,7 +467,7 @@ class rigger_ui_class():
         mc.intSlider('slider_value', 
         w=200, 
         minValue=0, 
-        max=5, 
+        max=11, 
         value=0, 
         step=1, 
         dc = 'character_rigger.tabs.color_slider.color_class().slider_move()' )
@@ -430,7 +484,7 @@ class rigger_ui_class():
         mc.intSlider('transform_slider_value', 
         w=200, 
         minValue=0, 
-        max=5, 
+        max=11, 
         value=0, 
         step=1, 
         dc='character_rigger.tabs.color_slider.color_class().transform_slider_move()')
@@ -447,7 +501,7 @@ class rigger_ui_class():
         mc.intSlider('wire_slider_value', 
         w=200, 
         minValue=0, 
-        max=5, 
+        max=11, 
         value=0, 
         step=1, 
         dc='character_rigger.tabs.color_slider.color_class().wire_slider_move()')
@@ -464,7 +518,7 @@ class rigger_ui_class():
         mc.intSlider('wireT_slider_value', 
         w=200, 
         minValue=0, 
-        max=5, 
+        max=11, 
         value=0, 
         step=1, 
         dc='character_rigger.tabs.color_slider.color_class().wireT_slider_move()')
@@ -481,11 +535,28 @@ class rigger_ui_class():
         mc.intSlider('outliner_slider_value', 
         w=200, 
         minValue=0, 
-        max=5, 
+        max=11, 
         value=0, 
         step=1, 
         dc='character_rigger.tabs.color_slider.color_class().outliner_slider_move()')
         mc.iconTextButton('outliner_color', w=55, bgc=(0.5, 0.5, 0.5))
+        mc.setParent('..')
+
+        # Seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = ' Change "Curve Width" of Selection', height=20, width=454, align='left', font = 'fixedWidthFont', bgc=(.5,0.5,0))
+        mc.setParent("..")
+
+        # outliner color slider
+        mc.rowLayout(numberOfColumns = 2)
+        mc.intSlider('curve_width_value', 
+        w=200, 
+        minValue=0, 
+        max=11, 
+        value=0, 
+        step=1, 
+        dc='character_rigger.tabs.color_slider.color_class().curve_width()')
+        mc.iconTextButton('curve_width', w=55, bgc=(0, 0, 0))
         mc.setParent('..')
 
         #parent column to tab

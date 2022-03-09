@@ -183,3 +183,27 @@ class modeling_class():
         #select arch
         mc.select(myArch)
 
+    #export multiple objs into seperate files
+    def mult_obj_exp(self):
+        mySel = mc.ls(sl=1)
+
+        for i in mySel:
+            mc.select(i)
+            mc.file('D:/Videos/projects/test/obj_export/' + i + '.obj',
+                        typ='OBJexport',
+                        es=1, # export selected 
+                        pr=1, # preserve ref
+                        f=1, # force
+                        options=('groups=0; ptgroups=0; materials=0; smoothing=1; normals=1'), 
+                        )
+
+
+    def dirPath(self):  #, filePath
+        mc.textFieldButtonGrp('obj_exp_text', edit=True, )  #text=str(filePath
+
+    def browse_files(self):
+        mc.fileDialog2( m=4, 
+                        fc='character_rigger.tabs.modeling.modeling_class().dirPath()', 
+                        ft='directory', 
+                        an='Choose Location')
+
