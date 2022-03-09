@@ -949,7 +949,7 @@ class leg_rig():
         pv_shin_scale = 1 + (shin_len_prc_diff * shin_len_prc)  # not used, only in expression below
 
         # soft ik, a little less than total length to keep some bend in knee joint
-        mc.expression ( s = leg_dist_ratio + '.input2X =' + str( (to_knee_len + to_ankle_len) * 0.994 ) + ' *' + 
+        mc.expression ( s = leg_dist_ratio + '.input2X =' + str(  (to_knee_len + to_ankle_len) * .994  ) + ' *' +  # round limits to 3 decimal places
                         # shin length amount of pv scale
                         '(1 +' '( ( (' + pv_ctrl_list[0] + '.scaleX) - 1) *' + str(shin_len_prc) + ') ) *' +
                         spine_root_ctrl + '.scaleX * ' + 

@@ -1307,6 +1307,9 @@ class arm_rig():
         # parent under global misc grp
         mc.parent(myArmGrp, global_misc_grp)
 
+        # set default to ik arm
+        mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0)
+
         #____________________________________________________________________________#
         #__________________chest ctrl/ global ctrl parenting_________________________#
         #____________________________________________________________________________#
