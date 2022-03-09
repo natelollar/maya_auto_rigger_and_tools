@@ -95,7 +95,7 @@ class rigger_ui_class():
                                         bgc=(.4,0,.4), 
                                         width=115, 
                                         height=24,
-                                        statusBarMessage='')
+                                        statusBarMessage='Uncheck if no forearm twist jnts.  Also, wrist jnt should be parented to elbow, not twist jnt end (a current rig limitation.)')
         
         mc.formLayout(  auto_rig_form,
                         edit=True, 
@@ -112,9 +112,6 @@ class rigger_ui_class():
                                     (auto_rig_textF2 , 'top', 50),(auto_rig_textF2 , 'left', 110),
                                     (headJnts_checkbox , 'top', 50),(headJnts_checkbox , 'left', 180),
                                     (twstJnts_checkbox , 'top', 20),(twstJnts_checkbox , 'left', 180)
-                                    #(auto_rig_b2 , 'top', 12),(auto_rig_b2 , 'left', 12),
-                                    #(auto_rig_b3 , 'top', 35),(auto_rig_b3 , 'left', 12),
-                                    #(auto_rig_b4 , 'top', 58),(auto_rig_b4 , 'left', 12) 
                                     ]
                         )
         
@@ -123,8 +120,6 @@ class rigger_ui_class():
 
         #parent column to tab
         mc.setParent('..')
-
-
 
         #________________________________Rigging Tab @mkg _______________________________#
         #__________________________________________________________________________#

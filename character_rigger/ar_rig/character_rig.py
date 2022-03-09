@@ -21,6 +21,8 @@ def character_rig():
     control_size = auto_rig_tab_info[1]
     # get boolean value of headJnt checkbox
     headJnts_checkbox = auto_rig_tab_info[2]
+    # get boolean value of twstJnt checkbox
+    twstJnts_checkbox = auto_rig_tab_info[3]
 
     #________________________________________________________________________#
     #create grp for item organization
@@ -220,7 +222,8 @@ def character_rig():
                                             elbow_dist_mult = (10 * float(control_size) ), 
                                             to_chest_ctrl=to_chest_ctrl,
                                             global_ctrl=global_ctrl_info[1],
-                                            global_misc_grp=character_misc_grp )
+                                            global_misc_grp=character_misc_grp, 
+                                            twstJnts_checkbox=twstJnts_checkbox )
 
     
     #________________________________________________________________________#
@@ -238,7 +241,8 @@ def character_rig():
                                             elbow_dist_mult = (10 * float(control_size) ), 
                                             to_chest_ctrl=to_chest_ctrl,
                                             global_ctrl=global_ctrl_info[1],
-                                            global_misc_grp=character_misc_grp)
+                                            global_misc_grp=character_misc_grp,
+                                            twstJnts_checkbox=twstJnts_checkbox )
 
 
     #________________________________________________________________________#

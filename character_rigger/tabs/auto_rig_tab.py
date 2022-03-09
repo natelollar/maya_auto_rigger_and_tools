@@ -15,7 +15,9 @@ class auto_rig_options():
 
         headJnts_checkbox = mc.checkBox( 'headJnts_checkbox', query=1, v=1 )
 
-        return midFace_jnt_amnt, control_size, headJnts_checkbox
+        twstJnts_checkbox = mc.checkBox( 'twstJnts_checkbox', query=1, v=1 )
+
+        return midFace_jnt_amnt, control_size, headJnts_checkbox, twstJnts_checkbox
 
     # reverse foot locator distance adjusted with Control Size textfield
     def rev_foot_adj(self, direction):
