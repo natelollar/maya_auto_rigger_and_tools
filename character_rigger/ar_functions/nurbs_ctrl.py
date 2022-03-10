@@ -171,15 +171,18 @@ class nurbs_ctrl():
         #rename shape
         mc.rename(itemsShape[0], nurbsCurve + 'Shape' )
 
-        # grp nurbs curve control
-        curveGroup_offset = mc.group( em=True, n=(nurbsCurve + '_grp_offset') )
-        mc.parent(nurbsCurve, curveGroup_offset)
+        #renaming curve inturn renames all its shapes
+        nurbsCurve_name = mc.rename(nurbsCurve, nurbsCurve + '#')
 
-        curveGroup = mc.group( em=True, n=(nurbsCurve + '_grp') )
+        # grp nurbs curve control
+        curveGroup_offset = mc.group( em=True, n=(nurbsCurve_name + '_grp_offset') )
+        mc.parent(nurbsCurve_name, curveGroup_offset)
+
+        curveGroup = mc.group( em=True, n=(nurbsCurve_name + '_grp') )
         mc.parent(curveGroup_offset, curveGroup)
 
         # return name of control and its grp
-        return curveGroup, nurbsCurve
+        return curveGroup, nurbsCurve_name
 
     
     def sphere_ctrl(self):
@@ -240,15 +243,18 @@ class nurbs_ctrl():
         mc.rename(shapeList[1], self.name + 'AShape' )
         mc.rename(shapeList[2], self.name + 'BShape' )
 
-        # grp nurbs curve control
-        curveGroup_offset = mc.group( em=True, n=(curveA + '_grp_offset') )
-        mc.parent(curveA, curveGroup_offset)
+        #renaming curve inturn renames all its shapes
+        curveA_name = mc.rename(curveA, curveA + '#')
 
-        curveGroup = mc.group( em=True, n=(curveA + '_grp') )
+        # grp nurbs curve control
+        curveGroup_offset = mc.group( em=True, n=(curveA_name + '_grp_offset') )
+        mc.parent(curveA_name, curveGroup_offset)
+
+        curveGroup = mc.group( em=True, n=(curveA_name + '_grp') )
         mc.parent(curveGroup_offset, curveGroup)
 
         # return name of control and its grp
-        return curveGroup, curveA
+        return curveGroup, curveA_name
 
 
     def tri_circle_ctrl(self):
@@ -315,15 +321,18 @@ class nurbs_ctrl():
         mc.rename(shapeList[1], self.name + 'AShape' )
         mc.rename(shapeList[2], self.name + 'BShape' )
 
-        # grp nurbs curve control
-        curveGroup_offset = mc.group( em=True, n=(curveA + '_grp_offset') )
-        mc.parent(curveA, curveGroup_offset)
+        #renaming curve inturn renames all its shapes
+        curveA_name = mc.rename(curveA, curveA + '#')
 
-        curveGroup = mc.group( em=True, n=(curveA + '_grp') )
+        # grp nurbs curve control
+        curveGroup_offset = mc.group( em=True, n=(curveA_name + '_grp_offset') )
+        mc.parent(curveA_name, curveGroup_offset)
+
+        curveGroup = mc.group( em=True, n=(curveA_name + '_grp') )
         mc.parent(curveGroup_offset, curveGroup)
 
         # return name of control and its grp
-        return curveGroup, curveA
+        return curveGroup, curveA_name
     
 
     def locator_ctrl(self):

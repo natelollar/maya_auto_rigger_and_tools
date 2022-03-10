@@ -234,6 +234,7 @@ class rigger_ui_class():
         
         mc.setParent('..')
 
+
         # red seperator
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0.4,0,0))
@@ -241,27 +242,85 @@ class rigger_ui_class():
 
         # nurbs_curve_cube, nurbs_curve_sphere, nurbs_curve_arrow
         mc.rowLayout(numberOfColumns = 5)
+        # column parented to row
+        mc.columnLayout()
         mc.button(  label='Nurbs Curve Cube', 
-                    h=75, 
-                    w=142, 
+                    h=38, 
+                    w=140, 
                     command = 'character_rigger.tabs.rigging.rigging_class().nurbs_curve_cube()', 
                     bgc = (.5,0,0.1), 
                     statusBarMessage='Create nurbs cube with groups.')
+
+        mc.button(  label='Tri Circle Ctrl', 
+                    h=37, 
+                    w=140, 
+                    command =   'character_rigger.ar_functions.bb_nurbs_ctrl.bb_nurbs_ctrl( name="tri_circle_ctrl",' + 
+                                                                                            'size=1,'+ 
+                                                                                            'color1R=0,'+ 
+                                                                                            'color1G=0,'+ 
+                                                                                            'color1B=1,'+ 
+                                                                                            'color2R=1,'+ 
+                                                                                            'color2G=1,'+ 
+                                                                                            'color2B=0 ).sel_tri_circle_ctrl()',
+                    bgc = (.5,.2,.1), 
+                    statusBarMessage='Create 3 nurb circles with locator in middle.')
+        # column parented to row
+        mc.setParent("..")
         mc.separator(style='none', w=10, h=75, bgc=(0.4,0,0))
+
+        # column parented to row
+        mc.columnLayout()
         mc.button(  label='Nurbs Curve Sphere', 
-                    h=75, 
-                    w=142, 
+                    h=38, 
+                    w=140, 
                     command = 'character_rigger.tabs.rigging.rigging_class().nurbs_curve_sphere()', 
                     bgc = (0.2,0.4,0), 
                     statusBarMessage='Create nurbs sphere with groups.')
+        
+        mc.button(  label='Sphere Circle Ctrl', 
+                    h=37, 
+                    w=140, 
+                    command =   'character_rigger.ar_functions.bb_nurbs_ctrl.bb_nurbs_ctrl( name="sphere_circle_ctrl",' + 
+                                                                                            'size=1,'+ 
+                                                                                            'color1R=0,'+ 
+                                                                                            'color1G=0,'+ 
+                                                                                            'color1B=1,'+ 
+                                                                                            'color2R=1,'+ 
+                                                                                            'color2G=1,'+ 
+                                                                                            'color2B=0 ).sel_sphere_ctrl()',
+                    bgc = (.1,.5,.1), 
+                    statusBarMessage='Create nurb curve sphere with locator shape in middle.')
+        # column parented to row
+        mc.setParent("..")
         mc.separator(style='none', w=10, h=75, bgc=(0.4,0,0))
+
+        # column parented to row
+        mc.columnLayout()
         mc.button(  label='Nurbs Curve Arrow', 
-                    h=75, 
-                    w=142, 
+                    h=38, 
+                    w=140, 
                     command = 'character_rigger.tabs.rigging.rigging_class().nurbs_curve_arrow()', 
                     bgc = (0.1,.1,.45), 
                     statusBarMessage='Create nurbs arrow with groups.')
+
+        mc.button(  label='Pyramid Ctrl', 
+                    h=37, 
+                    w=140, 
+                    command =   'character_rigger.ar_functions.bb_nurbs_ctrl.bb_nurbs_ctrl( name="tri_circle_ctrl",' + 
+                                                                                            'size=1,'+ 
+                                                                                            'color1R=0,'+ 
+                                                                                            'color1G=0,'+ 
+                                                                                            'color1B=1,'+ 
+                                                                                            'color2R=1,'+ 
+                                                                                            'color2G=1,'+ 
+                                                                                            'color2B=0 ).sel_pyramid_ctrl()',
+                    bgc = (.1,.2,.5), 
+                    statusBarMessage='Create nurb curve sphere with locator shape in middle.')
+        # column parented to row
+        mc.setParent("..")
+
         mc.setParent('..')
+
 
         # red seperator
         mc.rowLayout(numberOfColumns = 1)

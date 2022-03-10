@@ -903,120 +903,132 @@ class rigging_class():
                             direction + '_loc_heel',
                             direction + '_loc_outer_foot',
                             direction + '_loc_inner_foot' ]
-        ftCtrl_list = []
-        ftCtrl_grp_list = []
-        for i in rvFoot_loc_list:
-            #name circle curves
-            locCurveA_name = i.replace('loc_', 'ftCtrl_')
-            locCurveB_name = i.replace('loc_', 'ftCtrl_') + 'A'
-            locCurveC_name = i.replace('loc_', 'ftCtrl_') + 'B'
+        try:
+            # try to break the function if cannot select all foot locators
+            mc.select(rvFoot_loc_list)
+            # if can select all locators, do function
+            ftCtrl_list = []
+            ftCtrl_grp_list = []
+            for i in rvFoot_loc_list:
+                #name circle curves
+                locCurveA_name = i.replace('loc_', 'ftCtrl_')
+                locCurveB_name = i.replace('loc_', 'ftCtrl_') + 'A'
+                locCurveC_name = i.replace('loc_', 'ftCtrl_') + 'B'
 
-            #create nurbs circle
-            locCurveA = mc.circle(n=locCurveA_name, ch=False, r=3, nr=(0,1,0))
-            #create variable for nurbs circle shape
-            locCurveA_shape = mc.listRelatives(locCurveA, s=True)
-            #color nurbs circle shape
-            mc.setAttr((locCurveA_shape[0] + ".overrideEnabled"), 1)
-            mc.setAttr((locCurveA_shape[0] + ".overrideRGBColors"), 1)
-            mc.setAttr((locCurveA_shape[0] + ".overrideColorRGB"), .5, 1, 0)
+                #create nurbs circle
+                locCurveA = mc.circle(n=locCurveA_name, ch=False, r=3, nr=(0,1,0))
+                #create variable for nurbs circle shape
+                locCurveA_shape = mc.listRelatives(locCurveA, s=True)
+                #color nurbs circle shape
+                mc.setAttr((locCurveA_shape[0] + ".overrideEnabled"), 1)
+                mc.setAttr((locCurveA_shape[0] + ".overrideRGBColors"), 1)
+                mc.setAttr((locCurveA_shape[0] + ".overrideColorRGB"), .5, 1, 0)
 
-            #create 2nd nurbs circle
-            locCurveB = mc.circle(n=locCurveB_name, ch=False, r=3, nr=(0,0,0))
-            #create variable for 2nd nurbs circle shape
-            locCurveB_shape = mc.listRelatives(locCurveB, s=True)
-            #color 2nd nurbs circle shape
-            mc.setAttr((locCurveB_shape[0] + ".overrideEnabled"), 1)
-            mc.setAttr((locCurveB_shape[0] + ".overrideRGBColors"), 1)
-            mc.setAttr((locCurveB_shape[0] + ".overrideColorRGB"), .5, 1, 0)
-            #parent 2nd nurbs circle shape to first nurbs circle
-            mc.parent(locCurveB_shape, locCurveA, r=True, shape=True)
-            #delete 2nd nurbs circle transform
-            mc.delete(locCurveB)
+                #create 2nd nurbs circle
+                locCurveB = mc.circle(n=locCurveB_name, ch=False, r=3, nr=(0,0,0))
+                #create variable for 2nd nurbs circle shape
+                locCurveB_shape = mc.listRelatives(locCurveB, s=True)
+                #color 2nd nurbs circle shape
+                mc.setAttr((locCurveB_shape[0] + ".overrideEnabled"), 1)
+                mc.setAttr((locCurveB_shape[0] + ".overrideRGBColors"), 1)
+                mc.setAttr((locCurveB_shape[0] + ".overrideColorRGB"), .5, 1, 0)
+                #parent 2nd nurbs circle shape to first nurbs circle
+                mc.parent(locCurveB_shape, locCurveA, r=True, shape=True)
+                #delete 2nd nurbs circle transform
+                mc.delete(locCurveB)
 
-            #create 3rd nurbs circle
-            locCurveC = mc.circle(n=locCurveC_name, ch=False, r=3, nr=(1,0,0))
-            #create variable for 3rd nurbs circle shape
-            locCurveC_shape = mc.listRelatives(locCurveC, s=True)
-            #color 3rd nurbs circle shape
-            mc.setAttr((locCurveC_shape[0] + ".overrideEnabled"), 1)
-            mc.setAttr((locCurveC_shape[0] + ".overrideRGBColors"), 1)
-            mc.setAttr((locCurveC_shape[0] + ".overrideColorRGB"), .5, 1, 0)
-            #parent 3rd nurbs circle shape to first nurbs circle
-            mc.parent(locCurveC_shape, locCurveA, r=True, shape=True)
-            #delete 3rd nurbs circle transform
-            mc.delete(locCurveC)
+                #create 3rd nurbs circle
+                locCurveC = mc.circle(n=locCurveC_name, ch=False, r=3, nr=(1,0,0))
+                #create variable for 3rd nurbs circle shape
+                locCurveC_shape = mc.listRelatives(locCurveC, s=True)
+                #color 3rd nurbs circle shape
+                mc.setAttr((locCurveC_shape[0] + ".overrideEnabled"), 1)
+                mc.setAttr((locCurveC_shape[0] + ".overrideRGBColors"), 1)
+                mc.setAttr((locCurveC_shape[0] + ".overrideColorRGB"), .5, 1, 0)
+                #parent 3rd nurbs circle shape to first nurbs circle
+                mc.parent(locCurveC_shape, locCurveA, r=True, shape=True)
+                #delete 3rd nurbs circle transform
+                mc.delete(locCurveC)
 
-            #_______group ctrl_______#
-            locCurveA_grp = mc.group(locCurveA, n = (locCurveA[0] + '_grp'))
-            locCurveA_grp_offset = mc.group(locCurveA, n = (locCurveA[0] + '_grp_offset'))
+                #renaming curve inturn renames all its shapes
+                locCurveA_name = mc.rename(locCurveA, locCurveA[0] + '#')
+
+                #_______group ctrl_______#
+                locCurveA_grp = mc.group(locCurveA_name, n = (locCurveA_name + '_grp'))
+                locCurveA_grp_offset = mc.group(locCurveA_name, n = (locCurveA_name + '_grp_offset'))
+                
+                #_______move ctrl grp to loc_______#
+                mc.parent(locCurveA_grp, i, relative=True)
+                mc.Unparent(locCurveA_grp)
+                #add/ create list for ftCtrl's
+                ftCtrl_list.append(locCurveA_name)
+                ftCtrl_grp_list.append(locCurveA_grp)
             
-            #_______move ctrl grp to loc_______#
-            mc.parent(locCurveA_grp, i, relative=True)
-            mc.Unparent(locCurveA_grp)
-            #add/ create list for ftCtrl's
-            ftCtrl_list.append(locCurveA)
-            ftCtrl_grp_list.append(locCurveA_grp)
+            #group reverse foot ctrls together
+            mc.parent(ftCtrl_grp_list[4], ftCtrl_list[5])
+            mc.parent(ftCtrl_grp_list[3], ftCtrl_list[4])
+            mc.parent(ftCtrl_grp_list[2], ftCtrl_list[3])
+            mc.parent(ftCtrl_grp_list[1], ftCtrl_list[2])
+            mc.parent(ftCtrl_grp_list[0], ftCtrl_list[1])
+            
+
+            # create extra toe offset ctrl_______
+            for i in range(0,1):
+                myCurve = mc.curve(d=1, p=[ (-1, 1, 1), 
+                                            (-1, 1, -1), 
+                                            (1, 1, -1), 
+                                            (1, 1, 1), 
+                                            (-1, 1, 1), 
+                                            (-1, -1, 1), 
+                                            (-1, -1, -1), 
+                                            (1, -1, -1), 
+                                            (1, -1, 1), 
+                                            (-1, -1, 1), 
+                                            (-1, 1, 1), 
+                                            (1, 1, 1), 
+                                            (1, -1, 1), 
+                                            (1, -1, -1), 
+                                            (1, 1, -1), 
+                                            (-1, 1, -1), 
+                                            (-1, -1, -1)
+                                            ])
+                #curve size
+                mc.setAttr((myCurve + ".scaleX"), 4.5)
+                mc.setAttr((myCurve + ".scaleY"), 3)
+                mc.setAttr((myCurve + ".scaleZ"), 6)
+                #freeze transforms
+                mc.makeIdentity(myCurve, apply=True)
+                #select curve box's shape
+                curveShape = mc.listRelatives(myCurve, s=True)
+                #color curve box's shape red
+                mc.setAttr((curveShape[0] + ".overrideEnabled"), 1)
+                mc.setAttr((curveShape[0] + ".overrideRGBColors"), 1)
+                mc.setAttr((curveShape[0] + ".overrideColorR"), 1)
+                mc.setAttr((curveShape[0] + ".overrideColorG"), 0)
+                mc.setAttr((curveShape[0] + ".overrideColorB"), 1)
+                #rename curve
+                myCurve = mc.rename(direction + '_ftCtrl_toe_toeWiggle#')
+                #group curve
+                curveGrouped = mc.group(myCurve)
+                curveGrouped_offset = mc.group(myCurve)
+                #rename group
+                myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
+                myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
+                #parent and zero curveGrp
+                mc.parent(myGroup, ftCtrl_list[1], relative=True)
+                #unparent after getting position
+                mc.Unparent(myGroup)
+                #reparent to toe_end
+                mc.parent(myGroup, ftCtrl_list[2], relative=False)
+
+            #clear selection
+            mc.select(cl=True)
+
+        except:
+            print ('________________________________')
+            print ('____Need all FOOT Locators!_____')
+            print ('________________________________')
         
-        #group reverse foot ctrls together
-        mc.parent(ftCtrl_grp_list[4], ftCtrl_list[5])
-        mc.parent(ftCtrl_grp_list[3], ftCtrl_list[4])
-        mc.parent(ftCtrl_grp_list[2], ftCtrl_list[3])
-        mc.parent(ftCtrl_grp_list[1], ftCtrl_list[2])
-        mc.parent(ftCtrl_grp_list[0], ftCtrl_list[1])
-
-
-        # create extra toe offset ctrl_______
-        for items in range(0,1):
-            myCurve = mc.curve(d=1, p=[ (-1, 1, 1), 
-                                        (-1, 1, -1), 
-                                        (1, 1, -1), 
-                                        (1, 1, 1), 
-                                        (-1, 1, 1), 
-                                        (-1, -1, 1), 
-                                        (-1, -1, -1), 
-                                        (1, -1, -1), 
-                                        (1, -1, 1), 
-                                        (-1, -1, 1), 
-                                        (-1, 1, 1), 
-                                        (1, 1, 1), 
-                                        (1, -1, 1), 
-                                        (1, -1, -1), 
-                                        (1, 1, -1), 
-                                        (-1, 1, -1), 
-                                        (-1, -1, -1)
-                                        ])
-            #curve size
-            mc.setAttr((myCurve + ".scaleX"), 4.5)
-            mc.setAttr((myCurve + ".scaleY"), 3)
-            mc.setAttr((myCurve + ".scaleZ"), 6)
-            #freeze transforms
-            mc.makeIdentity(myCurve, apply=True)
-            #select curve box's shape
-            curveShape = mc.listRelatives(myCurve, s=True)
-            #color curve box's shape red
-            mc.setAttr((curveShape[0] + ".overrideEnabled"), 1)
-            mc.setAttr((curveShape[0] + ".overrideRGBColors"), 1)
-            mc.setAttr((curveShape[0] + ".overrideColorR"), 1)
-            mc.setAttr((curveShape[0] + ".overrideColorG"), 0)
-            mc.setAttr((curveShape[0] + ".overrideColorB"), 1)
-            #rename curve
-            myCurve = mc.rename('ftCtrl_toe_toeWiggle#')
-            #group curve
-            curveGrouped = mc.group(myCurve)
-            curveGrouped_offset = mc.group(myCurve)
-            #rename group
-            myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
-            myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
-            #parent and zero curveGrp
-            mc.parent(myGroup, ftCtrl_list[1], relative=True)
-            #unparent after getting position
-            mc.Unparent(myGroup)
-            #reparent to toe_end
-            mc.parent(myGroup, ftCtrl_list[2], relative=False)
-
-        #clear selection
-        mc.select(cl=True)
-
 
     def nurbs_curve_cube(self):
         myCurve = mc.curve(d=1, p=[ (-1, 1, 1), 

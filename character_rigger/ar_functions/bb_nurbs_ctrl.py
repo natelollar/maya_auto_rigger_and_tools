@@ -2,6 +2,7 @@ import maya.cmds as mc
 
 from . import nurbs_ctrl
 
+# bb = bounding box ( for bounding box selection)
 class bb_nurbs_ctrl():
 
     def __init__(self, name, size, color1R, color1G, color1B, color2R, color2G, color2B):
