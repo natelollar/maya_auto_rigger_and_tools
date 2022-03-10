@@ -268,6 +268,27 @@ class rigger_ui_class():
         mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0.4,0,0))
         mc.setParent("..")
 
+
+        mc.rowLayout(numberOfColumns = 5)
+        mc.button(  label='  Create New Bind Pose :', 
+                    h=30, 
+                    w=142, 
+                    command = 'character_rigger.tabs.rigging.rigging_class().new_bindpose()', 
+                    bgc = (0.4,0,0.4), 
+                    ann='Delete old bind pose, create new one.',
+                    statusBarMessage='Delete old bind pose, create new one. Select any joint in skeleton.')
+        mc.separator(style='none', w=10, h=30, bgc=(0.4,0,0))
+        mc.textField( 'bindpose_name_text', width=142, h=30, text='newBindPose_name', bgc=(.2,0,.2), 
+                        statusBarMessage='Delete old bind pose, create new one. Select any joint in skeleton.')
+        mc.separator(style='none', w=10, h=30, bgc=(0.4,0,0))
+
+
+        mc.setParent('..')
+
+
+
+
+
         #parent column to tab
         mc.setParent('..')
 
@@ -403,7 +424,7 @@ class rigger_ui_class():
 
         # create HUMAN model, Polygon ARCH 
         mc.rowLayout(numberOfColumns = 6)
-        mc.button(  label='MULTI OBJ Export \n \/ \n \/ \n \/', 
+        mc.button(  label='Multi OBJECT Export \n \      / \n \   / \n \/', 
                     h=75, 
                     w=142, 
                     command = 'character_rigger.tabs.modeling.modeling_class().mult_obj_exp()', 
@@ -433,20 +454,33 @@ class rigger_ui_class():
         mc.setParent("..")
 
         # obj export text field
-        def_text_var = os.path.abspath( os.path.join(__file__, "..", "..", "..", "..", "..", "..", "..", "downloads/") )
+        def_text_var = os.path.abspath( os.path.join(__file__, "..", "..", "..", "..", "..", "..", "..", "downloads") )
         mc.rowLayout(numberOfColumns = 1)
         mc.textFieldButtonGrp(  'obj_exp_text',
-                                label = '  OBJ Export Path:', # title
+                                label = '   Export Path:', # title
                                 cl3 = ['left', 'left', 'left'], # alignment of 3 columns (title, text, button)
                                 height=30, 
                                 width=454, 
-                                text= def_text_var ,
+                                text= def_text_var + '/',
                                 #bgc=(.5,0,.5), #background color
-                                cw3 = [95,305,60], # width of the 3 columns 
+                                cw3 = [75,315,60], # width of the 3 columns 
                                 buttonLabel='Browse', # button label
                                 buttonCommand= 'character_rigger.tabs.modeling.modeling_class().browse_files()' ) 
         mc.setParent("..")
 
+        mc.rowLayout(numberOfColumns = 1)
+        mc.radioButtonGrp(  'obj_radio_button',
+                            label='   Export Type:', 
+                            labelArray3=['.obj', '.fbx', '.ma'], 
+                            numberOfRadioButtons=3,
+                            cl4 = ['left', 'left', 'left', 'left'],
+                            cw4 = [85, 75, 65, 65],
+                            height=20, 
+                            width=454,
+                            bgc = (0,0.2,0.4),
+                            sl=1
+                            )
+        mc.setParent("..")
 
         #parent column to tab
         mc.setParent('..')
@@ -544,7 +578,7 @@ class rigger_ui_class():
 
         # Seperator
         mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = ' Change "Curve Width" of Selection', height=20, width=454, align='left', font = 'fixedWidthFont', bgc=(.5,0.5,0))
+        mc.text(label = ' Change "WIDTH" of Curve Selection', height=20, width=454, align='left', font = 'fixedWidthFont', bgc=(.5,0.5,0))
         mc.setParent("..")
 
         # outliner color slider

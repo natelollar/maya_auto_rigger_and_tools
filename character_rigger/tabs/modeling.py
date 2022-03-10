@@ -1,6 +1,8 @@
+from numpy import True_
 import maya.cmds as mc
 
 import random
+import os
 
 #_________________Modeling Tab Methods __________________________#
 #________________________________________________________________#
@@ -185,25 +187,37 @@ class modeling_class():
 
     #export multiple objs into seperate files
     def mult_obj_exp(self):
+        radio_button = mc.radioButtonGrp( 'obj_radio_button', query=True, sl=True)
+        if radio_button == 1:
+            radio_button_val = 'OBJexport'
+            export_opt = ('groups=0; ptgroups=0; materials=0; smoothing=1; normals=1;')
+        elif radio_button == 2:
+            radio_button_val = 'FBX export'
+            export_opt = ('v=0;')
+        elif radio_button == 3:
+            radio_button_val = 'mayaAscii'
+            export_opt = ('v=0;')
+        
+        path_dir = mc.textFieldButtonGrp('obj_exp_text', query=True, text=True)
+        
         mySel = mc.ls(sl=1)
-
         for i in mySel:
             mc.select(i)
-            mc.file('D:/Videos/projects/test/obj_export/' + i + '.obj',
-                        typ='OBJexport',
+            mc.file(    str(path_dir + i),
+                        type=radio_button_val,
                         es=1, # export selected 
-                        pr=1, # preserve ref
                         f=1, # force
-                        options=('groups=0; ptgroups=0; materials=0; smoothing=1; normals=1'), 
+                        pr=1,
+                        options=export_opt, 
                         )
 
-
-    def dirPath(self):  #, filePath
-        mc.textFieldButtonGrp('obj_exp_text', edit=True, )  #text=str(filePath
+                        
 
     def browse_files(self):
-        mc.fileDialog2( m=4, 
-                        fc='character_rigger.tabs.modeling.modeling_class().dirPath()', 
-                        ft='directory', 
-                        an='Choose Location')
+        path_dir = mc.fileDialog2(  fileMode=3, #3 The name of a directory. Only directories are displayed in the dialog.
+                                    caption='Choose Location',
+                                    dialogStyle=2,
+                                    okCaption='Accept')
+
+        if path_dir: mc.textFieldButtonGrp('obj_exp_text', edit=True, text=path_dir[0] + '/') 
 

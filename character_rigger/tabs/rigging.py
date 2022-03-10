@@ -1148,3 +1148,15 @@ class rigging_class():
         #rename group
         myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
         myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
+
+
+    def new_bindpose(self):
+        bindPose_name = mc.textField( 'bindpose_name_text', query=1, text=1)
+
+        mySel = mc.ls(sl=True)
+        myBindPose = mc.listConnections(mySel, s=1, type='dagPose')
+        mc.delete(myBindPose)
+
+        new_pose = mc.dagPose(mySel, save=True, n=(bindPose_name) )
+
+        mc.setAttr(( new_pose + '.bindPose'), 1)

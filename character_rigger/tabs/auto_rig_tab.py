@@ -72,3 +72,6 @@ class auto_rig_options():
         for i in mySel:
             mc.setAttr(i + ".displayLocalAxis", 1)
 
+
+
+
