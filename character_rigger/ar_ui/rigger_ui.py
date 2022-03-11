@@ -56,8 +56,8 @@ class rigger_ui_class():
         auto_rig_s4 = mc.separator(style='none', h=265, w=10, bgc=(0,.448,1) )
         # buttons
         auto_rig_b1 = mc.symbolButton(  image = os.path.abspath( os.path.join(__file__, "..", "..", "icons/", "RIG_ME.png") ),
-                                        h=130, 
-                                        w=230, 
+                                        h=120, 
+                                        w=220, 
                                         command = 'character_rigger.ar_rig.character_rig.character_rig()',
                                         statusBarMessage='Auto Rig Character.  No Joint Names Required. Must have tongue, bot face joints, and top face joints.'
                                     )
@@ -78,22 +78,51 @@ class rigger_ui_class():
                                 h=25, 
                                 w=100, 
                                 command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().show_orient_axis()',
-                                bgc = (.5,.1,0), 
+                                bgc = (0,.1,.5), 
                                 statusBarMessage='Reveal Rotate Axis, Joint Orient, & Rotate Order in channel box.  Rotate Axis should be 0. Regular rotation should be 0. Rotation values should be in Joint Orient.')
+        auto_rig_b4a = mc.button(label='', 
+                                ann='Hide Joint Orient & Rotate Axis & Rotate Order.',
+                                h=25, 
+                                w=15, 
+                                command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().hide_orient_axis()',
+                                bgc = (.5,0,0), 
+                                statusBarMessage='Hide Joint Orient & Rotate Axis & Rotate Order.')
         auto_rig_b5 = mc.button(label='Locator/s for Axis', 
                                 ann='Create & parent locator under joint.',
                                 h=25, 
                                 w=100, 
                                 command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().jnt_loc_axis()',
-                                bgc = (.5,.2,0), 
+                                bgc = (0,.2,.5), 
                                 statusBarMessage='Creare locator parented under selected joint to help align axis.' )
+        auto_rig_b5a = mc.button(label='', 
+                                ann='Delete locator/s under joint.',
+                                h=25, 
+                                w=15, 
+                                command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().jnt_loc_axis_del()',
+                                bgc = (.5,0,0), 
+                                statusBarMessage='Delete locator/s under joint.' )
         auto_rig_b6 = mc.button(label='Show Local Axis', 
-                                ann='Show local axis for hierarchy.',
+                                ann='Show local axis.',
                                 h=25, 
                                 w=100, 
                                 command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().disp_local_axis()',
-                                bgc = (.5,.3,0), 
-                                statusBarMessage='Show local axis for hierarchy.' )
+                                bgc = (0,.3,.5), 
+                                statusBarMessage='Show local axis.' )
+        auto_rig_b6a = mc.button(label='', 
+                                ann='Hide local axis.',
+                                h=25, 
+                                w=15, 
+                                command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().disp_local_axis_off()',
+                                bgc = (.5,0,0), 
+                                statusBarMessage='Hide local axis.' )
+        auto_rig_b7 = mc.button(label='Select Hierarchy', 
+                                ann='Select hierarchy of selection.',
+                                h=15, 
+                                w=100, 
+                                command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().sel_hierarchy()',
+                                bgc = (.6,.1,.1), 
+                                statusBarMessage='Select hierarchy of selection.' )
+        
         
         # text fields
         # corner lips
@@ -103,7 +132,7 @@ class rigger_ui_class():
                                         statusBarMessage='Amount of Mid Face Joints to be weighted between top face and bot face jnts.  First 2 mid joints might be the lip corners.  Then the next lowest top face joints, might be the cheeks.' )
         auto_rig_text2 = mc.text(   label = 'Control Size:', width=85, height=24, bgc=(0.4,0,0.4), align='center', font = 'boldLabelFont', 
                                     statusBarMessage='')
-        auto_rig_textF2 = mc.textField( 'global_ctrl_size_text', width=40, h=24, text='0.5', bgc=(.2,0,.2), 
+        auto_rig_textF2 = mc.textField( 'global_ctrl_size_text', width=40, h=24, text='1.0', bgc=(.2,0,.2), 
                                         statusBarMessage='' )
         # check boxes
         headJnts_checkbox = mc.checkBox('headJnts_checkbox', 
@@ -121,6 +150,51 @@ class rigger_ui_class():
                                         width=115, 
                                         height=24,
                                         statusBarMessage='Uncheck if no forearm twist jnts.  Also, wrist jnt should be parented to elbow, not twist jnt end (a current rig limitation.)')
+        
+
+        # browser
+        skin_weight_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "\orc_skinWeights.xml" )
+        find_weights_browser = mc.textFieldButtonGrp( 'skin_weights_browser_text',
+                                                    label = '  Skin Weights :', # title
+                                                    cl3 = ['right', 'left', 'left'], # alignment of 3 columns (title, text, button)
+                                                    height=20, 
+                                                    width=454, 
+                                                    text= skin_weight_path,
+                                                    cw3 = [75,305,50], # width of the 3 columns 
+                                                    buttonLabel='Browse', # button label
+                                                    buttonCommand= 'character_rigger.tabs.auto_rig_tab.auto_rig_options().skin_weights_browse()',
+                                                    statusBarMessage= 'Export XML weights using "Deform<Export Weights".  Disconnect from NG Skin tools (if exist), before weights export.',
+                                                    ann='Export XML weights using "Deform<Export Weights"'
+                                                    ) 
+        skele_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "\orc_skele.fbx" )
+        find_skele_browser = mc.textFieldButtonGrp( 'skele_browser_text',
+                                                    label = '  Skeleton :', # title
+                                                    cl3 = ['right', 'left', 'left'], # alignment of 3 columns (title, text, button)
+                                                    height=20, 
+                                                    width=454, 
+                                                    text= skele_path,
+                                                    cw3 = [75,305,50], # width of the 3 columns 
+                                                    buttonLabel='Browse', # button label
+                                                    buttonCommand= 'character_rigger.tabs.auto_rig_tab.auto_rig_options().skele_file_browse()' ) 
+        model_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "\orc_body.fbx" )
+        find_model_browser = mc.textFieldButtonGrp( 'model_browser_text',
+                                                    label = '  Model :', # title
+                                                    cl3 = ['right', 'left', 'left'], # alignment of 3 columns (title, text, button)
+                                                    height=20, 
+                                                    width=454, 
+                                                    text= model_path,
+                                                    cw3 = [75,305,50], # width of the 3 columns 
+                                                    buttonLabel='Browse', # button label
+                                                    buttonCommand= 'character_rigger.tabs.auto_rig_tab.auto_rig_options().model_file_browse()' ) 
+        new_scene_button = mc.button(label='New Skinned \n Character Scene', 
+                                            ann='',
+                                            h=60, 
+                                            w=95, 
+                                            command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().new_character_scene()',
+                                            bgc = (0,.3,.5), 
+                                            statusBarMessage='' )
+        
+
         # rigger tab ui layout
         mc.formLayout(  auto_rig_form,
                         edit=True,  # seperators
@@ -129,12 +203,16 @@ class rigger_ui_class():
                                     (auto_rig_s3 , 'top', 0),(auto_rig_s3 , 'left', 0),
                                     (auto_rig_s4 , 'top', 0),(auto_rig_s4 , 'left', 454),
                                     # buttons
-                                    (auto_rig_b1 , 'top', 90),(auto_rig_b1 , 'left', 115),
+                                    (auto_rig_b1 , 'top', 77),(auto_rig_b1 , 'left', 130),
                                     (auto_rig_b2 , 'top', 15),(auto_rig_b2 , 'left', 325),
                                     (auto_rig_b3 , 'top', 15),(auto_rig_b3 , 'left', 390),
-                                    (auto_rig_b4 , 'top', 235),(auto_rig_b4 , 'left', 15),
-                                    (auto_rig_b5 , 'top', 235),(auto_rig_b5 , 'left', 120),
-                                    (auto_rig_b6 , 'top', 235),(auto_rig_b6 , 'left', 225),
+                                    (auto_rig_b4 , 'top', 86),(auto_rig_b4 , 'left', 15),
+                                    (auto_rig_b4a , 'top', 86),(auto_rig_b4a , 'left', 116),
+                                    (auto_rig_b5 , 'top', 116),(auto_rig_b5 , 'left', 15),
+                                    (auto_rig_b5a , 'top', 116),(auto_rig_b5a , 'left', 116),
+                                    (auto_rig_b6 , 'top', 146),(auto_rig_b6 , 'left', 15),
+                                    (auto_rig_b6a , 'top', 146),(auto_rig_b6a , 'left', 116),
+                                    (auto_rig_b7 , 'top', 176),(auto_rig_b7 , 'left', 15),
                                     # text fields
                                     (auto_rig_text1 , 'top', 20),(auto_rig_text1 , 'left', 20),
                                     (auto_rig_textF1 , 'top', 20),(auto_rig_textF1 , 'left', 110),
@@ -142,7 +220,12 @@ class rigger_ui_class():
                                     (auto_rig_textF2 , 'top', 50),(auto_rig_textF2 , 'left', 110),
                                     # checkboxes
                                     (headJnts_checkbox , 'top', 50),(headJnts_checkbox , 'left', 180),
-                                    (twstJnts_checkbox , 'top', 20),(twstJnts_checkbox , 'left', 180)
+                                    (twstJnts_checkbox , 'top', 20),(twstJnts_checkbox , 'left', 180),
+                                    #browser
+                                    (new_scene_button , 'top', 133),(new_scene_button , 'left', 353),
+                                    (find_weights_browser , 'top', 195),(find_weights_browser , 'left', 15),
+                                    (find_skele_browser , 'top', 218),(find_skele_browser , 'left', 15),
+                                    (find_model_browser , 'top', 241),(find_model_browser , 'left', 15)
                                     ]
                         )
         # parent for layout to column
@@ -329,18 +412,24 @@ class rigger_ui_class():
 
 
         mc.rowLayout(numberOfColumns = 5)
-        mc.button(  label='  Create New Bind Pose :', 
-                    h=30, 
+        mc.button(  label='  Create New Bind Pose : \n ~~~~~~~~ \n Select Any Joint', 
+                    h=60, 
                     w=142, 
                     command = 'character_rigger.tabs.rigging.rigging_class().new_bindpose()', 
                     bgc = (0.4,0,0.4), 
-                    ann='Delete old bind pose, create new one.',
+                    ann='Delete old bind pose, create new one. Select any joint in skeleton.',
                     statusBarMessage='Delete old bind pose, create new one. Select any joint in skeleton.')
-        mc.separator(style='none', w=10, h=30, bgc=(0.4,0,0))
-        mc.textField( 'bindpose_name_text', width=142, h=30, text='newBindPose_name', bgc=(.2,0,.2), 
+        mc.separator(style='none', w=10, h=60, bgc=(0.4,0,0))
+        mc.textField( 'bindpose_name_text', width=142, h=60, text='newBindPose_name', bgc=(.2,0,.2), 
                         statusBarMessage='Delete old bind pose, create new one. Select any joint in skeleton.')
-        mc.separator(style='none', w=10, h=30, bgc=(0.4,0,0))
-
+        mc.separator(style='none', w=10, h=60, bgc=(0.4,0,0))
+        mc.button(  label=  'Print/ Return \n Object Type', 
+                    h=60, 
+                    w=142, 
+                    command = 'character_rigger.tabs.rigging.rigging_class().object_type()', 
+                    bgc = (.1,.2,.4), 
+                    ann='Print selected object "type."',
+                    statusBarMessage='Print selected object "type."')
 
         mc.setParent('..')
 

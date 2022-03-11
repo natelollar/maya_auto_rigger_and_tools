@@ -1172,3 +1172,13 @@ class rigging_class():
         new_pose = mc.dagPose(mySel, save=True, n=(bindPose_name) )
 
         mc.setAttr(( new_pose + '.bindPose'), 1)
+
+    def object_type(self):
+        mySel = mc.ls(sl=1)
+        mySel_type = mc.objectType(mySel)
+        print('__________________')
+        print ('Type: ' + mySel_type)
+        print('__________________')
+
+        return mySel_type
+

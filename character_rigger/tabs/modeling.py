@@ -221,3 +221,7 @@ class modeling_class():
 
         if path_dir: mc.textFieldButtonGrp('obj_exp_text', edit=True, text=path_dir[0] + '/') 
 
+    # for testing file locations
+    def file_spot(self):
+        test_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "test.obj" )
+        print(test_path)
