@@ -22,7 +22,7 @@ class leg_rig():
 
         hip_jnt = l_hip_var_info[0]
 
-        ankle_jnt = leg_chain[-2]
+        ankle_jnt = leg_chain[2]
 
         return leg_chain, hip_jnt, ankle_jnt
 
@@ -43,11 +43,11 @@ class leg_rig():
             leg_chain_pos.append(i_pos)
             leg_chain_rot.append(i_rot)
 
-        ankle_jnt_pos = [leg_chain_pos[-2]][0]
-        ankle_jnt_rot = [leg_chain_rot[-2]][0]
+        ankle_jnt_pos = [leg_chain_pos[2]][0]
+        ankle_jnt_rot = [leg_chain_rot[2]][0]
 
-        toe_jnt_pos = [leg_chain_pos[-1]][0]
-        toe_jnt_rot = [leg_chain_rot[-1]][0]
+        toe_jnt_pos = [leg_chain_pos[3]][0]
+        toe_jnt_rot = [leg_chain_rot[3]][0]
         #create ankle locator
         if mc.objExists(direction + '_loc_ankle') == False:
             loc_ankle = mc.spaceLocator(n = direction + '_loc_ankle')
@@ -158,6 +158,7 @@ class leg_rig():
                             ik_ctrl_size, 
                             pv_ctrl_size, 
                             knee_dist_mult,
+                            soft_ik_mult,
                             spine_root_ctrl, 
                             global_ctrl):
         # find leg joints using method from own class
@@ -334,13 +335,14 @@ class leg_rig():
         #_____________________________________#
         #______________IK Ctrls_______________#
         #_____________________________________#
+        # no foot does not work if end jnt on toe end
         ikJoint_list_noFoot = ikJoint_list[0:-1]
         #group for organization
         myLegGrp = mc.group(em=True, n= direction + '_leg_grp')
         
         #___________create IK HANDLE____________#
 
-        ikHandle_var = mc.ikHandle(n=ikJoint_list_noFoot[0] + '_ikHandkle', sj=ikJoint_list_noFoot[0], ee=ikJoint_list_noFoot[-1])
+        ikHandle_var = mc.ikHandle(n=ikJoint_list[0] + '_ikHandkle', sj=ikJoint_list[0], ee=ikJoint_list[2])
 
         mc.setAttr((ikHandle_var[0] + '.poleVectorX'), 0)
         mc.setAttr((ikHandle_var[0] + '.poleVectorY'), 0)
@@ -392,7 +394,7 @@ class leg_rig():
             mc.setAttr((curveShape[0] + '.overrideColorRGB'), 0.1, 1, 0)
 
             #rename curve
-            myCurve = mc.rename(ikJoint_list_noFoot[-1] + '_ik_ctrl')
+            myCurve = mc.rename(ikJoint_list[2] + '_ik_ctrl')
             #group curve
             curveGrouped = mc.group(myCurve)
             curveGrouped_offset = mc.group(myCurve)
@@ -401,7 +403,7 @@ class leg_rig():
             myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
 
             #parent and zero curveGrp to joints
-            mc.parent(myGroup, ikJoint_list_noFoot[-1], relative=True)
+            mc.parent(myGroup, ikJoint_list[2], relative=True)
             #unparent group (since it has correct position)
             mc.Unparent(myGroup)
 
@@ -449,7 +451,7 @@ class leg_rig():
             mc.setAttr((curveShape[0] + '.overrideColorRGB'), 0.1, 1, 0)
 
             #rename curve
-            myCurve = mc.rename(ikJoint_list_noFoot[0] + '_ik_ctrl')
+            myCurve = mc.rename(ikJoint_list[0] + '_ik_ctrl')
             #group curve
             curveGrouped = mc.group(myCurve)
             curveGrouped_offset = mc.group(myCurve)
@@ -457,7 +459,7 @@ class leg_rig():
             myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
             myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
             #parent and zero curveGrp to joints
-            mc.parent(myGroup, ikJoint_list_noFoot[0], relative=True)
+            mc.parent(myGroup, ikJoint_list[0], relative=True)
             #unparent group (since it has correct position)
             mc.Unparent(myGroup)
 
@@ -469,9 +471,9 @@ class leg_rig():
             ik_hip_ctrl_list.append(myCurve)
 
         # parent constrain hip joint translation to control
-        mc.parentConstraint(ik_hip_ctrl_list[0], ikJoint_list_noFoot[0], sr=('x', 'y', 'z'))
+        mc.parentConstraint(ik_hip_ctrl_list[0], ikJoint_list[0], sr=('x', 'y', 'z'))
         #scale constrain ctrl to jnt
-        mc.scaleConstraint(ik_hip_ctrl_list[0], ikJoint_list_noFoot[0])
+        mc.scaleConstraint(ik_hip_ctrl_list[0], ikJoint_list[0])
         # lock and hide rotation values for hip control
         mc.setAttr((ik_hip_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
         mc.setAttr((ik_hip_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
@@ -507,7 +509,7 @@ class leg_rig():
             mc.setAttr((curveShape[0] + '.overrideRGBColors'), 1)
             mc.setAttr((curveShape[0] + '.overrideColorRGB'), 1, 1, 0)
             #rename curve
-            myCurve = mc.rename(ikJoint_list_noFoot[1] + '_poleVector_ctrl')
+            myCurve = mc.rename(ikJoint_list[1] + '_poleVector_ctrl')
             #group curve
             curveGrouped = mc.group(myCurve)
             curveGrouped_offset = mc.group(myCurve)
@@ -516,29 +518,23 @@ class leg_rig():
             myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
             
             
-            #middle index value of ik joints (middle joint)
-            roughMedian = round(len(ikJoint_list_noFoot)/2.0)
 
-            #___more accurate mid point (for 'hip_to_ankle_scaled')___
-            #length of whole limb
+            #length of whole limb (knee .tx + ankle .tx)
             limb_lenA = 0
-            for i in ikJoint_list_noFoot:
-                if i != ikJoint_list_noFoot[0]:
-                    limb_lenA += mc.getAttr(i + '.translateX')
-            #length of upper half of limb
-            upperLimb_lenA = 0
-            for i in ikJoint_list_noFoot[:int(roughMedian)]:
-                if i != ikJoint_list_noFoot[0]:
-                    upperLimb_lenA += mc.getAttr(i + '.translateX')
+            for i in ikJoint_list[1:3]:
+                limb_lenA += mc.getAttr(i + '.translateX')
+
+            #length of upper half of limb (knee jnt translate x)
+            upperLimb_lenA = mc.getAttr(ikJoint_list[1] + '.translateX')
 
             #divide sum of leg lengths by upper leg length (for more accurate mid point)
             better_midPoint_var = (limb_lenA / upperLimb_lenA)
 
             #__vector math____#
             #vector positions of hip, knee, ankle
-            hip_pos = om.MVector(mc.xform(ikJoint_list_noFoot[0], q=True, rp=True, ws=True))
-            knee_pos = om.MVector(mc.xform(ikJoint_list_noFoot[int(roughMedian-1.0)], q=True, rp=True, ws=True))
-            ankle_pos = om.MVector(mc.xform(ikJoint_list_noFoot[-1], q=True, rp=True, ws=True))
+            hip_pos = om.MVector(mc.xform(ikJoint_list[0], q=True, rp=True, ws=True))
+            knee_pos = om.MVector(mc.xform(ikJoint_list[1], q=True, rp=True, ws=True))
+            ankle_pos = om.MVector(mc.xform(ikJoint_list[2], q=True, rp=True, ws=True))
 
             #finding vector point of pv knee (on plane of hip, knee, ankle)
             hip_to_ankle = ankle_pos - hip_pos
@@ -551,7 +547,7 @@ class leg_rig():
             #final polve vector point (to avoid knee changing position on creation)
             final_PV_point = mc.xform(myGroup, t=mid_point_to_knee_point)
 
-            myAimConst = mc.aimConstraint(  ikJoint_list_noFoot[int(roughMedian-1.0)], 
+            myAimConst = mc.aimConstraint(  ikJoint_list[1], 
                                             myGroup, 
                                             offset=(0, 0, 0), 
                                             weight=1, 
@@ -565,7 +561,7 @@ class leg_rig():
             mc.poleVectorConstraint(myCurve, ikHandle_var[0])
 
             # connect scale of knee and pole vector control (scale constraint creates cyclical error)
-            mc.connectAttr( (myCurve + '.scale'), ( ikJoint_list_noFoot[ int(roughMedian-1.0) ] ) + '.scale', f=True)
+            mc.connectAttr( (myCurve + '.scale'), ( ikJoint_list[1] ) + '.scale', f=True)
 
             #parent grp to global grp to organize
             mc.parent(myGroup, global_ctrl)
@@ -866,22 +862,22 @@ class leg_rig():
 
         #parent reverse foot ankle ctrl to ikHandle trans and ankle joint rotate
         mc.parentConstraint(ftCtrl_list[0], ikHandle_var[0], mo=True, sr=('x', 'y', 'z'))
-        mc.parentConstraint(ftCtrl_list[0], ikJoint_list_noFoot[-1], mo=True, st=('x', 'y', 'z'))
+        mc.parentConstraint(ftCtrl_list[0], ikJoint_list[2], mo=True, st=('x', 'y', 'z'))
         #scale constrain top reverse foot/ankle ctrl to ankle jnt
-        mc.scaleConstraint(ftCtrl_list[0], ikJoint_list_noFoot[-1] )
+        mc.scaleConstraint(ftCtrl_list[0], ikJoint_list[2] )
 
         # parent toe
-        mc.parentConstraint(toe_wiggle_list[0], ikJoint_list[-1], mo=True)
+        mc.parentConstraint(toe_wiggle_list[0], ikJoint_list[3], mo=True)
         # scale constrain ik toe wiggle to jnt
-        mc.scaleConstraint(toe_wiggle_list[0], ikJoint_list[-1])
+        mc.scaleConstraint(toe_wiggle_list[0], ikJoint_list[3])
 
         # ______________________________________________________#
         # __________________ IK stretchy leg ___________________#
         # ______________________________________________________#
 
         # get joint x lengths
-        to_knee_len = mc.getAttr(ikJoint_list_noFoot[int(roughMedian-1.0)] + '.tx')
-        to_ankle_len = mc.getAttr(ikJoint_list_noFoot[-1] + '.tx')
+        to_knee_len = mc.getAttr(ikJoint_list[1] + '.tx')
+        to_ankle_len = mc.getAttr(ikJoint_list[2] + '.tx')
         # create ruler tool
         ik_jnt_ruler_temp = mc.distanceDimension( sp=(0, 0, 0), ep=(0, 0, 10) )
         ik_jnt_ruler = mc.rename(ik_jnt_ruler_temp, ( direction + '_ik_jnt_rulerShape' ) )
@@ -949,7 +945,7 @@ class leg_rig():
         pv_shin_scale = 1 + (shin_len_prc_diff * shin_len_prc)  # not used, only in expression below
 
         # soft ik, a little less than total length to keep some bend in knee joint
-        mc.expression ( s = leg_dist_ratio + '.input2X =' + str(  (to_knee_len + to_ankle_len) * .994  ) + ' *' +  # round limits to 3 decimal places
+        mc.expression ( s = leg_dist_ratio + '.input2X =' + str(  (to_knee_len + to_ankle_len) * soft_ik_mult ) + ' *' +  # .999
                         # shin length amount of pv scale
                         '(1 +' '( ( (' + pv_ctrl_list[0] + '.scaleX) - 1) *' + str(shin_len_prc) + ') ) *' +
                         spine_root_ctrl + '.scaleX * ' + 
@@ -979,8 +975,8 @@ class leg_rig():
         mc.setAttr( (ankle_len_con + '.secondTerm'), to_ankle_len )
 
         #connect stretch lengths to joint translate x
-        mc.connectAttr( (knee_len_con + '.outColorR'), (ikJoint_list_noFoot[int(roughMedian-1.0)] + '.tx'), f=True )
-        mc.connectAttr( (ankle_len_con + '.outColorR'), (ikJoint_list_noFoot[-1] + '.tx'), f=True )
+        mc.connectAttr( (knee_len_con + '.outColorR'), (ikJoint_list[1] + '.tx'), f=True )
+        mc.connectAttr( (ankle_len_con + '.outColorR'), (ikJoint_list[2] + '.tx'), f=True )
 
         #___________________________________________________________________#
         #___________________Visibility and Parenting________________________#

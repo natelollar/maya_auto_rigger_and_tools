@@ -23,6 +23,7 @@ class arm_rig():
                 ik_ctrl_size, 
                 pv_ctrl_size, 
                 elbow_dist_mult,
+                soft_ik_mult,
                 to_chest_ctrl, 
                 global_ctrl,
                 global_misc_grp,
@@ -570,7 +571,7 @@ class arm_rig():
             mid_point_to_elbow_vec_scaled = mid_point_to_elbow_vec * elbow_dist_mult  #pv ctrl distance from elbow multiplier
             mid_point_to_elbow_point = mid_point + mid_point_to_elbow_vec_scaled
 
-            #final polve vector point (to avoid elbow changing position on creation)
+            #final pole vector point (to avoid elbow changing position on creation)
             final_PV_point = mc.xform(myGroup, t=mid_point_to_elbow_point)
 
             myAimConst = mc.aimConstraint(  ikJoint_list[2], 
@@ -963,7 +964,7 @@ class arm_rig():
             ik_exp_str = ik_exp_str + (ctrl + '.scaleX * ')
         # must create expression to account for offset of elbow and wrist length when scaling
         # soft ik, a little less than total length to keep some bend in elbow joint
-        mc.expression ( s = arm_dist_ratio + '.input2X =' + str( (to_elbow_len + to_wrist_len) * 0.994 ) + ' *' + 
+        mc.expression ( s = arm_dist_ratio + '.input2X =' + str( (to_elbow_len + to_wrist_len) * soft_ik_mult ) + ' *' +  #.999
                         ik_exp_str + 
                         '(1 +' '( ( (' + pv_ctrl_list[0] + '.scaleX) - 1) *' + str(forearm_len_prc) + ') ) * ' +
                         # pv_ctrl_list[0] + '.scaleX *' +

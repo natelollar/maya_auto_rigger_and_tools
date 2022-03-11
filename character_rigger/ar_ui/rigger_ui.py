@@ -131,9 +131,23 @@ class rigger_ui_class():
         auto_rig_textF1 = mc.textField( 'midFace_jnt_amnt_text', width=40, h=24, text='2', bgc=(.2,0,.2), 
                                         statusBarMessage='Amount of Mid Face Joints to be weighted between top face and bot face jnts.  First 2 mid joints might be the lip corners.  Then the next lowest top face joints, might be the cheeks.' )
         auto_rig_text2 = mc.text(   label = 'Control Size:', width=85, height=24, bgc=(0.4,0,0.4), align='center', font = 'boldLabelFont', 
-                                    statusBarMessage='')
-        auto_rig_textF2 = mc.textField( 'global_ctrl_size_text', width=40, h=24, text='1.0', bgc=(.2,0,.2), 
+                                    statusBarMessage='Global size of ctrls.')
+        auto_rig_textF2 = mc.textField( 'global_ctrl_size_text', width=40, h=24, text='.5', bgc=(.2,0,.2), 
                                         statusBarMessage='' )
+        auto_rig_text3 = mc.text(   label = 'Arm Soft IK', width=68, height=24, bgc=(0.3,0,0.5), align='center', font = 'boldLabelFont', 
+                                    ann='IK Length Stretch Multiplier',
+                                    statusBarMessage='To prevent elbow snapping.  1 is none.  Less than 1 is closer to bend length, probably around .995. More than 1 for no IK stretch style.' )
+        auto_rig_textF3 = mc.textField( 'arm_soft_ik_amount_text', width=35, h=24, text='1', bgc=(.2,0,.2), 
+                                        ann='IK Length Stretch Multiplier',
+                                        statusBarMessage='To prevent elbow snapping.  1 is none.  Less than 1 is closer to bend length, probably around .995. More than 1 for no IK stretch style.' )
+        auto_rig_text4 = mc.text(   label = 'Leg Soft IK', width=68, height=24, bgc=(0.3,0,0.5), align='center', font = 'boldLabelFont', 
+                                    ann='IK Length Stretch Multiplier',
+                                    statusBarMessage='To prevent knee snapping.  1 is none.  Less than 1 is closer to bend length, probably around .995. More than 1 for no IK stretch style.' )
+        auto_rig_textF4 = mc.textField( 'leg_soft_ik_amount_text', width=35, h=24, text='1', bgc=(.2,0,.2), 
+                                        ann='IK Length Stretch Multiplier',
+                                        statusBarMessage='To prevent knee snapping.  1 is none.  Less than 1 is closer to bend length, probably around .995. More than 1 for no IK stretch style.' )
+
+
         # check boxes
         headJnts_checkbox = mc.checkBox('headJnts_checkbox', 
                                         label='Head Jnts', 
@@ -160,7 +174,7 @@ class rigger_ui_class():
                                                     height=20, 
                                                     width=437, 
                                                     text= skin_weight_path,
-                                                    cw3 = [75,305,50], # width of the 3 columns 
+                                                    cw3 = [75,305,20], # width of the 3 columns 
                                                     buttonLabel='Browse', # button label
                                                     buttonCommand= 'character_rigger.tabs.auto_rig_tab.auto_rig_options().skin_weights_browse()',
                                                     statusBarMessage= 'Export XML weights using "Deform<Export Weights".  Disconnect from NG Skin tools (if exist), before weights export.',
@@ -173,7 +187,7 @@ class rigger_ui_class():
                                                     height=20, 
                                                     width=437, 
                                                     text= skele_path,
-                                                    cw3 = [75,305,50], # width of the 3 columns 
+                                                    cw3 = [75,305,20], # width of the 3 columns 
                                                     buttonLabel='Browse', # button label
                                                     buttonCommand= 'character_rigger.tabs.auto_rig_tab.auto_rig_options().skele_file_browse()' ) 
         model_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "\orc_body.fbx" )
@@ -183,7 +197,8 @@ class rigger_ui_class():
                                                     height=20, 
                                                     width=437, 
                                                     text= model_path,
-                                                    cw3 = [75,305,50], # width of the 3 columns 
+                                                    cw3 = [75,305,20], # width of the 3 columns 
+                                                    #bgc = (.5,.5,.5),
                                                     buttonLabel='Browse', # button label
                                                     buttonCommand= 'character_rigger.tabs.auto_rig_tab.auto_rig_options().model_file_browse()' ) 
         new_scene_button = mc.button(label='New Skinned \n Character Scene', 
@@ -218,11 +233,15 @@ class rigger_ui_class():
                                     (auto_rig_textF1 , 'top', 20),(auto_rig_textF1 , 'left', 110),
                                     (auto_rig_text2 , 'top', 50),(auto_rig_text2 , 'left', 20),
                                     (auto_rig_textF2 , 'top', 50),(auto_rig_textF2 , 'left', 110),
+                                    (auto_rig_text3 , 'top', 73),(auto_rig_text3 , 'left', 382),
+                                    (auto_rig_textF3 , 'top', 73),(auto_rig_textF3 , 'left', 346),
+                                    (auto_rig_text4 , 'top', 101),(auto_rig_text4 , 'left', 382),
+                                    (auto_rig_textF4 , 'top', 101),(auto_rig_textF4 , 'left', 346),
                                     # checkboxes
                                     (headJnts_checkbox , 'top', 50),(headJnts_checkbox , 'left', 180),
                                     (twstJnts_checkbox , 'top', 20),(twstJnts_checkbox , 'left', 180),
                                     #browser
-                                    (new_scene_button , 'top', 133),(new_scene_button , 'left', 353),
+                                    (new_scene_button , 'top', 132),(new_scene_button , 'left', 353),
                                     (find_weights_browser , 'top', 195),(find_weights_browser , 'left', 15),
                                     (find_skele_browser , 'top', 218),(find_skele_browser , 'left', 15),
                                     (find_model_browser , 'top', 241),(find_model_browser , 'left', 15)

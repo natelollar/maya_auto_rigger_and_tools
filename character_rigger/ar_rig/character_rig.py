@@ -23,6 +23,10 @@ def character_rig():
     headJnts_checkbox = auto_rig_tab_info[2]
     # get boolean value of twstJnt checkbox
     twstJnts_checkbox = auto_rig_tab_info[3]
+    # get arm soft ik amount from textfield
+    arm_soft_ik = auto_rig_tab_info[4]
+    # get leg soft ik amount from textfield
+    leg_soft_ik = auto_rig_tab_info[5]
 
     #________________________________________________________________________#
     #create grp for item organization
@@ -45,13 +49,13 @@ def character_rig():
     fk_spine_rig_var = fk_spine_rig.fk_spine_rig_class()
     fk_spine_rig_info = fk_spine_rig_var.fk_spine_rig_meth (ctrl_size = (4.5 * float(control_size) ) )
 
-    # parent top spine ctrl group under global control
+    # parent first spine ctrl grp under global control
     mc.parent(fk_spine_rig_info[0], global_ctrl_info[1])
 
     #________________________________________________________________________#
 
-    # find spine root joint
-    # parent joints to global control
+    # find spine root joint and parent to global ctrl
+    # therefore parent ALL joints to global control for global scaling and organization
     spine_root_temp = find_jnts.find_jnts()
     spine_root = spine_root_temp.find_spine_root()
 
@@ -144,6 +148,7 @@ def character_rig():
                                                         ik_ctrl_size = (12 * float(control_size) ),
                                                         pv_ctrl_size = (1 * float(control_size) ),
                                                         knee_dist_mult = (20 * float(control_size) ),
+                                                        soft_ik_mult=float(leg_soft_ik),
                                                         spine_root_ctrl=fk_spine_rig_info[1],
                                                         global_ctrl=global_ctrl_info[1] )
 
@@ -171,6 +176,7 @@ def character_rig():
                                                         ik_ctrl_size = (12 * float(control_size) ),
                                                         pv_ctrl_size = (1 * float(control_size) ),
                                                         knee_dist_mult = (20 * float(control_size) ),
+                                                        soft_ik_mult=float(leg_soft_ik),
                                                         spine_root_ctrl=fk_spine_rig_info[1],
                                                         global_ctrl=global_ctrl_info[1])
 
@@ -219,7 +225,8 @@ def character_rig():
                                             fk_ctrl_size = (12 * float(control_size) ),
                                             ik_ctrl_size = (10 * float(control_size) ),
                                             pv_ctrl_size = (1 * float(control_size) ), 
-                                            elbow_dist_mult = (10 * float(control_size) ), 
+                                            elbow_dist_mult = (20 * float(control_size) ), 
+                                            soft_ik_mult=float(arm_soft_ik),
                                             to_chest_ctrl=to_chest_ctrl,
                                             global_ctrl=global_ctrl_info[1],
                                             global_misc_grp=character_misc_grp, 
@@ -238,7 +245,8 @@ def character_rig():
                                             fk_ctrl_size = (12 * float(control_size) ),
                                             ik_ctrl_size = (10 * float(control_size) ),
                                             pv_ctrl_size = (1 * float(control_size) ), 
-                                            elbow_dist_mult = (10 * float(control_size) ), 
+                                            elbow_dist_mult = (20 * float(control_size) ), 
+                                            soft_ik_mult=float(arm_soft_ik),
                                             to_chest_ctrl=to_chest_ctrl,
                                             global_ctrl=global_ctrl_info[1],
                                             global_misc_grp=character_misc_grp,
