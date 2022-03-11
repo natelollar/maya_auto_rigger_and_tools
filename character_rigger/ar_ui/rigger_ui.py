@@ -158,7 +158,7 @@ class rigger_ui_class():
                                                     label = '  Skin Weights :', # title
                                                     cl3 = ['right', 'left', 'left'], # alignment of 3 columns (title, text, button)
                                                     height=20, 
-                                                    width=454, 
+                                                    width=437, 
                                                     text= skin_weight_path,
                                                     cw3 = [75,305,50], # width of the 3 columns 
                                                     buttonLabel='Browse', # button label
@@ -171,7 +171,7 @@ class rigger_ui_class():
                                                     label = '  Skeleton :', # title
                                                     cl3 = ['right', 'left', 'left'], # alignment of 3 columns (title, text, button)
                                                     height=20, 
-                                                    width=454, 
+                                                    width=437, 
                                                     text= skele_path,
                                                     cw3 = [75,305,50], # width of the 3 columns 
                                                     buttonLabel='Browse', # button label
@@ -181,7 +181,7 @@ class rigger_ui_class():
                                                     label = '  Model :', # title
                                                     cl3 = ['right', 'left', 'left'], # alignment of 3 columns (title, text, button)
                                                     height=20, 
-                                                    width=454, 
+                                                    width=437, 
                                                     text= model_path,
                                                     cw3 = [75,305,50], # width of the 3 columns 
                                                     buttonLabel='Browse', # button label
@@ -423,7 +423,7 @@ class rigger_ui_class():
         mc.textField( 'bindpose_name_text', width=142, h=60, text='newBindPose_name', bgc=(.2,0,.2), 
                         statusBarMessage='Delete old bind pose, create new one. Select any joint in skeleton.')
         mc.separator(style='none', w=10, h=60, bgc=(0.4,0,0))
-        mc.button(  label=  'Print/ Return \n Object Type', 
+        mc.button(  label=  'Print \n Object Type', 
                     h=60, 
                     w=142, 
                     command = 'character_rigger.tabs.rigging.rigging_class().object_type()', 
