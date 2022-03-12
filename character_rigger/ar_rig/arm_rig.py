@@ -469,7 +469,7 @@ class arm_rig():
         clav_scale_off = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_clav_scale_off' )
         # set operation to divide
         mc.setAttr( clav_scale_off + '.operation', 2)
-
+        
         # connect global ctrl scale X to scale offset
         # _____create expression to multiply all scaling offset ctrls together____#
         # spine ctrls for scale offset
@@ -488,9 +488,11 @@ class arm_rig():
             mc.setAttr( (clav_invert_value + '.input2X'), -1 )
             mc.connectAttr( (clv_measerTool_parent + '.distance'), (clav_invert_value + '.input1X'), f=True)
             mc.connectAttr( (clav_invert_value + '.outputX') , clav_scale_off + '.input1X')
-
+        
         #connect scale offset to tranlate x of shldr jnt
         mc.connectAttr( (clav_scale_off + '.outputX') , ikJoint_list[1] + '.translateX')
+
+            #problem here shoulder not in perfect x direction from clav, therefore scaling with X is off
 
         # create grp for ctrls and measure tool for organization
         clv_measerTool_grp = mc.group(em = True, n= direction + '_clav_measure_grp')
@@ -507,7 +509,7 @@ class arm_rig():
         mc.setAttr((ik_shldr_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
         mc.setAttr((ik_shldr_ctrl_list[0] + '.rz'), lock=True, keyable=False, channelBox=False)
         
-
+        
         #_________________POLE VECTOR Start___________________#
         #_____________________________________________________#
         pv_group_list = []

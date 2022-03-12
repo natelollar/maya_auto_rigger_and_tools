@@ -27,7 +27,7 @@ def character_rig():
     arm_soft_ik = auto_rig_tab_info[4]
     # get leg soft ik amount from textfield
     leg_soft_ik = auto_rig_tab_info[5]
-
+    
     #________________________________________________________________________#
     #create grp for item organization
     character_misc_grp = mc.group(em=1, n='character_misc_grp')
@@ -190,7 +190,7 @@ def character_rig():
     
     #________________________________________________________________________#
     # create offset joints for blend color arms
-
+    
     # find chest jnt index
     chest_index = find_jnts.find_jnts().find_chest_jnt_index()
 
@@ -225,7 +225,7 @@ def character_rig():
                                             fk_ctrl_size = (12 * float(control_size) ),
                                             ik_ctrl_size = (10 * float(control_size) ),
                                             pv_ctrl_size = (1 * float(control_size) ), 
-                                            elbow_dist_mult = (20 * float(control_size) ), 
+                                            elbow_dist_mult = (40 * float(control_size) ), 
                                             soft_ik_mult=float(arm_soft_ik),
                                             to_chest_ctrl=to_chest_ctrl,
                                             global_ctrl=global_ctrl_info[1],
@@ -245,7 +245,7 @@ def character_rig():
                                             fk_ctrl_size = (12 * float(control_size) ),
                                             ik_ctrl_size = (10 * float(control_size) ),
                                             pv_ctrl_size = (1 * float(control_size) ), 
-                                            elbow_dist_mult = (20 * float(control_size) ), 
+                                            elbow_dist_mult = (40 * float(control_size) ), 
                                             soft_ik_mult=float(arm_soft_ik),
                                             to_chest_ctrl=to_chest_ctrl,
                                             global_ctrl=global_ctrl_info[1],

@@ -636,13 +636,13 @@ class leg_rig():
 
             #_______move joint to ankle and parent_______#
             #parent and zero joints to last joint in selection
-            mc.parent(switchCurveA_grp, leg_chain[-2], relative=True)
+            mc.parent(switchCurveA_grp, leg_chain[2], relative=True)
             #parent joints to world space
             mc.Unparent(switchCurveA_grp)
 
             # parent and scale constrain switch ctrl to ankle
-            mc.parentConstraint(leg_chain[-2], switchCurveA_grp, mo=True)
-            mc.scaleConstraint(leg_chain[-2], switchCurveA_grp, mo=True)
+            mc.parentConstraint(leg_chain[2], switchCurveA_grp, mo=True)
+            mc.scaleConstraint(leg_chain[2], switchCurveA_grp, mo=True)
 
             #_______add IK FK Blend attr to switch ctrl_______#
             mc.addAttr(switchCurveA, ln = 'fk_ik_blend', min=0, max=1, k=True)
