@@ -1323,12 +1323,10 @@ class arm_rig():
 
 
         # return top ik and fk controls to parent to chest ctrl (if needed, though done above)
-        return  ik_clav_group_list[0], \
-                ik_shldr_group_list[0], \
-                fk_ctrl_grp_list[0], \
-                                  \
-                pv_group_list[0], \
-                ik_group_list[0] 
+        # return  ik_clav_group_list[0], ik_shldr_group_list[0], fk_ctrl_grp_list[0], pv_group_list[0], ik_group_list[0],
+        
+        # return twist curve to remove from controller tags
+        return arm_ikHandle_curve_newName 
                 
         
         

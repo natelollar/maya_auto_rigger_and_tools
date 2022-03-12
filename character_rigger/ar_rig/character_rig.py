@@ -110,7 +110,7 @@ def character_rig():
         # create extra grp for mid face ctrls
         face_grp = mc.group(em=1, n='face_grp')
         #if mid face ctrls exist
-        if top_ctrls_info[2] == True:
+        if top_ctrls_info[2]:
             mc.parent(top_ctrls_info[2], face_grp)
         #parent top face ctrls to top head
         mc.parent(face_grp, character_misc_grp)
@@ -215,9 +215,9 @@ def character_rig():
 
     #________________________________________________________________________#
     # create l arm ctrls
-    arm_rig_class = arm_rig.arm_rig()
+    l_arm_rig_class = arm_rig.arm_rig()
 
-    arm_rig_return = arm_rig_class.arm_rig( direction='left', 
+    l_arm_rig_return = l_arm_rig_class.arm_rig( direction='left', 
                                             offset_parent_jnt=chest_blend_offset_info, 
                                             swch_ctrl_size = (3 * float(control_size) ),
                                             swch_ctrl_dist = (35 * float(control_size) ),
@@ -225,7 +225,7 @@ def character_rig():
                                             fk_ctrl_size = (12 * float(control_size) ),
                                             ik_ctrl_size = (10 * float(control_size) ),
                                             pv_ctrl_size = (1 * float(control_size) ), 
-                                            elbow_dist_mult = (40 * float(control_size) ), 
+                                            elbow_dist_mult = (20 * float(control_size) ), 
                                             soft_ik_mult=float(arm_soft_ik),
                                             to_chest_ctrl=to_chest_ctrl,
                                             global_ctrl=global_ctrl_info[1],
@@ -235,9 +235,9 @@ def character_rig():
     
     #________________________________________________________________________#
     # create r arm ctrls
-    arm_rig_class = arm_rig.arm_rig()
+    r_arm_rig_class = arm_rig.arm_rig()
 
-    arm_rig_return = arm_rig_class.arm_rig( direction='right', 
+    r_arm_rig_return = r_arm_rig_class.arm_rig( direction='right', 
                                             offset_parent_jnt=chest_blend_offset_info, 
                                             finger_size = (0.4 * float(control_size) ),
                                             swch_ctrl_size = (3 * float(control_size) ),
@@ -245,7 +245,7 @@ def character_rig():
                                             fk_ctrl_size = (12 * float(control_size) ),
                                             ik_ctrl_size = (10 * float(control_size) ),
                                             pv_ctrl_size = (1 * float(control_size) ), 
-                                            elbow_dist_mult = (40 * float(control_size) ), 
+                                            elbow_dist_mult = (20 * float(control_size) ), 
                                             soft_ik_mult=float(arm_soft_ik),
                                             to_chest_ctrl=to_chest_ctrl,
                                             global_ctrl=global_ctrl_info[1],
@@ -257,5 +257,27 @@ def character_rig():
     # grp misc and global ctrl grp in final grp
     final_grp = mc.group(em=1, n='character_all_grp')
     mc.parent( global_ctrl_info[0], character_misc_grp, final_grp )
+
+
+    #______________________________________________________________________________#
+    # select all nurbs curves to tag as controls
+    allNurbsCtrls = mc.listRelatives(final_grp, ad=True, type='nurbsCurve')
+    allNurbsCtrls_parent = mc.listRelatives(allNurbsCtrls, p=True)
+    mc.select(allNurbsCtrls_parent)
+
+    # remove arm twist splines from tag selection
+    if l_arm_rig_return:
+        mc.select(l_arm_rig_return, d=True)
+    if r_arm_rig_return:
+        mc.select(r_arm_rig_return, d=True)
+
+    # tag most all ctrls as Controller (for parallel evaluation)
+    mc.TagAsController()
+
+    #__________________________________#
+    #deselect all, back to main screen
+    mc.select(cl=True)
+    mc.setFocus("MayaWindow")
+    
     
 
