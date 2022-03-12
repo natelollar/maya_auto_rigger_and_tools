@@ -862,15 +862,26 @@ class leg_rig():
 
         #parent reverse foot ankle ctrl to ikHandle trans and ankle joint rotate
         mc.parentConstraint(ftCtrl_list[0], ikHandle_var[0], mo=True, sr=('x', 'y', 'z'))
-        mc.parentConstraint(ftCtrl_list[0], ikJoint_list[2], mo=True, st=('x', 'y', 'z'))
+        mc.parentConstraint(ftCtrl_list[0], ikJoint_list[2], mo=True, st=('x', 'y', 'z')) 
         #scale constrain top reverse foot/ankle ctrl to ankle jnt
         mc.scaleConstraint(ftCtrl_list[0], ikJoint_list[2] )
 
         # parent toe
-        mc.parentConstraint(toe_wiggle_list[0], ikJoint_list[3], mo=True)
+        mc.parentConstraint(toe_wiggle_list[0], ikJoint_list[3], mo=True, st=('x', 'y', 'z')) #rotation only parent
+        
+        # direct translation connect with offset
+        toe_plusMinusAv = mc.shadingNode('plusMinusAverage', asUtility=True, n= direction + '_toe_plusMinusAv' )
+        #connect to get trans attr, then disconnect, versus parent/ point constraint acts weird on non stretch IK
+        mc.connectAttr(ikJoint_list[3] + '.translate', toe_plusMinusAv + '.input3D[1]', f=True) #get offset 
+        mc.disconnectAttr(ikJoint_list[3] + '.translate', toe_plusMinusAv + '.input3D[1]')  #then disconnect
+        #connect toe translation now with offset
+        mc.connectAttr(toe_wiggle_list[0] + '.translate', toe_plusMinusAv + '.input3D[0]', f=True) #get offset 
+        #connect plusMinus with offset toe value into ik toe jnt, to replace the clunky point constraint alternative
+        mc.connectAttr(toe_plusMinusAv + '.output3D', ikJoint_list[3] + '.translate', f=True)
+
         # scale constrain ik toe wiggle to jnt
         mc.scaleConstraint(toe_wiggle_list[0], ikJoint_list[3])
-
+        
         # ______________________________________________________#
         # __________________ IK stretchy leg ___________________#
         # ______________________________________________________#
