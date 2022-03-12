@@ -965,7 +965,8 @@ class leg_rig():
                         # shin length amount of pv scale
                         '(1 + ' '( ( (' + pv_ctrl_list[0] + '.scaleX ) - 1 ) * ' + str(shin_len_prc) + ') ) *' +
                         spine_root_ctrl + '.scaleX * ' + 
-                        ik_hip_ctrl_list[0] + '.scaleX' )
+                        ik_hip_ctrl_list[0] + '.scaleX', n = direction + '_leg_IK_stretch_exp' )
+
         #_____________#
 
 

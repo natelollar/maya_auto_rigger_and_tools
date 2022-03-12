@@ -1,17 +1,9 @@
 # ui 
-from calendar import c
 import maya.cmds as mc
 
 import os
 
-from ..tabs import modeling
-from ..tabs import rigging
-from ..tabs import animation
-from ..tabs import color_slider
-
-from ..ar_rig import character_rig
-
-
+# main ui with tabs and everything
 class rigger_ui_class():
 
     def rigger_ui_method(self):
@@ -132,7 +124,7 @@ class rigger_ui_class():
                                         statusBarMessage='Amount of Mid Face Joints to be weighted between top face and bot face jnts.  First 2 mid joints might be the lip corners.  Then the next lowest top face joints, might be the cheeks.' )
         auto_rig_text2 = mc.text(   label = 'Control Size:', width=85, height=24, bgc=(0.4,0,0.4), align='center', font = 'boldLabelFont', 
                                     statusBarMessage='Global size of ctrls.')
-        auto_rig_textF2 = mc.textField( 'global_ctrl_size_text', width=40, h=24, text='.5', bgc=(.2,0,.2), 
+        auto_rig_textF2 = mc.textField( 'global_ctrl_size_text', width=40, h=24, text='1', bgc=(.2,0,.2), 
                                         statusBarMessage='' )
         auto_rig_text3 = mc.text(   label = 'Elbow PV Dist', width=76, height=24, bgc=(0.3,0,0.5), align='center', font = 'boldLabelFont', 
                                     ann='Elbow Polve Vector Ctrl Start Distance.',
@@ -772,17 +764,6 @@ class rigger_ui_class():
         #Show UI Window
         mc.showWindow()
 
-
-
-'''
-    def test_method(self):
-        import os
-        print(__file__)
-        print(os.path.join(os.path.dirname(__file__), '..'))
-        print(os.path.dirname(os.path.realpath(__file__)))
-        print(os.path.abspath(os.path.dirname(__file__)))
-        print( os.path.abspath(os.path.join(__file__, "..", "icons/", "my_image.png") ) )
-'''
 
 
 

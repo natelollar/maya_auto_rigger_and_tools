@@ -481,7 +481,7 @@ class arm_rig():
             clav_exp_str = clav_exp_str + (ctrl + '.scaleX * ')
 
         #mc.connectAttr( (global_ctrl + '.scaleX'), (fk_globalScale_off + '.input2X'), f=True )
-        mc.expression( s = clav_scale_off + '.input2X = ' + clav_exp_str + global_ctrl + '.scaleX' )
+        mc.expression( s = clav_scale_off + '.input2X = ' + clav_exp_str + global_ctrl + '.scaleX', n = direction + '_arm_IK_clav_stretch_exp' )
         
         if direction == 'left':
             mc.connectAttr(clv_measerTool_parent + '.distance', clav_scale_off + '.input1X')
@@ -974,7 +974,7 @@ class arm_rig():
                         '(1 + ' '( ( (' + pv_ctrl_list[0] + '.scaleX) - 1 ) * ' + str(forearm_len_prc) + ') ) * ' +
                         # pv_ctrl_list[0] + '.scaleX *' +
                         ik_shldr_ctrl_list[0] + '.scaleX * ' +
-                        ik_clav_ctrl_list[0] + '.scaleX' )
+                        ik_clav_ctrl_list[0] + '.scaleX', n = direction + '_arm_IK_stretch_exp' )
 
         #__________________________#
 
@@ -1047,7 +1047,7 @@ class arm_rig():
             for ctrl in to_chest_ctrl:
                 ikTwst_exp_str = ikTwst_exp_str + (ctrl + '.scaleX * ')
             mc.expression(  s = ikTwst_globalScale_off + '.input2X = ' + global_ctrl + '.scaleX * ' +
-                            pv_ctrl_list[0] + '.scaleX' )
+                            pv_ctrl_list[0] + '.scaleX', n = direction + '_arm_IK_twst_stretch_exp' )
 
 
             # connect ruler distance over total distance of joints
@@ -1130,7 +1130,7 @@ class arm_rig():
                             fk_exp_str +
                             fk_ctrl_list[0] + '.scaleX * ' + 
                             fk_ctrl_list[1] + '.scaleX * ' +
-                            fk_ctrl_list[2] + '.scaleX' )
+                            fk_ctrl_list[2] + '.scaleX', n = direction + '_arm_FK_twst_stretch_exp' )
 
             # connect ruler distance over total distance of joints
             if direction == 'left':
