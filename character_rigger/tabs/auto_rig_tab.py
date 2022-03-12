@@ -20,11 +20,11 @@ class auto_rig_options():
 
         twstJnts_checkbox = mc.checkBox( 'twstJnts_checkbox', query=1, v=1 )
 
-        arm_soft_ik = mc.textField( 'arm_soft_ik_amount_text', query=1, tx=1 )
+        elbow_pv_dist = mc.textField( 'elbow_pv_dist_text', query=1, tx=1 )
 
-        leg_soft_ik = mc.textField( 'leg_soft_ik_amount_text', query=1, tx=1 )
+        knee_pv_dist = mc.textField( 'knee_pv_dist_text', query=1, tx=1 )
 
-        return midFace_jnt_amnt, control_size, headJnts_checkbox, twstJnts_checkbox, arm_soft_ik, leg_soft_ik
+        return midFace_jnt_amnt, control_size, headJnts_checkbox, twstJnts_checkbox, elbow_pv_dist, knee_pv_dist
 
     # reverse foot locator distance adjusted with Control Size textfield
     def rev_foot_adj(self, direction):

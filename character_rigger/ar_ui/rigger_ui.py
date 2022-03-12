@@ -134,18 +134,18 @@ class rigger_ui_class():
                                     statusBarMessage='Global size of ctrls.')
         auto_rig_textF2 = mc.textField( 'global_ctrl_size_text', width=40, h=24, text='.5', bgc=(.2,0,.2), 
                                         statusBarMessage='' )
-        auto_rig_text3 = mc.text(   label = 'Arm Soft IK', width=68, height=24, bgc=(0.3,0,0.5), align='center', font = 'boldLabelFont', 
-                                    ann='IK Length Stretch Multiplier',
-                                    statusBarMessage='To prevent elbow snapping.  1 is none.  Less than 1 is closer to bend length, probably around .995. More than 1 for no IK stretch style.' )
-        auto_rig_textF3 = mc.textField( 'arm_soft_ik_amount_text', width=35, h=24, text='1', bgc=(.2,0,.2), 
-                                        ann='IK Length Stretch Multiplier',
-                                        statusBarMessage='To prevent elbow snapping.  1 is none.  Less than 1 is closer to bend length, probably around .995. More than 1 for no IK stretch style.' )
-        auto_rig_text4 = mc.text(   label = 'Leg Soft IK', width=68, height=24, bgc=(0.3,0,0.5), align='center', font = 'boldLabelFont', 
-                                    ann='IK Length Stretch Multiplier',
-                                    statusBarMessage='To prevent knee snapping.  1 is none.  Less than 1 is closer to bend length, probably around .995. More than 1 for no IK stretch style.' )
-        auto_rig_textF4 = mc.textField( 'leg_soft_ik_amount_text', width=35, h=24, text='1', bgc=(.2,0,.2), 
-                                        ann='IK Length Stretch Multiplier',
-                                        statusBarMessage='To prevent knee snapping.  1 is none.  Less than 1 is closer to bend length, probably around .995. More than 1 for no IK stretch style.' )
+        auto_rig_text3 = mc.text(   label = 'Elbow PV Dist', width=76, height=24, bgc=(0.3,0,0.5), align='center', font = 'boldLabelFont', 
+                                    ann='Elbow Polve Vector Ctrl Start Distance.',
+                                    statusBarMessage='Elbow Polve Vector Ctrl Start Distance.' )
+        auto_rig_textF3 = mc.textField( 'elbow_pv_dist_text', width=28, h=24, text='20', bgc=(.2,0,.2), 
+                                        ann='Elbow Polve Vector Ctrl Start Distance.',
+                                        statusBarMessage='Elbow Polve Vector Ctrl Start Distance.' )
+        auto_rig_text4 = mc.text(   label = 'Knee PV Dist', width=76, height=24, bgc=(0.3,0,0.5), align='center', font = 'boldLabelFont', 
+                                    ann='Knee Polve Vector Ctrl Start Distance.',
+                                    statusBarMessage='' )
+        auto_rig_textF4 = mc.textField( 'knee_pv_dist_text', width=28, h=24, text='20', bgc=(.2,0,.2), 
+                                        ann='Knee Polve Vector Ctrl Start Distance.',
+                                        statusBarMessage='Knee Polve Vector Ctrl Start Distance.' )
 
 
         # check boxes
@@ -233,9 +233,9 @@ class rigger_ui_class():
                                     (auto_rig_textF1 , 'top', 20),(auto_rig_textF1 , 'left', 110),
                                     (auto_rig_text2 , 'top', 50),(auto_rig_text2 , 'left', 20),
                                     (auto_rig_textF2 , 'top', 50),(auto_rig_textF2 , 'left', 110),
-                                    (auto_rig_text3 , 'top', 73),(auto_rig_text3 , 'left', 382),
+                                    (auto_rig_text3 , 'top', 73),(auto_rig_text3 , 'left', 375),
                                     (auto_rig_textF3 , 'top', 73),(auto_rig_textF3 , 'left', 346),
-                                    (auto_rig_text4 , 'top', 101),(auto_rig_text4 , 'left', 382),
+                                    (auto_rig_text4 , 'top', 101),(auto_rig_text4 , 'left', 375),
                                     (auto_rig_textF4 , 'top', 101),(auto_rig_textF4 , 'left', 346),
                                     # checkboxes
                                     (headJnts_checkbox , 'top', 50),(headJnts_checkbox , 'left', 180),

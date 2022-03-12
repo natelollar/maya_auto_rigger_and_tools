@@ -23,7 +23,6 @@ class arm_rig():
                 ik_ctrl_size, 
                 pv_ctrl_size, 
                 elbow_dist_mult,
-                soft_ik_mult,
                 to_chest_ctrl, 
                 global_ctrl,
                 global_misc_grp,
@@ -306,7 +305,11 @@ class arm_rig():
             mc.parentConstraint(myCurve, ikJoint_list[-1], st=('x','y','z'))
             mc.scaleConstraint(myCurve, ikJoint_list[-1])
 
-        
+            # add Soft Ik/ No Ik stretch ctrl
+            mc.addAttr(myCurve, ln='IK_strch_amnt', nn='IK_strch_amnt', at='double', dv=1, k=1)
+
+
+
         #___________ik shldr CTRL____________#
         ik_shldr_group_list = []
         ik_shldr_ctrl_list = []
@@ -966,11 +969,11 @@ class arm_rig():
             ik_exp_str = ik_exp_str + (ctrl + '.scaleX * ')
         # must create expression to account for offset of elbow and wrist length when scaling
         # soft ik, a little less than total length to keep some bend in elbow joint
-        mc.expression ( s = arm_dist_ratio + '.input2X =' + str( (to_elbow_len + to_wrist_len) * soft_ik_mult ) + ' *' +  #.999
+        mc.expression ( s = arm_dist_ratio + '.input2X = ' + str(to_elbow_len + to_wrist_len) + ' * ' + ik_ctrl_list[0] + '.IK_strch_amnt' + ' * ' +  #.999  #soft_ik_mult
                         ik_exp_str + 
-                        '(1 +' '( ( (' + pv_ctrl_list[0] + '.scaleX) - 1) *' + str(forearm_len_prc) + ') ) * ' +
+                        '(1 + ' '( ( (' + pv_ctrl_list[0] + '.scaleX) - 1 ) * ' + str(forearm_len_prc) + ') ) * ' +
                         # pv_ctrl_list[0] + '.scaleX *' +
-                        ik_shldr_ctrl_list[0] + '.scaleX *' +
+                        ik_shldr_ctrl_list[0] + '.scaleX * ' +
                         ik_clav_ctrl_list[0] + '.scaleX' )
 
         #__________________________#
@@ -1022,7 +1025,7 @@ class arm_rig():
             ikTwst_arm_loc_1 = mc.rename(ikTwst_ruler_loc_list[1], direction + '_ikTwst_wrist_dist_loc')
             # parent constraint measure locators to ctrls (ruler loc is ends of distanceMeasure tool)
             mc.pointConstraint(ikJoint_list[2], ikTwst_arm_loc_0 )
-            mc.pointConstraint(ik_ctrl_list[0], ikTwst_arm_loc_1 )
+            mc.pointConstraint(ikJoint_list[3], ikTwst_arm_loc_1 ) # better than to ik ctrl for no stretch
             
             # make node for stretchy limb
             ikTwst_arm_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ikTwst_arm_dist_ratio' )
@@ -1043,7 +1046,7 @@ class arm_rig():
             ikTwst_exp_str = ''
             for ctrl in to_chest_ctrl:
                 ikTwst_exp_str = ikTwst_exp_str + (ctrl + '.scaleX * ')
-            mc.expression(  s = ikTwst_globalScale_off + '.input2X = ' + global_ctrl + '.scaleX * ' + 
+            mc.expression(  s = ikTwst_globalScale_off + '.input2X = ' + global_ctrl + '.scaleX * ' +
                             pv_ctrl_list[0] + '.scaleX' )
 
 
@@ -1103,7 +1106,7 @@ class arm_rig():
             fk_arm_loc_1 = mc.rename(fk_ruler_loc_list[1], direction + '_fk_wrist_dist_loc')
             # parent constraint measure locators to ctrls (ruler loc is ends of distanceMeasure tool)
             mc.parentConstraint(fk_ctrl_list[2], fk_arm_loc_0 )
-            mc.parentConstraint(fk_ctrl_list[-1], fk_arm_loc_1 )
+            mc.parentConstraint(fk_ctrl_list[-1], fk_arm_loc_1 ) # should switch to fk joint and point constraint for consistency
             
             # make node for stretchy limb
             fk_arm_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_fk_arm_dist_ratio' )
@@ -1327,6 +1330,6 @@ class arm_rig():
         
         # return twist curve to remove from controller tags
         return arm_ikHandle_curve_newName 
-                
+        
         
         

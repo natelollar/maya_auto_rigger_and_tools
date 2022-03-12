@@ -158,7 +158,6 @@ class leg_rig():
                             ik_ctrl_size, 
                             pv_ctrl_size, 
                             knee_dist_mult,
-                            soft_ik_mult,
                             spine_root_ctrl, 
                             global_ctrl):
         # find leg joints using method from own class
@@ -413,6 +412,9 @@ class leg_rig():
             #append grp for outside use
             ik_group_list.append(myGroup)
             ik_ctrl_list.append(myCurve)
+
+            # add Soft Ik/ No Ik stretch ctrl
+            mc.addAttr(myCurve, ln='IK_strch_amnt', nn='IK_strch_amnt', at='double', dv=1, k=1)
         
         
         #___________ik hip CTRL____________#
@@ -470,6 +472,7 @@ class leg_rig():
             ik_hip_group_list.append(myGroup)
             ik_hip_ctrl_list.append(myCurve)
 
+
         # parent constrain hip joint translation to control
         mc.parentConstraint(ik_hip_ctrl_list[0], ikJoint_list[0], sr=('x', 'y', 'z'))
         #scale constrain ctrl to jnt
@@ -478,6 +481,8 @@ class leg_rig():
         mc.setAttr((ik_hip_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
         mc.setAttr((ik_hip_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
         mc.setAttr((ik_hip_ctrl_list[0] + '.rz'), lock=True, keyable=False, channelBox=False)
+
+
 
 
         #_________________POLE VECTOR Start___________________#
@@ -956,9 +961,9 @@ class leg_rig():
         pv_shin_scale = 1 + (shin_len_prc_diff * shin_len_prc)  # not used, only in expression below
 
         # soft ik, a little less than total length to keep some bend in knee joint
-        mc.expression ( s = leg_dist_ratio + '.input2X =' + str(  (to_knee_len + to_ankle_len) * soft_ik_mult ) + ' *' +  # .999
+        mc.expression ( s = leg_dist_ratio + '.input2X = ' + str(to_knee_len + to_ankle_len) + ' * ' + ik_ctrl_list[0] + '.IK_strch_amnt' + ' * ' +   # .999  #soft_ik_mult
                         # shin length amount of pv scale
-                        '(1 +' '( ( (' + pv_ctrl_list[0] + '.scaleX) - 1) *' + str(shin_len_prc) + ') ) *' +
+                        '(1 + ' '( ( (' + pv_ctrl_list[0] + '.scaleX ) - 1 ) * ' + str(shin_len_prc) + ') ) *' +
                         spine_root_ctrl + '.scaleX * ' + 
                         ik_hip_ctrl_list[0] + '.scaleX' )
         #_____________#
