@@ -45,6 +45,7 @@ class animation_class():
         for i in mySel:
             #switching L_R_ prefix
             subVar = i.replace(left_prefix, right_prefix, 1) # '1', to replace first instance of string only
+            # transfer attributes over to opposite side
             mc.copyAttr(i, subVar, values=True, attribute=('translate', 'rotate', 'scale'))
 
             #get values of right side to multiply offset

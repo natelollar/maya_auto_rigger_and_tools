@@ -792,25 +792,44 @@ class rigger_ui_class():
 
         # blue seperator
         mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=10, width=454, align='left', font='boldLabelFont', bgc=(0.5,0.5,0.9))
+        mc.text(label = '', height=3, width=454, align='left', font='boldLabelFont', bgc=(0.5,0.5,0.9))
         mc.setParent("..")
 
         # new row
         mc.rowLayout(numberOfColumns = 5)
         mc.button(  label='Maya, API, Python, QtCore, \n PySide2, OS Version', 
                     h=40, 
-                    w=145, 
+                    w=150, 
                     command = 'character_rigger.tabs.misc_tab.misc_tab_class().python_maya_info()', 
                     bgc = (0.4,0.4,0.4), 
                     statusBarMessage='')
-        #mc.separator(style='none', w=10, h=30, bgc=(0.4,0,0))
         mc.button(  label='Test Function', 
                     h=40, 
-                    w=145, 
+                    w=150, 
                     command = 'character_rigger.tabs.misc_tab.misc_tab_class().function_test()', 
                     bgc = (0.5,0.3,0.3), 
                     statusBarMessage='')
-        #mc.separator(style='none', w=10, h=30, bgc=(0.4,0,0))
+        mc.button(  label='Curve/s Vertex Positions', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().curve_vert_pos()', 
+                    bgc = (0.2,0.2,0.5), 
+                    statusBarMessage='Select curve. Or shape if multiple shapes in curve.  Print Curve Vertex Positions.  Good for pasting into cmds.curve().',
+                    ann='Print Curve Vertex Positions')
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=3, width=454, align='left', font='boldLabelFont', bgc=(0.5,0.5,0.9))
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 5)
+        mc.button(  label='Reference Ctrl Shape/s', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().reference_curve_shape()', 
+                    bgc = (0.2,0.2,0.2), 
+                    statusBarMessage='Make Ctrl Unselectable. Good for referenceing global ctrl when animating.',
+                    ann='Make Ctrl Unselectable.')
         mc.setParent("..")
 
 

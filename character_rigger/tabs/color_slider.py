@@ -417,68 +417,76 @@ class color_class():
         curveW = mc.intSlider('curve_width_value', q=True, value=True)
         #my selection
         mySel = mc.ls(sl=True)
-        #apply color to selection shapes
-        if curveW == 0: 
-            mc.iconTextButton('curve_width', e=True, bgc=(0, 0, 0))
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", -1)
-        if curveW == 1: 
-            mc.iconTextButton('curve_width', e=True, bgc=(0.1, 0.1, 0.1))
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", 0)
-        if curveW == 2: 
-            mc.iconTextButton('curve_width', e=True, bgc=(0.2, 0.2, 0.2))
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", 2)
-        if curveW == 3: 
-            mc.iconTextButton('curve_width', e=True, bgc=(0.3, 0.3, 0.3))
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", 3)
-        if curveW == 4: 
-            mc.iconTextButton('curve_width', e=True, bgc=(0.4, 0.4, 0.4))
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", 4)
-        if curveW == 5: 
-            mc.iconTextButton('curve_width', e=True, bgc=(0.5, 0.5, 0.5))
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", 5)
-        if curveW == 6: 
-            mc.iconTextButton('curve_width', e=True, bgc=(0.6, 0.6, 0.6))
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", 6)
-        if curveW == 7: 
-            mc.iconTextButton('curve_width', e=True, bgc=(0.7, 0.7, 0.7))
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", 7)
-        if curveW == 8: 
-            mc.iconTextButton('curve_width', e=True, bgc=(0.8, 0.8, 0.8) )
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", 8)
-        if curveW == 9: 
-            mc.iconTextButton('curve_width', e=True, bgc=(0.9, 0.9, 0.9))
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", 9)
-        if curveW == 10: 
-            mc.iconTextButton('curve_width', e=True, bgc=(0.95, 0.95, 0.95))
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", 10)
-        if curveW == 11: 
-            mc.iconTextButton('curve_width', e=True, bgc=(1, 1, 1))
-            for i in mySel:
-                selShape = mc.listRelatives(i, s=True)
-                mc.setAttr(selShape[0] + ".lineWidth", 11)
+        # to avoid red error when nothing selected
+        if mySel:
+            #apply color to selection shapes
+            if curveW == 0: 
+                mc.iconTextButton('curve_width', e=True, bgc=(0, 0, 0))
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", -1)
+            if curveW == 1: 
+                mc.iconTextButton('curve_width', e=True, bgc=(0.1, 0.1, 0.1))
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", 0)
+            if curveW == 2: 
+                mc.iconTextButton('curve_width', e=True, bgc=(0.2, 0.2, 0.2))
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", 2)
+            if curveW == 3: 
+                mc.iconTextButton('curve_width', e=True, bgc=(0.3, 0.3, 0.3))
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", 3)
+            if curveW == 4: 
+                mc.iconTextButton('curve_width', e=True, bgc=(0.4, 0.4, 0.4))
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", 4)
+            if curveW == 5: 
+                mc.iconTextButton('curve_width', e=True, bgc=(0.5, 0.5, 0.5))
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", 5)
+            if curveW == 6: 
+                mc.iconTextButton('curve_width', e=True, bgc=(0.6, 0.6, 0.6))
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", 6)
+            if curveW == 7: 
+                mc.iconTextButton('curve_width', e=True, bgc=(0.7, 0.7, 0.7))
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", 7)
+            if curveW == 8: 
+                mc.iconTextButton('curve_width', e=True, bgc=(0.8, 0.8, 0.8) )
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", 8)
+            if curveW == 9: 
+                mc.iconTextButton('curve_width', e=True, bgc=(0.9, 0.9, 0.9))
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", 9)
+            if curveW == 10: 
+                mc.iconTextButton('curve_width', e=True, bgc=(0.95, 0.95, 0.95))
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", 10)
+            if curveW == 11: 
+                mc.iconTextButton('curve_width', e=True, bgc=(1, 1, 1))
+                for i in mySel:
+                    selShape = mc.listRelatives(i, s=True)
+                    mc.setAttr(selShape[0] + ".lineWidth", 11)
 
+            curve_width = mc.getAttr(selShape[0] + ".lineWidth")
 
+            # print width for user to know
+            if curve_width:
+                print(curve_width)
+        else:
+            print('Please select curve! Nothing selected.')
 
 
