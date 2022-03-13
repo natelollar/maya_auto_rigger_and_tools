@@ -4,6 +4,8 @@ import itertools
 
 import maya.api.OpenMaya as om
 
+import string
+
 #_________________Rigging Functions ___________________________#
 #______________________________________________________________#
 class rigging_class():
@@ -1222,7 +1224,7 @@ class rigging_class():
             
             # get shape of opposite side ctrl to delete later
             mySel_opp_shape = mc.listRelatives(mySel_opp, s=True)
-            #parent under opposite ctrl and freeze attributes to get same exact pos, rot, scale
+            #parent under opposite ctrl and freeze attributes to get same exact trans, rot, scale
             mc.parent(mySel_dup[0], mySel_opp)
             mc.makeIdentity(mySel_dup[0], translate=True, rotate=True, scale=True, apply=True)
             mc.Unparent(mySel_dup[0])
@@ -1235,12 +1237,19 @@ class rigging_class():
             mc.delete(mySel_dup[0])
             #delete old shape under opposite ctrl
             mc.delete(mySel_opp_shape)
+
             #rename new shape after opposite ctrl parent
-            mc.rename(mySel_dup_shape, mySel_opp + 'Shape')
+            for shape in mySel_dup_shape: # for loop in case more than one shape
+                myIndex = mySel_dup_shape.index(shape)
+                # alphabet_list + '_'
+                alphabet_list = '_' + string.ascii_uppercase[:] 
+                if shape != mySel_dup_shape[0]:
+                    mc.rename(shape, mySel_opp + alphabet_list[myIndex] + 'Shape')
+                elif shape == mySel_dup_shape[0]:
+                    mc.rename(shape, mySel_opp + 'Shape')
 
             # relock and hide attritues
             if mySel_locked_attr:
                 for i in mySel_locked_attr:
                     mc.setAttr((mySel + '.' + i), lock=True, keyable=False, channelBox=False)
                     mc.setAttr((mySel_opp + '.' + i), lock=True, keyable=False, channelBox=False)
-
