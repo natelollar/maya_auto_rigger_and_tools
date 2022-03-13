@@ -169,8 +169,8 @@ class rigger_ui_class():
                                                     cw3 = [75,305,20], # width of the 3 columns 
                                                     buttonLabel='Browse', # button label
                                                     buttonCommand= 'character_rigger.tabs.auto_rig_tab.auto_rig_options().skin_weights_browse()',
-                                                    statusBarMessage= 'Export XML weights using "Deform<Export Weights".  Disconnect from NG Skin tools (if exist), before weights export.',
-                                                    ann='Export XML weights using "Deform<Export Weights"'
+                                                    statusBarMessage= 'Set skin weights import path.  Export XML weights using "Deform<Export Weights".  Disconnect from NG Skin tools (if exist), before weights export.',
+                                                    ann='Set skin weights import path. Export XML weights using "Deform<Export Weights"'
                                                     ) 
         skele_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "\orc_skele.fbx" )
         find_skele_browser = mc.textFieldButtonGrp( 'skele_browser_text',
@@ -181,7 +181,10 @@ class rigger_ui_class():
                                                     text= skele_path,
                                                     cw3 = [75,305,20], # width of the 3 columns 
                                                     buttonLabel='Browse', # button label
-                                                    buttonCommand= 'character_rigger.tabs.auto_rig_tab.auto_rig_options().skele_file_browse()' ) 
+                                                    buttonCommand= 'character_rigger.tabs.auto_rig_tab.auto_rig_options().skele_file_browse()',
+                                                    statusBarMessage= 'Set skeleton import path.  .ma or fbx. will work.',
+                                                    ann='Set skeleton import path.  .ma or fbx. will work.'
+                                                     ) 
         model_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "\orc_body.fbx" )
         find_model_browser = mc.textFieldButtonGrp( 'model_browser_text',
                                                     label = '  Model :', # title
@@ -190,16 +193,19 @@ class rigger_ui_class():
                                                     width=437, 
                                                     text= model_path,
                                                     cw3 = [75,305,20], # width of the 3 columns 
-                                                    #bgc = (.5,.5,.5),
                                                     buttonLabel='Browse', # button label
-                                                    buttonCommand= 'character_rigger.tabs.auto_rig_tab.auto_rig_options().model_file_browse()' ) 
+                                                    buttonCommand= 'character_rigger.tabs.auto_rig_tab.auto_rig_options().model_file_browse()',
+                                                    statusBarMessage= 'Set character model import path.  .ma or fbx. will work.',
+                                                    ann='Set character model import path.  .ma or fbx. will work.'
+                                                     ) 
         new_scene_button = mc.button(label='New Skinned \n Character Scene', 
-                                            ann='',
                                             h=60, 
                                             w=95, 
                                             command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().new_character_scene()',
                                             bgc = (0,.3,.5), 
-                                            statusBarMessage='' )
+                                            statusBarMessage='Create a new scene that automatically skins the skeleton to the model with premade skin weights.  Makes it easy to adjust skeleton in seperate file.',
+                                            ann='Create a new scene that automatically skins the chosen skeleton to the model with premade weights.' 
+                                            )
         
 
         # rigger tab ui layout
@@ -756,10 +762,35 @@ class rigger_ui_class():
         mc.setParent('..')
 
 
+
+        #______________________________Misc Tab @mkp _______________________________#
+        #__________________________________________________________________________#
+
+        misc_tab = mc.columnLayout()
+
+        # blue seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=10, width=454, align='left', font='boldLabelFont', bgc=(0.5,0.5,0.9))
+        mc.setParent("..")
+
+        # new row
+        mc.rowLayout(numberOfColumns = 5)
+        mc.button(  label='Maya, API, Python, QtCore, \n PySide2, OS Version', 
+                    h=40, 
+                    w=145, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().python_maya_info()', 
+                    bgc = (0.4,0.4,0.4), 
+                    statusBarMessage='')
+        #mc.separator(style='none', w=10, h=30, bgc=(0.4,0,0))
+        mc.setParent("..")
+
+        #parent column to tab
+        mc.setParent('..')
+
         #_________________Tab Layout/ UI End___________________#
 
         #tabs layout
-        mc.tabLayout(myTabs, edit=True, tabLabel=[ (auto_rig_tab, 'Auto Rig'), (modeling_tab, 'Modeling'), (rigging_tab, 'Rigging'), (animation_tab, 'Animation'), (color_tab, 'Color')], bs='none')
+        mc.tabLayout(myTabs, edit=True, tabLabel=[ (auto_rig_tab, 'Auto Rig'), (modeling_tab, 'Modeling'), (rigging_tab, 'Rigging'), (animation_tab, 'Animation'), (color_tab, 'Color'), (misc_tab, 'Misc')], bs='none')
 
         #Show UI Window
         mc.showWindow()
