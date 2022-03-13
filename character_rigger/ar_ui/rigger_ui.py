@@ -18,7 +18,7 @@ class rigger_ui_class():
         #main layout creation
         myForm = mc.formLayout()
 
-        myColumn = mc.columnLayout( bgc=(0.1,0,0.1) )
+        myColumn = mc.columnLayout( bgc=(0.1,0,0.1), h=100, w=470 )
 
         #_______Beginning Title_______#
         #to create border around edge
@@ -32,6 +32,7 @@ class rigger_ui_class():
         #_________________________declare Tabs____________________________________#
         #Insert Tabs
         myTabs = mc.tabLayout()
+
 
         #________________________________Auto Rig Tab @mkg _______________________________#
         #__________________________________________________________________________#
@@ -450,8 +451,30 @@ class rigger_ui_class():
 
         mc.setParent('..')
 
+        # green seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=222, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.setParent("..")
 
+        # Text Input Row
+        mc.rowLayout(numberOfColumns = 15)
+        mc.textField('left_prefix_text', width=40, h=24, text='l_')
+        mc.textField('right_prefix_text', width=40, h=24, text='r_')
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+        mc.button(  label='MIRROR Ctrl Shape/s', 
+                    w=113, 
+                    command = 'character_rigger.tabs.rigging.rigging_class().mirror_ctrl_shape()', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage = 'Mirror Ctrl Shape to Opposite side Ctrl (across X Axis).  Select LEFT Controls to Mirror. ' +
+                                        'Useful for autrigger when controls need to be aligned, but dont want to do both sides.',
+                    ann = 'Mirror Ctrl Shape to Opposite side Ctrl (across X Axis).  Select LEFT Controls to Mirror.' )
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+        mc.setParent("..")
 
+        # green seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=222, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.setParent("..")
 
 
         #parent column to tab
@@ -517,16 +540,16 @@ class rigger_ui_class():
 
         # Text Input Row
         mc.rowLayout(numberOfColumns = 15)
-        mc.textField('l_hip_text', width=40, h=24, text='l_')
-        mc.textField('r_hip_text', width=40, h=24, text='r_')
+        mc.textField('l_ctrlObject_text', width=40, h=24, text='l_')
+        mc.textField('r_ctrlObject_text', width=40, h=24, text='r_')
         mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
 
         mc.button(  label='M I R R O R', 
                     w=80, 
                     command = 'character_rigger.tabs.animation.animation_class().mirror_ctrls()', 
                     bgc = (0.1,0.5,0.1), 
-                    statusBarMessage=   'Select LEFT Controls/ Objects to Mirror, \
-                                        Or Mirror Selected if No Opposite Conrols/ Objects Exist')
+                    statusBarMessage=   'Select LEFT Controls/ Objects to Mirror,' +
+                                        'Or Mirror Selected if No Opposite Conrols/ Objects Exist')
         mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
 
         mc.textField('translateX_text', width=40, h=24, text='-1')
@@ -762,7 +785,6 @@ class rigger_ui_class():
         mc.setParent('..')
 
 
-
         #______________________________Misc Tab @mkp _______________________________#
         #__________________________________________________________________________#
 
@@ -782,10 +804,20 @@ class rigger_ui_class():
                     bgc = (0.4,0.4,0.4), 
                     statusBarMessage='')
         #mc.separator(style='none', w=10, h=30, bgc=(0.4,0,0))
+        mc.button(  label='Test Function', 
+                    h=40, 
+                    w=145, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().function_test()', 
+                    bgc = (0.5,0.3,0.3), 
+                    statusBarMessage='')
+        #mc.separator(style='none', w=10, h=30, bgc=(0.4,0,0))
         mc.setParent("..")
+
 
         #parent column to tab
         mc.setParent('..')
+
+        
 
         #_________________Tab Layout/ UI End___________________#
 

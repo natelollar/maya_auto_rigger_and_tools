@@ -31,8 +31,8 @@ class animation_class():
         #selection
         mySel = mc.ls(sl=True)
         #prefix text
-        left_prefix = mc.textField('l_hip_text', query=True, text=True)
-        right_prefix = mc.textField('r_hip_text', query=True, text=True)
+        left_prefix = mc.textField('l_ctrlObject_text', query=True, text=True)
+        right_prefix = mc.textField('r_ctrlObject_text', query=True, text=True)
         #multiplier text
         tranX_mult = mc.textField('translateX_text', query=True, text=True)
         tranY_mult = mc.textField('translateY_text', query=True, text=True)
@@ -44,7 +44,7 @@ class animation_class():
         #mirrioring values of ctrls with correct prefix
         for i in mySel:
             #switching L_R_ prefix
-            subVar = i.replace(left_prefix, right_prefix)
+            subVar = i.replace(left_prefix, right_prefix, 1) # '1', to replace first instance of string only
             mc.copyAttr(i, subVar, values=True, attribute=('translate', 'rotate', 'scale'))
 
             #get values of right side to multiply offset

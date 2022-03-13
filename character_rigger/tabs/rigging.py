@@ -1182,3 +1182,65 @@ class rigging_class():
 
         return mySel_type
 
+
+    def mirror_ctrl_shape(self):
+        # left right prefix
+        left_prefix = mc.textField('left_prefix_text', query=True, text=True)
+        right_prefix = mc.textField('right_prefix_text', query=True, text=True)
+        # get selection list
+        mySel_list = mc.ls(sl=True)
+        # itterate through selected
+        for mySel in mySel_list:
+            mc.select(mySel) # if error sometimes reselect will fix
+            # list locked attr to unlock and relock later
+            mySel_locked_attr = mc.listAttr(mySel, locked=True)
+            # unlock all locked attributes
+            if mySel_locked_attr: # if locked attr exist /have value
+                for i in mySel_locked_attr:
+                    mc.setAttr((mySel + '.' + i), lock=False, keyable=True, channelBox=True)
+
+            # duplicate, delete children, unparent
+            mySel_dup = mc.duplicate(mySel, renameChildren=True)
+            mySel_dup_childs = mc.listRelatives(mySel_dup, ad=True, type='transform')
+            mc.delete(mySel_dup_childs)
+            mc.Unparent(mySel_dup[0])
+            # parent duplicated ctrl under world origin grp
+            myGrp = mc.group(em=1)
+            mc.parent(mySel_dup[0], myGrp)
+            # flip grp to other side and freeze scale of -1 back to 1
+            mc.setAttr(myGrp + '.scaleX', -1)
+            mc.Unparent(mySel_dup[0]) # unparent from flip grp
+            #delete flip grp
+            mc.delete(myGrp)
+            
+            # find opposite side ctrl of orignal duplicated
+            mySel_opp = mySel.replace(left_prefix, right_prefix, 1)
+            #unlock all attributes
+            if mySel_locked_attr:
+                for i in mySel_locked_attr:
+                    mc.setAttr((mySel_opp + '.' + i), lock=False, keyable=True, channelBox=True)
+            
+            # get shape of opposite side ctrl to delete later
+            mySel_opp_shape = mc.listRelatives(mySel_opp, s=True)
+            #parent under opposite ctrl and freeze attributes to get same exact pos, rot, scale
+            mc.parent(mySel_dup[0], mySel_opp)
+            mc.makeIdentity(mySel_dup[0], translate=True, rotate=True, scale=True, apply=True)
+            mc.Unparent(mySel_dup[0])
+
+            #find shape of duplicated control
+            mySel_dup_shape = mc.listRelatives(mySel_dup[0], s=True)
+            # parent flipped shape under other side ctrl
+            mc.parent(mySel_dup_shape, mySel_opp, r=True, s=True)
+            # delete unused duplicate transform
+            mc.delete(mySel_dup[0])
+            #delete old shape under opposite ctrl
+            mc.delete(mySel_opp_shape)
+            #rename new shape after opposite ctrl parent
+            mc.rename(mySel_dup_shape, mySel_opp + 'Shape')
+
+            # relock and hide attritues
+            if mySel_locked_attr:
+                for i in mySel_locked_attr:
+                    mc.setAttr((mySel + '.' + i), lock=True, keyable=False, channelBox=False)
+                    mc.setAttr((mySel_opp + '.' + i), lock=True, keyable=False, channelBox=False)
+

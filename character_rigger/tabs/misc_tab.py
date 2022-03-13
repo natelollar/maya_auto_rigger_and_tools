@@ -29,6 +29,16 @@ class misc_tab_class():
         print('_____________________')
 
 
+    def function_test(self):
+        print('#________________________#')
+        print('TEST!!! TEST!!! TEST!!!')
+        print('#________________________#')
+            
+        
+
+
+
+
 
 
 # could make function for appending sys path or maya.env
