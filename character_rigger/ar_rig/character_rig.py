@@ -117,7 +117,7 @@ def character_rig():
 
         #________________________________________________________________________#
 
-        # ear ctrls
+        # ear ctrls (top face jnts w/ children jnt/s)
         #parent to spine top (head) control
         top_ctrls_var = face_rig.face_rig()
         top_ctrls_var.ear_ctrls(ctrl_size = (3 * float( control_size ) ), 

@@ -5,6 +5,8 @@ import sys
 from PySide2 import QtCore
 import PySide2
 
+from ..ar_rig import leg_rig
+
 
 class misc_tab_class():
 
@@ -84,6 +86,15 @@ class misc_tab_class():
                 # set display type of shape to reference
                 mc.setAttr(i + '.overrideEnabled', 1)
                 mc.setAttr(i + '.overrideDisplayType', 2)
+
+    def rename_first(self):
+        current_part = mc.textField('current_part_text', query=True, text=True)
+        replace_part = mc.textField('replace_part_text', query=True, text=True)
+        mySel = mc.ls(sl=1)
+        for i in mySel:
+            mySel_name = i.replace(current_part, replace_part, 1)
+            print(mySel_name)
+            mc.rename(i, mySel_name)
 
 
 

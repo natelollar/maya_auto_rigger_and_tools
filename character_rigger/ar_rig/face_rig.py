@@ -212,68 +212,72 @@ class face_rig():
             except:
                 pass
 
-        # chain for first r ear
-        r_ear_list_var = sel_joints.sel_joints(firstJoint=ear_jnts[0])
+        # if ear jnts do exist rig them (top face jnts w/ child/s)
+        try:
+            # chain for first r ear (should just put For Loop incase more fk chains on head)
+            r_ear_list_var = sel_joints.sel_joints(firstJoint=ear_jnts[0])
 
-        r_ear_list_info = r_ear_list_var.sel_jnt_chain()
+            r_ear_list_info = r_ear_list_var.sel_jnt_chain()
 
-        # chain for first l ear
-        l_ear_list_var = sel_joints.sel_joints(firstJoint=ear_jnts[1])
+            # chain for first l ear
+            l_ear_list_var = sel_joints.sel_joints(firstJoint=ear_jnts[1])
 
-        l_ear_list_info = l_ear_list_var.sel_jnt_chain()
+            l_ear_list_info = l_ear_list_var.sel_jnt_chain()
 
-        #create controls and groups for R EAR ___________________________
-        r_ear_grp_list = []
-        r_ear_ctrl_list = []
-        for jnt in r_ear_list_info:
-            jnt_var = fk_ctrl.fk_ctrl()
-            jnt_var_info = jnt_var.single_fk_curve_ctrl(jnt=jnt, 
-                                                        parent_to='', 
-                                                        version='box', 
-                                                        size=ctrl_size, 
-                                                        colorR=0, 
-                                                        colorG=0.5, 
-                                                        colorB=1)
-            r_ear_grp_list.append(jnt_var_info[0])
-            r_ear_ctrl_list.append(jnt_var_info[1])
-        # varaiable for top grp before removed
-        r_ear_top_grp = r_ear_grp_list[0]
+            #create controls and groups for R EAR ___________________________
+            r_ear_grp_list = []
+            r_ear_ctrl_list = []
+            for jnt in r_ear_list_info:
+                jnt_var = fk_ctrl.fk_ctrl()
+                jnt_var_info = jnt_var.single_fk_curve_ctrl(jnt=jnt, 
+                                                            parent_to='', 
+                                                            version='box', 
+                                                            size=ctrl_size, 
+                                                            colorR=0, 
+                                                            colorG=0.5, 
+                                                            colorB=1)
+                r_ear_grp_list.append(jnt_var_info[0])
+                r_ear_ctrl_list.append(jnt_var_info[1])
+            # varaiable for top grp before removed
+            r_ear_top_grp = r_ear_grp_list[0]
 
-        #remove first and last of lists to correctly parent ctrls and grps together in for loop
-        r_ear_grp_list.pop(0)
-        r_ear_ctrl_list.pop(-1)
+            #remove first and last of lists to correctly parent ctrls and grps together in for loop
+            r_ear_grp_list.pop(0)
+            r_ear_ctrl_list.pop(-1)
 
-        #parent ctrls and grps together
-        for i_grp, i_ctrl in itertools.izip(r_ear_grp_list, r_ear_ctrl_list):
-            mc.parent(i_grp, i_ctrl)
-        # parent top grp to head ctrl
-        mc.parent(r_ear_top_grp, parent_to)
+            #parent ctrls and grps together
+            for i_grp, i_ctrl in itertools.izip(r_ear_grp_list, r_ear_ctrl_list):
+                mc.parent(i_grp, i_ctrl)
+            # parent top grp to head ctrl
+            mc.parent(r_ear_top_grp, parent_to)
 
-        #create controls and groups for L EAR ___________________________
-        l_ear_grp_list = []
-        l_ear_ctrl_list = []
-        for jnt in l_ear_list_info:
-            jnt_var = fk_ctrl.fk_ctrl()
-            jnt_var_info = jnt_var.single_fk_curve_ctrl(jnt=jnt, 
-                                                        parent_to='', 
-                                                        version='box', 
-                                                        size=ctrl_size, 
-                                                        colorR=0, 
-                                                        colorG=0.5, 
-                                                        colorB=1)
-            l_ear_grp_list.append(jnt_var_info[0])
-            l_ear_ctrl_list.append(jnt_var_info[1])
-        # varaiable for top grp before removed
-        l_ear_top_grp = l_ear_grp_list[0]
+            #create controls and groups for L EAR ___________________________
+            l_ear_grp_list = []
+            l_ear_ctrl_list = []
+            for jnt in l_ear_list_info:
+                jnt_var = fk_ctrl.fk_ctrl()
+                jnt_var_info = jnt_var.single_fk_curve_ctrl(jnt=jnt, 
+                                                            parent_to='', 
+                                                            version='box', 
+                                                            size=ctrl_size, 
+                                                            colorR=0, 
+                                                            colorG=0.5, 
+                                                            colorB=1)
+                l_ear_grp_list.append(jnt_var_info[0])
+                l_ear_ctrl_list.append(jnt_var_info[1])
+            # varaiable for top grp before removed
+            l_ear_top_grp = l_ear_grp_list[0]
 
-        #remove first and last of lists to correctly parent ctrls and grps together in for loop
-        l_ear_grp_list.pop(0)
-        l_ear_ctrl_list.pop(-1)
+            #remove first and last of lists to correctly parent ctrls and grps together in for loop
+            l_ear_grp_list.pop(0)
+            l_ear_ctrl_list.pop(-1)
 
-        #parent ctrls and grps together
-        for i_grp, i_ctrl in itertools.izip(l_ear_grp_list, l_ear_ctrl_list):
-            mc.parent(i_grp, i_ctrl)
-        # parent top grp to head ctrl
-        mc.parent(l_ear_top_grp, parent_to)
+            #parent ctrls and grps together
+            for i_grp, i_ctrl in itertools.izip(l_ear_grp_list, l_ear_ctrl_list):
+                mc.parent(i_grp, i_ctrl)
+            # parent top grp to head ctrl
+            mc.parent(l_ear_top_grp, parent_to)
 
-        return r_ear_top_grp, l_ear_top_grp
+            return r_ear_top_grp, l_ear_top_grp
+        except:
+            pass

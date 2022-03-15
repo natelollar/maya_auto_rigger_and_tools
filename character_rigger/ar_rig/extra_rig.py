@@ -14,7 +14,7 @@ class extra_rig():
         spine_root = spine_root_temp.find_spine_root()
 
         chest_temp = find_jnts.find_jnts()
-        chest = spine_root_temp.find_chest_jnt()
+        chest = chest_temp.find_chest_jnt()
 
         if parent == 'spine_root_pos':
             single_jnt_var = create_jnts.create_jnts(   spine_root + '_blendOffset', 
@@ -27,9 +27,16 @@ class extra_rig():
 
             pos_const = mc.parentConstraint(spine_root, myJoint)
             mc.delete(pos_const)
+            
+            # freeze join attr (to 0 rid of rotation) 
+            mc.makeIdentity(myJoint, apply=True)
 
+            #turn off scale compensate to prevent double scaling (when global scaling)
+            mc.setAttr(myJoint + '.segmentScaleCompensate', 0 )
+            
             mc.parentConstraint(parentTo, myJoint)
             mc.scaleConstraint(parentTo, myJoint)  
+            
 
         if parent == 'chest_pos':
             # create single joint
@@ -48,6 +55,12 @@ class extra_rig():
             # delete parent constraint
             mc.delete(pos_const)
 
+            # freeze join attr (to 0 rid of rotation) 
+            mc.makeIdentity(myJoint, apply=True)
+
+            #turn off scale compensate to prevent double scaling (when global scaling)
+            mc.setAttr(myJoint + '.segmentScaleCompensate', 0 )
+
             # constrain jnt to chest control
             mc.parentConstraint(parentTo, myJoint)
             mc.scaleConstraint(parentTo, myJoint)
@@ -55,10 +68,8 @@ class extra_rig():
         else:
             pass
 
-        # set offset joint to invisible
-        #mc.setAttr(myJoint + '.visibility', 0)
-
         return myJoint
+
 
     # find spine ctrls up to and including chest ctrl
     def to_chest_ctrl(self, fk_ctrl_list):

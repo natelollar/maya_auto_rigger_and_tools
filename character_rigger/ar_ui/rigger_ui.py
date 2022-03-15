@@ -120,9 +120,13 @@ class rigger_ui_class():
         # text fields
         # corner lips
         auto_rig_text1 = mc.text(   label = 'Mid Face Jnts:', width=85, height=24, bgc=(0.4,0,0.4), align='center', font = 'boldLabelFont', 
-                                    statusBarMessage='Amount of Mid Face Joints to be weighted between top face and bot face jnts. First 2 mid joints might be the lip corners.  Then the next 2 lowest top face joints, might be the cheeks.')
+                                    statusBarMessage='Amount of Mid Face Joints to be weighted between top face and bot face jnts. ' + 
+                                    'First 2 mid joints might be the lip corners.  Then the next 2 lowest top face joints, might be the cheeks.',
+                                    ann='Lowest top face jnts. Parent between upper and lower face.' )
         auto_rig_textF1 = mc.textField( 'midFace_jnt_amnt_text', width=40, h=24, text='2', bgc=(.2,0,.2), 
-                                        statusBarMessage='Amount of Mid Face Joints to be weighted between top face and bot face jnts.  First 2 mid joints might be the lip corners.  Then the next lowest top face joints, might be the cheeks.' )
+                                        statusBarMessage='Amount of Mid Face Joints to be weighted between top face and bot face jnts. ' +  
+                                        'First 2 mid joints might be the lip corners.  Then the next lowest top face joints, might be the cheeks.',
+                                        ann='Lowest top face jnts. Parent between upper and lower face.' )
         auto_rig_text2 = mc.text(   label = 'Control Size:', width=85, height=24, bgc=(0.4,0,0.4), align='center', font = 'boldLabelFont', 
                                     statusBarMessage='Global size of ctrls.')
         auto_rig_textF2 = mc.textField( 'global_ctrl_size_text', width=40, h=24, text='1', bgc=(.2,0,.2), 
@@ -438,7 +442,7 @@ class rigger_ui_class():
                     ann='Delete old bind pose, create new one. Select any joint in skeleton.',
                     statusBarMessage='Delete old bind pose, create new one. Select any joint in skeleton.')
         mc.separator(style='none', w=10, h=60, bgc=(0.4,0,0))
-        mc.textField( 'bindpose_name_text', width=142, h=60, text='newBindPose_name', bgc=(.2,0,.2), 
+        mc.textField( 'bindpose_name_text', width=142, h=60, text='newBindPose_name', 
                         statusBarMessage='Delete old bind pose, create new one. Select any joint in skeleton.')
         mc.separator(style='none', w=10, h=60, bgc=(0.4,0,0))
         mc.button(  label=  'Print \n Object Type', 
@@ -830,6 +834,20 @@ class rigger_ui_class():
                     bgc = (0.2,0.2,0.2), 
                     statusBarMessage='Make Ctrl Unselectable. Good for referenceing global ctrl when animating.',
                     ann='Make Ctrl Unselectable.')
+        mc.button(  label='RENAME First Occurrence', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().rename_first()', 
+                    bgc = (0.4,0.2,0.2), 
+                    statusBarMessage='Rename first occurrence.',
+                    ann='Rename first occurrence.')
+        mc.textField(   'current_part_text', width=75, h=40, text='l',
+                        statusBarMessage='Text to be replaced.',
+                        ann='Text to be replaced.' )
+        mc.textField(   'replace_part_text', width=75, h=40, text='l_', 
+                        statusBarMessage='Replace text with...',
+                        ann='Replace text with...' )
+        
         mc.setParent("..")
 
 

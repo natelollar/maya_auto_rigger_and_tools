@@ -63,9 +63,9 @@ class nurbs_ctrl():
         mc.setAttr( (nurbsCurve + '.scale'), self.size, self.size, self.size )
         mc.makeIdentity(apply=True)
         itemsShape = mc.listRelatives(s=True)
-        mc.setAttr( ('.overrideEnabled'), 1 )
-        mc.setAttr( ('.overrideRGBColors'), 1 )
-        mc.setAttr( ('.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
+        mc.setAttr( (itemsShape[0] + '.overrideEnabled'), 1 )
+        mc.setAttr( (itemsShape[0] + '.overrideRGBColors'), 1 )
+        mc.setAttr( (itemsShape[0] + '.overrideColorRGB'), self.colorR, self.colorG, self.colorB )
 
         # grp nurbs curve control
         curveGroup_offset = mc.group( em=True, n=(nurbsCurve + '_grp_offset') )

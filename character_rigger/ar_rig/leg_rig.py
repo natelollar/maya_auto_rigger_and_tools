@@ -39,6 +39,7 @@ class leg_rig():
             #query translation
             i_pos = mc.xform(i, query=True, ws=True, t=True)
             #query rotation
+            # different rotation order can cause locators to flip 180
             i_rot = mc.xform(i, query=True, ws=True, ro=True)
             leg_chain_pos.append(i_pos)
             leg_chain_rot.append(i_rot)
@@ -249,7 +250,7 @@ class leg_rig():
             #append lists for outside loop use
             blendColorsTran_list.append(blendColorsTran)
             blendColorsRot_list.append(blendColorsRot)
-
+        
         #__________________________________________________________________#
         # parent top joints to original root spine0 to offset blend Color nodes
         #__________________________________________________________________#
@@ -484,7 +485,7 @@ class leg_rig():
 
 
 
-
+        
         #_________________POLE VECTOR Start___________________#
         #_____________________________________________________#
         pv_group_list = []
@@ -574,7 +575,7 @@ class leg_rig():
             pv_group_list.append(myGroup)
             pv_ctrl_list.append(myCurve)
 
-
+        
         #______________________________________________________________________________#
         #____________________________IK/ FK Switch Ctrl _______________________________#
         #______________________________________________________________________________#
@@ -1020,4 +1021,4 @@ class leg_rig():
 
         # return top ik and fk controls to parent to hip
         return ik_hip_group_list[0], fk_ctrl_grp_list[0], myLegGrp
-
+        
