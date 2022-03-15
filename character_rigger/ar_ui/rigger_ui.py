@@ -847,9 +847,56 @@ class rigger_ui_class():
         mc.textField(   'replace_part_text', width=75, h=40, text='l_', 
                         statusBarMessage='Replace text with...',
                         ann='Replace text with...' )
-        
         mc.setParent("..")
 
+        mc.rowLayout(numberOfColumns = 5)
+        mc.button(  label='Constrain between Last 2', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().parent_scale_multi()', 
+                    bgc = (0.1,0.1,0.1), 
+                    statusBarMessage='Parent and Scale Constrain to Last 2 Selected.',
+                    ann='Parent and Scale Constrain to Last 2 Selected.')
+        mc.button(  label='Multi Set DrivenKey', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().multi_set_driven_key()', 
+                    bgc = (0.4,0.2,0.2), 
+                    statusBarMessage='Select objects with contraints, except last selected has switch attribute.  For single constraint. ' +
+                    'Enter 0 for W0 = 0 when swch is 0, and W0=1, when swch is 1. W1 is opposite.',
+                    ann='Select objects with contraints, except LAST selected has switch attribute. For single constraint. ' +
+                    'Enter 0 value for W0 to match swch. Or 1 for W1 to match switch.')
+        mc.textField(   'swch_attr_name', width=75, h=40, text='.fk_ik_blend',
+                        statusBarMessage='Name of Swch Ctrl Attribute.',
+                        ann='Name of Swch Ctrl Attribute.' )
+        mc.textField(   'W0_text', width=75, h=40, text='0', 
+                        statusBarMessage='Enter 0 value for W0 to match swch. Or 1 for W1 to match switch.  (ex. W0 = 0, swch 0, W0 = 1, swch 1, W1 Opposite.. For value 0)',
+                        ann='Enter 0 value for W0 to match swch. Or 1 for W1 to match switch.' )
+        mc.setParent("..")
+
+
+        mc.rowLayout(numberOfColumns = 5)
+        mc.button(  label='Multi Scale Constraint', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().scale_multi_const()', 
+                    bgc = (0.2,0.2,0.2), 
+                    statusBarMessage='Scale constrain multiple to LAST selected object.',
+                    ann='Scale constrain multiple to LAST selected object.')
+        mc.button(  label='Multi Attr Set', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().set_multi_attr()', 
+                    bgc = (0.5,0.2,0.2), 
+                    statusBarMessage='Select multiple objects. Enter attribute name.  Enter attribute value.',
+                    ann='Select multiple objects. Enter attribute name.  Enter attribute value.')
+        mc.textField(   'attr_name_text', width=75, h=40, text='.scale',
+                        statusBarMessage='Enter Attribute Name',
+                        ann='Enter Attribute Name' )
+        mc.textField(   'attr_value_text', width=75, h=40, text='1, 1, 1', 
+                        statusBarMessage='Enter Attribute Value',
+                        ann='Enter Attribute Value' )
+        mc.setParent("..")
 
         #parent column to tab
         mc.setParent('..')

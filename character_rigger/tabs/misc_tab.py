@@ -5,7 +5,7 @@ import sys
 from PySide2 import QtCore
 import PySide2
 
-from ..ar_rig import leg_rig
+from re import search
 
 
 class misc_tab_class():
@@ -95,6 +95,106 @@ class misc_tab_class():
             mySel_name = i.replace(current_part, replace_part, 1)
             print(mySel_name)
             mc.rename(i, mySel_name)
+
+    def parent_scale_multi(self):
+        # parent and scale constrain between last two selectd objects
+        mySel = mc.ls(sl=True)
+        for i in mySel:
+            if i != mySel[-1] and i != mySel[-2]:
+                mc.parentConstraint([ mySel[-1], mySel[-2] ], i, mo=1, weight=1)
+                mc.scaleConstraint([ mySel[-1], mySel[-2] ], i, weight=1)
+
+    def multi_set_driven_key(self):
+        # get textfield values
+        swch_attr_nm = mc.textField('swch_attr_name', query=True, text=True)
+        W0_text_var = mc.textField('W0_text', query=True, text=True)
+        
+        mySel = mc.ls(sl=True)
+        # single constraint switch
+        for jnt in mySel:
+            # last selection is control with switch
+            if jnt != mySel[-1]:
+                # get scale constraint of jnt
+                get_jnt_scaleCnst = mc.listConnections(jnt, type='scaleConstraint')
+                jnt_scaleCnst = get_jnt_scaleCnst[0]
+                # list attributes to get W0 and W1
+                jnt_scaleCnst_attr = mc.listAttr(jnt_scaleCnst)
+                # get the weight names of the constrain
+                for i in jnt_scaleCnst_attr:
+                    print[i]
+                    if 'W0' in i:
+                        weight_0_var = '.' + i
+                    if 'W1' in i:
+                        weight_1_var = '.' + i
+
+                if W0_text_var == '0':
+                    # W0 = 0, switch 0, W0 = 1, switch 1, W1 opposite
+                    # alternative is to disconnect/ unlock and use '.target[0].targetWeight'
+                    mc.setAttr((mySel[-1] + swch_attr_nm), 0)
+                    mc.setAttr( (jnt_scaleCnst + weight_0_var),  0)
+                    mc.setAttr( (jnt_scaleCnst + weight_1_var),  1)
+
+                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm))
+                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm))
+
+                    mc.setAttr((mySel[-1] + swch_attr_nm), 1)
+                    mc.setAttr( (jnt_scaleCnst + weight_0_var),  1)
+                    mc.setAttr( (jnt_scaleCnst + weight_1_var),  0)
+
+                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm) )
+                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm) )
+
+                if W0_text_var == '1':
+                    # W0 = 0, switch 1, W0 = 1, switch 0, W1 opposite
+                    # alternative is to disconnect/ unlock and use '.target[0].targetWeight'
+                    mc.setAttr((mySel[-1] + swch_attr_nm), 0)
+                    mc.setAttr( (jnt_scaleCnst + weight_0_var),  1)
+                    mc.setAttr( (jnt_scaleCnst + weight_1_var),  0)
+
+                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm))
+                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm))
+
+                    mc.setAttr((mySel[-1] + swch_attr_nm), 1)
+                    mc.setAttr( (jnt_scaleCnst + weight_0_var),  0)
+                    mc.setAttr( (jnt_scaleCnst + weight_1_var),  1)
+
+                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm) )
+                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm) )
+            
+    def scale_multi_const(self):
+        # scale const multi to last selected
+        mySel = mc.ls(sl=True)
+        for i in mySel:
+            if i != mySel[-1]:
+                mc.scaleConstraint(mySel[-1], i, weight=1)
+
+    def set_multi_attr(self):
+        #set multiple object boolean or number value
+        #get value and attribute name
+        attr_name = mc.textField('attr_name_text', query=True, text=True)
+        attr_value = mc.textField('attr_value_text', query=True, text=True)
+        #get selection
+        mySel = mc.ls(sl=True)
+        # set multiple selected objects attributes
+        attr_value_list = attr_value.split(',')
+        try:
+            #if list single number long
+            if len(attr_value_list) == 1:
+                print('___1___')
+                for i in mySel:
+                    mc.setAttr ( (i + attr_name), float(attr_value) )
+            # if list 3 number array
+            if len(attr_value_list) == 3:
+                val1 = float(attr_value_list[0])
+                val2 = float(attr_value_list[1])
+                val3 = float(attr_value_list[2])
+                print('___3____')
+                for i in mySel:
+                    mc.setAttr ( (i + attr_name), val1, val2, val3 )
+            else:
+                print('Enter 1 number or 3 numbers seperated by commas')
+        except:
+            mc.warning('Probably entered attribute wrong, string instead of number, or wrong number of values.')
 
 
 
