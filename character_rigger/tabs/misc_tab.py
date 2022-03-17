@@ -115,12 +115,12 @@ class misc_tab_class():
             # last selection is control with switch
             if jnt != mySel[-1]:
                 # get scale constraint of jnt
-                get_jnt_scaleCnst = mc.listConnections(jnt, type='scaleConstraint')
-                jnt_scaleCnst = get_jnt_scaleCnst[0]
+                get_jnt_cnst = mc.listConnections(jnt, type='constraint')
+                jnt_cnst = get_jnt_cnst[0]
                 # list attributes to get W0 and W1
-                jnt_scaleCnst_attr = mc.listAttr(jnt_scaleCnst)
+                jnt_cnst_attr = mc.listAttr(jnt_cnst)
                 # get the weight names of the constrain
-                for i in jnt_scaleCnst_attr:
+                for i in jnt_cnst_attr:
                     print[i]
                     if 'W0' in i:
                         weight_0_var = '.' + i
@@ -131,35 +131,35 @@ class misc_tab_class():
                     # W0 = 0, switch 0, W0 = 1, switch 1, W1 opposite
                     # alternative is to disconnect/ unlock and use '.target[0].targetWeight'
                     mc.setAttr((mySel[-1] + swch_attr_nm), 0)
-                    mc.setAttr( (jnt_scaleCnst + weight_0_var),  0)
-                    mc.setAttr( (jnt_scaleCnst + weight_1_var),  1)
+                    mc.setAttr( (jnt_cnst + weight_0_var),  0)
+                    mc.setAttr( (jnt_cnst + weight_1_var),  1)
 
-                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm))
-                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm))
+                    mc.setDrivenKeyframe((jnt_cnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm))
+                    mc.setDrivenKeyframe((jnt_cnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm))
 
                     mc.setAttr((mySel[-1] + swch_attr_nm), 1)
-                    mc.setAttr( (jnt_scaleCnst + weight_0_var),  1)
-                    mc.setAttr( (jnt_scaleCnst + weight_1_var),  0)
+                    mc.setAttr( (jnt_cnst + weight_0_var),  1)
+                    mc.setAttr( (jnt_cnst + weight_1_var),  0)
 
-                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm) )
-                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm) )
+                    mc.setDrivenKeyframe((jnt_cnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm) )
+                    mc.setDrivenKeyframe((jnt_cnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm) )
 
                 if W0_text_var == '1':
                     # W0 = 0, switch 1, W0 = 1, switch 0, W1 opposite
                     # alternative is to disconnect/ unlock and use '.target[0].targetWeight'
                     mc.setAttr((mySel[-1] + swch_attr_nm), 0)
-                    mc.setAttr( (jnt_scaleCnst + weight_0_var),  1)
-                    mc.setAttr( (jnt_scaleCnst + weight_1_var),  0)
+                    mc.setAttr( (jnt_cnst + weight_0_var),  1)
+                    mc.setAttr( (jnt_cnst + weight_1_var),  0)
 
-                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm))
-                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm))
+                    mc.setDrivenKeyframe((jnt_cnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm))
+                    mc.setDrivenKeyframe((jnt_cnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm))
 
                     mc.setAttr((mySel[-1] + swch_attr_nm), 1)
-                    mc.setAttr( (jnt_scaleCnst + weight_0_var),  0)
-                    mc.setAttr( (jnt_scaleCnst + weight_1_var),  1)
+                    mc.setAttr( (jnt_cnst + weight_0_var),  0)
+                    mc.setAttr( (jnt_cnst + weight_1_var),  1)
 
-                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm) )
-                    mc.setDrivenKeyframe((jnt_scaleCnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm) )
+                    mc.setDrivenKeyframe((jnt_cnst + weight_0_var), currentDriver = (mySel[-1] + swch_attr_nm) )
+                    mc.setDrivenKeyframe((jnt_cnst + weight_1_var), currentDriver = (mySel[-1] + swch_attr_nm) )
             
     def scale_multi_const(self):
         # scale const multi to last selected

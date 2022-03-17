@@ -15,9 +15,18 @@ class animation_class():
     def reset_ctrls(self):
         mySel = mc.ls(sl=True)
         for i in mySel:
-            mc.setAttr((i + ".translate"), 0,0,0)
-            mc.setAttr((i + ".rotate"), 0,0,0)
-            mc.setAttr((i + ".scale"), 1,1,1)
+            try:
+                mc.setAttr((i + ".translate"), 0,0,0)
+            except:
+                pass
+            try:
+                mc.setAttr((i + ".rotate"), 0,0,0)
+            except:
+                pass
+            try:
+                mc.setAttr((i + ".scale"), 1,1,1)
+            except:
+                pass
         
     def create_locator(self):
         myLoc = mc.spaceLocator()
@@ -56,12 +65,30 @@ class animation_class():
             subVarRY = mc.getAttr(subVar + '.rotateY')
             subVarRZ = mc.getAttr(subVar + '.rotateZ')
             # multiply trans, and rotation, by text fields to reverse etc
-            mc.setAttr((subVar + '.translateX'), (subVarTX * float(tranX_mult)))
-            mc.setAttr((subVar + '.translateY'), (subVarTY * float(tranY_mult)))
-            mc.setAttr((subVar + '.translateZ'), (subVarTZ * float(tranZ_mult)))
-            mc.setAttr((subVar + '.rotateX'), (subVarRX * float(rotX_mult)))
-            mc.setAttr((subVar + '.rotateY'), (subVarRY * float(rotY_mult)))
-            mc.setAttr((subVar + '.rotateZ'), (subVarRZ * float(rotZ_mult)))
+            try:
+                mc.setAttr((subVar + '.translateX'), (subVarTX * float(tranX_mult)))
+            except:
+                pass
+            try:
+                mc.setAttr((subVar + '.translateY'), (subVarTY * float(tranY_mult)))
+            except:
+                pass
+            try:
+                mc.setAttr((subVar + '.translateZ'), (subVarTZ * float(tranZ_mult)))
+            except:
+                pass
+            try:
+                mc.setAttr((subVar + '.rotateX'), (subVarRX * float(rotX_mult)))
+            except:
+                pass
+            try:
+                mc.setAttr((subVar + '.rotateY'), (subVarRY * float(rotY_mult)))
+            except:
+                pass
+            try:
+                mc.setAttr((subVar + '.rotateZ'), (subVarRZ * float(rotZ_mult)))
+            except:
+                pass
 
         #set focus back to maya
         mc.setFocus('MayaWindow')

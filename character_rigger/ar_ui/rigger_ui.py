@@ -552,8 +552,9 @@ class rigger_ui_class():
                     w=80, 
                     command = 'character_rigger.tabs.animation.animation_class().mirror_ctrls()', 
                     bgc = (0.1,0.5,0.1), 
-                    statusBarMessage=   'Select LEFT Controls/ Objects to Mirror,' +
-                                        'Or Mirror Selected if No Opposite Conrols/ Objects Exist')
+                    statusBarMessage=   'Select LEFT Controls/ Objects to Mirror. ' +
+                                        'Or Mirror Selected if No Opposite Conrols/ Objects Exist. ' +
+                                        'Possibly Add "-=180" to channel box Rotate X if wanting to immitate "mirror behavior" from skeleton mirror.')
         mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
 
         mc.textField('translateX_text', width=40, h=24, text='-1')
