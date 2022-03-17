@@ -503,8 +503,9 @@ class arm_rig():
 
         
         #____________parenting ik shoulder ctrl__________________#
-        # parent constrain shldr joint translation to single solver ik handle grp
-        mc.parentConstraint(ik_shldr_ctrl_list[0], clvGrp, sr=('x','y','z'))
+        # parent constrain shldr joint translation  and rotation to single solver ik handle grp
+        # skipping rotation constrain caused shoulder flipping when rig upside down
+        mc.parentConstraint(ik_shldr_ctrl_list[0], clvGrp, mo=True)
         #scale constrain ctrl to shldr jnt
         mc.scaleConstraint(ik_shldr_ctrl_list[0], ikJoint_list[1])
         # lock and hide rotation values for shldr control

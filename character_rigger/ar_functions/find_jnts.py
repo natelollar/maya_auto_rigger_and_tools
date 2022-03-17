@@ -1,4 +1,3 @@
-from types import NoneType
 import maya.cmds as mc
 
 from . import sel_joints
@@ -138,53 +137,7 @@ class find_jnts():
             mc.select(low_x_val_jnt)
             return low_x_val_jnt
 
-    '''
-    # find head/ top of neck joint
-    def find_head_jnt(self):
-        chest_jnt = self.find_chest_jnt()
-        
-        # get immediate children of chest
-        chest_children_jnts = mc.listConnections(chest_jnt, type='joint', s=False )
-        mc.select(chest_children_jnts)
-        chest_children_jnts_sel = mc.ls(sl=True)
-        
-        # get l and r clavicle
-        l_clav = self.l_r_clavicle_jnt('left')
-        r_clav = self.l_r_clavicle_jnt('right')
-        # if not l or r clavicle, must be neck
-        for child_jnt in chest_children_jnts_sel:
-            if child_jnt != l_clav[0] and child_jnt != r_clav[0]:
-                neck_base_jnt = child_jnt
-                
-        # neck base # of children
-        neck_jnt_children = mc.listConnections(neck_base_jnt, s=False, type='joint' )
-        mc.select (neck_jnt_children)
-        try:
-            # joint with more than 1 child would be head/ top neck
-            if len(neck_jnt_children) >= 2:
-                # head = neck base joint
-                mc.select(neck_base_jnt)
-                return neck_base_jnt
-            else:
-                # if only 1 joint go up until more than 1 joint
-                for i in range(1,25):
-                    if len(neck_jnt_children) == 1:
-                        neck_jnt_children = mc.listConnections( neck_jnt_children, s=False, type = 'joint' )
-                    else:
-                        head_jnt = mc.listConnections( neck_jnt_children, d=False, type = 'joint')
-                        mc.select(head_jnt)
-                        head_jnt_sel = mc.ls(sl=True)
-                        return head_jnt_sel[0]
-        except:
-            # if len() is 0 children and returns 'NoneType' 
-            # head = neck top joint
-            mc.select(neck_base_jnt)
-            return neck_base_jnt
-    '''
 
-
-
-    
     # find head/ top of neck joint
     def find_head_jnt(self):
         chest_jnt = self.find_chest_jnt()

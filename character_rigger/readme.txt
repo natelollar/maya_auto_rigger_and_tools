@@ -1,4 +1,5 @@
 *Nate Tools Character Rigger Toolset ReadMe...*
+-Tested in Maya 2020.4, Windows 10, Python 2.7.11
 
 # first, put 'character_rigger' folder in root level of maya scripts folder
 # C:\Users\Bob\Documents\maya\2020\scripts   (or add path to maya.env as PYTHONPATH = '')
