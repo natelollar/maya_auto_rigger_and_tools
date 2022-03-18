@@ -1,5 +1,5 @@
 *Nate Tools Character Rigger Toolset ReadMe...*
--Tested in Maya 2020.4, Windows 10, Python 2.7.11
+- Mainly Tested in Maya 2020.4, Windows 10, Python 2.7.11 (though, should also work in Maya 2022 and 2019)
 
 # first, put 'character_rigger' folder in root level of maya scripts folder
 # C:\Users\Bob\Documents\maya\2020\scripts   (or add path to maya.env as PYTHONPATH = '')
@@ -34,7 +34,7 @@ The forearm twist chain should be considered seperate and only parented to the e
 In other words, the wrist should be parented to the elbow and not the twist joints.
 Nothing should be parented to the end of the twist chain for the current setup.
 
-The foot locators are not required but will give the reverse foot locator pivots exact positions instead of the preset.
+The foot locators are not required but will give the reverse foot pivots exact positions instead of the preset.
 
 Currently the 'head joints' require top face jnts parented to the head, a jaw jnt parented to the head jnt, 
 bottom face jnts parented to the jaw, and a tongue jnt chain parented to the jaw jnt. 
@@ -53,7 +53,8 @@ Currently the main axis for the rig is X down the chain and Y pointing outwards.
 This is Y up on the arms and fingers, and Y forward on the legs, spine and neck.
 If X is not directly down the chain, the IK elbows and knees may move unwantingly on rig creation.
 
-Currently, the ankle and toe jnt should be level with the ground.  Otherwise x down the chain like the other jnts.
+Currently, the ankle and toe jnt should be level with the ground, so that the ankle and toe ctrls are not at a downward angle.  
+Otherwise x down the chain like the other jnts.
 
 However, the 'head joints' aside from the tongue can be oriented to the default world position.
 
@@ -65,9 +66,9 @@ XYZ is currently the rotation order for all the joints.
 
 Note there should be a bend in the elbow and knees of the skeleton.
 
-There is no real limit on the spine, neck or finger chain length.
+There is no real limit on the spine, neck or finger jnt chain length.
 
-The rig is made at Maya's default distance, where 1 unit = 1 cm. A 6ft human would be 182.88 maya units (cm) tall.
+The rig is made at Maya's default distance scale, where 1 unit = 1 cm. A 6ft human would be 182.88 maya units (cm) tall.
 In other words the same as Unreal Engine. And also the size of the humanBody base sculpt mesh in the Maya 'content browser'.
 
 The rig supports global scaling and uniform scaling of most all individual joints. Non-uniform joint scaling is not currently supported.
@@ -99,7 +100,7 @@ tediously match them manually or through some other means.
 -limitations and How-to
 
 The animation tab includes a multi-parent constraint for moving multiple controls in worldspace.  
-One would key the controls after they were moved and delete the locator they were parented to, auto deleting the constraints.  
+One would key the controls after they were moved and delete the locator they are parented to, auto deleting the constraints.  
 This allows a full character to be rotated in world space.  
 
 In addition there is a function to mirror left control attributes to the right side.   
@@ -139,15 +140,15 @@ The Maya and Python version can be printed out in the script editor console.  Th
 And a funciton to print out the positions of the vertices in a curve, including multiple shapes in a curve.
 
 An option to change the display type of a curve to 'reference,' for instance, to avoid selection of a global control during animation.
-Next to that is the option to rename the first occurence of a string in a name to something.
+Next to that is the option to rename the first occurence of a string, in a name, to something.
 
-Also, there is a button to contrain a group of objects between the last two selected objects.  
+Also, there is a button to constrain a group of objects between the last two selected objects.  
 
 An option to scale constrain an object to multiple objects at once, not possible in default Maya.
 
 One can set the numerical value of an objects attribute name as well.
 
-Finally, there is an option to automatically set up Set Driven Key to multiple objects or constraints at once, 
+Finally, there is an option to automatically set up Set Driven Keys to multiple objects with 1 contraint per object, 
 tied to a switch control attribute.
 
 
@@ -156,12 +157,13 @@ tied to a switch control attribute.
 *___________________________________*
 
 In the future bounding box selection may be implemented to the auto rigger for a hybrid approach.
-It seams finding the joint via other joints, for instance, the root joint being the joint with the most children in the scene,
+It seams finding the joints via other joints, for instance, the root joint being the joint with the most children in the scene,
 lacks some flexibility for modularity.  If one would want 5 arms coming out of a toe, this becomes unnecessarily complicated
 to look at all the other joints around when one could just place a bounding box selector at the root of each appendage instead.
 I think placing bounding box selectors, where joints may be unpredictable, like the face, would be a good hybrid approach. 
 In addition to finding joints based on other joints and based on bounding boxes; world position, vectors based on other joints, 
-or joint labels could also be used.  This all allows the rig to not rely on joint names making it more flexible and easier to use.
+or joint labels could also be used.  This all allows the rig to operate without joint names making it more flexible and easier to use,
+not requring selecting joints or typing in names, both repetitive tasks.
 
 Though, a fully modular setup may be better for the auto rigger, where placing stand-in objects would represent joints and
 then joint orientation could be better accounted for.  It is nice to be able to use an auto rigger on a pre-existing skeleton,
@@ -180,11 +182,11 @@ However, bullet physics seams clunky and possibly nCloth might be a better route
 
 I hope to add a pose saver to the rigging toolset.
 
-The python scripts could be better organized.  Better uses of classes could also be made to reduce repeating code.
+The python scripts could be better organized.  Better use of classes could also be made to reduce repeating code.
 
 Finally, I would like to dig into the Maya API as well to add some interesting functionality to the Character Rigger Toolset.
 
 *___________________________________*
 
-The Toolset seams to work the same in Maya 2019 as the Maya Python version is the same as Maya 2020. from . import init
+The toolset has been mainly test in Maya 2020 Python 2.7, but has also been tested in Python 3 for Maya 2022.
 
