@@ -1,17 +1,17 @@
 # Nate Tools Character Rigger Toolset ReadMe...
-Mainly Tested in Maya 2020.4, Windows 10, Python 2.7.11 (though, should also work in Maya 2022 and 2019)
+> Mainly Tested in Maya 2020.4, Windows 10, Python 2.7.11 (though, should work in Maya 2022 and 2019)
 
-
-*first, put 'character_rigger' folder in root level of maya scripts folder*
-> C:\Users\Bob\Documents\maya\2020\scripts   (or add path to maya.env as PYTHONPATH = '')
+First, place the 'character_rigger' folder in root level of the Maya scripts folder. ( or add path to maya.env as PYTHONPATH = ' ' )
+> C:\Users\Bob\Documents\maya\2020\scripts   
 
 'ar' stands for 'auto rig'
 launch 'rigger_ui.py' in 'ar_ui' folder
 
-*launch 'rigger_ui' with this python code:*
-
-**import character_rigger**
-**character_rigger.ar_ui.rigger_ui.rigger_ui_class().rigger_ui_method()**
+Launch the UI with this Python code:
+```bash
+import character_rigger
+character_rigger.ar_ui.rigger_ui.rigger_ui_class().rigger_ui_method()
+```
 
 *make a shelf button by middle mouse dragging this code to a Maya shelf from the script editor*
     (the launch script is also in the 'launch_ui.py' file)
