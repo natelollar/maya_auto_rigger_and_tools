@@ -18,8 +18,8 @@ character_rigger.ar_ui.rigger_ui.rigger_ui_class().rigger_ui_method()
 ```
 ##
 make a shelf button by middle mouse dragging this code to a Maya shelf from the script editor<br/> 
-- *(the launch script is also in the 'launch_ui.py' file)*<br/> 
-- *(shelf button icon is in 'character_rigger < icons' folder)*<br/> 
+- *( the launch script is also in the 'launch_ui.py' file )*<br/> 
+- *( shelf button icon is in 'character_rigger < icons' folder )*<br/> 
 
 if Maya has trouble importing files, use the 'import_reload.py' file to import and reload all files<br/> 
 - *( consider making a shelf button of this too )*<br/> 
