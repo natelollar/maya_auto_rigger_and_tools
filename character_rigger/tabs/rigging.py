@@ -1,6 +1,9 @@
 import maya.cmds as mc
 
-import itertools
+try:
+    from itertools import izip as zip
+except ImportError: # will be 3.x series
+    pass
 
 import maya.api.OpenMaya as om
 
@@ -80,7 +83,7 @@ class rigging_class():
         fk_ctrl_list.pop(-1)
 
         #parent ctrls and grps together
-        for i_grp, i_ctrl in itertools.izip(fk_ctrl_grp_list, fk_ctrl_list):
+        for i_grp, i_ctrl in zip(fk_ctrl_grp_list, fk_ctrl_list):
             mc.parent(i_grp, i_ctrl)
 
 
@@ -318,7 +321,7 @@ class rigging_class():
         blendColorsRot_list = []
         blendColorsScale_list = []
         #blend joints together
-        for i_FK, i_IK, i in itertools.izip(fkJoint_list, ikJoint_list, mySel):
+        for i_FK, i_IK, i in zip(fkJoint_list, ikJoint_list, mySel):
             #create blend color nodes
             blendColorsTran = mc.createNode('blendColors', n='blendColorsTran#')
             blendColorsRot = mc.createNode('blendColors', n='blendColorsRot#')
@@ -413,7 +416,7 @@ class rigging_class():
         print(fk_ctrl_list_temp)
 
         #parent ctrls and grps together
-        for i_grp, i_ctrl in itertools.izip(fk_ctrl_grp_list_temp, fk_ctrl_list_temp):
+        for i_grp, i_ctrl in zip(fk_ctrl_grp_list_temp, fk_ctrl_list_temp):
             mc.parent(i_grp, i_ctrl)
 
 
@@ -677,7 +680,7 @@ class rigging_class():
 
 
         #_______connect switch control to blendNodes_______#
-        for items_trans, items_rot, items_scale in itertools.izip(  blendColorsTran_list, 
+        for items_trans, items_rot, items_scale in zip(  blendColorsTran_list, 
                                                                     blendColorsRot_list, 
                                                                     blendColorsScale_list):
             mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (items_trans + '.blender'), f=True)
@@ -797,7 +800,7 @@ class rigging_class():
             if i != ikJoint_list[0]:
                 mc.parent(ikJoint_list[currentIndex], ikJoint_list[currentIndex-1])
         
-        for i_FK, i_IK, i in itertools.izip(fkJoint_list, ikJoint_list, mySel):
+        for i_FK, i_IK, i in zip(fkJoint_list, ikJoint_list, mySel):
             blendColorsTran = mc.createNode('blendColors', n='blendColorsTran#')
             blendColorsRot = mc.createNode('blendColors', n='blendColorsRot#')
             blendColorsScale = mc.createNode('blendColors', n='blendColorsScale#')

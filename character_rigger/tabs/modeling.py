@@ -1,4 +1,3 @@
-from numpy import True_
 import maya.cmds as mc
 
 import random

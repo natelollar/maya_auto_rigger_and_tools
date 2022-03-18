@@ -1,7 +1,12 @@
 # spine rig
 
 import maya.cmds as mc
-import itertools
+
+try:
+    from itertools import izip as zip
+except ImportError: # will be 3.x series
+    pass
+
 from ..ar_functions import find_jnts
 from ..ar_functions import sel_joints
 from ..ar_functions import nurbs_ctrl
@@ -55,7 +60,7 @@ class fk_spine_rig_class():
         fk_ctrl_grp_list.pop(0)
         fk_ctrl_list.pop(-1)
 
-        for i_grp, i_ctrl in itertools.izip(fk_ctrl_grp_list, fk_ctrl_list):
+        for i_grp, i_ctrl in zip(fk_ctrl_grp_list, fk_ctrl_list):
             mc.parent(i_grp, i_ctrl)
 
         return first_grp, first_ctrl, last_grp, last_ctrl, full_fk_ctrl_list

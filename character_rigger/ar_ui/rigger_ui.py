@@ -550,11 +550,11 @@ class rigger_ui_class():
 
         mc.button(  label='M I R R O R', 
                     w=80, 
-                    command = 'character_rigger.tabs.animation.animation_class().mirror_ctrls()', 
+                    command = 'character_rigger.tabs.animation.animation_class().mirror_ctrls(row=1)', 
                     bgc = (0.1,0.5,0.1), 
                     statusBarMessage=   'Select LEFT Controls/ Objects to Mirror. ' +
                                         'Or Mirror Selected if No Opposite Conrols/ Objects Exist. ' +
-                                        'Possibly Add "-=180" to channel box Rotate X if wanting to immitate "mirror behavior" from skeleton mirror.')
+                                        'Possibly Add "-=180" to channel box Rotate X afterwards if wanting to immitate "mirror behavior" from skeleton mirror.')
         mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
 
         mc.textField('translateX_text', width=40, h=24, text='-1')
@@ -565,6 +565,68 @@ class rigger_ui_class():
         mc.textField('rotateX_text', width=40, h=24, text='1')
         mc.textField('rotateY_text', width=40, h=24, text='-1')
         mc.textField('rotateZ_text', width=40, h=24, text='-1')
+        mc.setParent('..')
+
+        # green seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.setParent("..")
+
+        #____repeat mirror controls incase some oriented differently___#
+        # Text Input Row
+        mc.rowLayout(numberOfColumns = 15)
+        mc.textField('l_ctrlObject_textA', width=40, h=24, text='l_')
+        mc.textField('r_ctrlObject_textA', width=40, h=24, text='r_')
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+
+        mc.button(  label='M I R R O R', 
+                    w=80, 
+                    command = 'character_rigger.tabs.animation.animation_class().mirror_ctrls(row=2)', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage=   'Select LEFT Controls/ Objects to Mirror. ' +
+                                        'Or Mirror Selected if No Opposite Conrols/ Objects Exist. ' +
+                                        'Possibly Add "-=180" to channel box Rotate X afterwards if wanting to immitate "mirror behavior" from skeleton mirror.')
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+
+        mc.textField('translateX_textA', width=40, h=24, text='-1')
+        mc.textField('translateY_textA', width=40, h=24, text='-1')
+        mc.textField('translateZ_textA', width=40, h=24, text='-1')
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+
+        mc.textField('rotateX_textA', width=40, h=24, text='1')
+        mc.textField('rotateY_textA', width=40, h=24, text='1')
+        mc.textField('rotateZ_textA', width=40, h=24, text='1')
+        mc.setParent('..')
+
+        # green seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.setParent("..")
+
+        #____repeat mirror controls incase some oriented differently___#
+        # Text Input Row
+        mc.rowLayout(numberOfColumns = 15)
+        mc.textField('l_ctrlObject_textB', width=40, h=24, text='left_')
+        mc.textField('r_ctrlObject_textB', width=40, h=24, text='right_')
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+
+        mc.button(  label='M I R R O R', 
+                    w=80, 
+                    command = 'character_rigger.tabs.animation.animation_class().mirror_ctrls(row=3)', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage=   'Select LEFT Controls/ Objects to Mirror. ' +
+                                        'Or Mirror Selected if No Opposite Conrols/ Objects Exist. ' +
+                                        'Possibly Add "-=180" to channel box Rotate X afterwards if wanting to immitate "mirror behavior" from skeleton mirror.')
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+
+        mc.textField('translateX_textB', width=40, h=24, text='-1')
+        mc.textField('translateY_textB', width=40, h=24, text='-1')
+        mc.textField('translateZ_textB', width=40, h=24, text='-1')
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+
+        mc.textField('rotateX_textB', width=40, h=24, text='1')
+        mc.textField('rotateY_textB', width=40, h=24, text='1')
+        mc.textField('rotateZ_textB', width=40, h=24, text='1')
         mc.setParent('..')
 
         # green seperator
@@ -863,9 +925,9 @@ class rigger_ui_class():
                     w=150, 
                     command = 'character_rigger.tabs.misc_tab.misc_tab_class().multi_set_driven_key()', 
                     bgc = (0.4,0.2,0.2), 
-                    statusBarMessage='Select objects with contraints, except last selected has switch attribute.  For single constraint. ' +
+                    statusBarMessage='Select objects with contraints, except last selected has switch attribute.  Currently only works with 1 const per object. ' +
                     'Enter 0 for W0 = 0 when swch is 0, and W0=1, when swch is 1. W1 is opposite.',
-                    ann='Select objects with contraints, except LAST selected has switch attribute. For single constraint. ' +
+                    ann='Select objects with contraints, except LAST selected has switch attribute. Currently only works with 1 const per object. ' +
                     'Enter 0 value for W0 to match swch. Or 1 for W1 to match switch.')
         mc.textField(   'swch_attr_name', width=75, h=40, text='.fk_ik_blend',
                         statusBarMessage='Name of Swch Ctrl Attribute.',
@@ -877,13 +939,13 @@ class rigger_ui_class():
 
 
         mc.rowLayout(numberOfColumns = 5)
-        mc.button(  label='Multi Scale Constraint', 
+        mc.button(  label='Cnst btwn Lst 2 (Parnt Only)', 
                     h=40, 
                     w=150, 
-                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().scale_multi_const()', 
-                    bgc = (0.2,0.2,0.2), 
-                    statusBarMessage='Scale constrain multiple to LAST selected object.',
-                    ann='Scale constrain multiple to LAST selected object.')
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().parent_multi()', 
+                    bgc = (0.05,0.05,0.05), 
+                    statusBarMessage='Parent Constrain to Last 2 Selected.',
+                    ann='Parent and Scale Constrain to Last 2 Selected.')
         mc.button(  label='Multi Attr Set', 
                     h=40, 
                     w=150, 
@@ -898,6 +960,20 @@ class rigger_ui_class():
                         statusBarMessage='Enter Attribute Value',
                         ann='Enter Attribute Value' )
         mc.setParent("..")
+
+
+
+        mc.rowLayout(numberOfColumns = 5)
+        mc.button(  label='Multi Scale Cnst to Last', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().scale_multi_const()', 
+                    bgc = (0.2,0.2,0.2), 
+                    statusBarMessage='Scale constrain multiple to LAST selected object.',
+                    ann='Scale constrain multiple to LAST selected object.')
+        mc.setParent("..")
+
+
 
         #parent column to tab
         mc.setParent('..')

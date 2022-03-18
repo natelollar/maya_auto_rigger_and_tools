@@ -2,12 +2,13 @@ import maya.cmds as mc
 
 import maya.api.OpenMaya as om
 
-import itertools
+try:
+    from itertools import izip as zip
+except ImportError: # will be 3.x series
+    pass
 
-import random
 
 from ..ar_functions import find_jnts
-from ..ar_functions import sel_joints
 from ..ar_tools import fk_chain
 
 # arm rig
@@ -126,7 +127,7 @@ class arm_rig():
         blendColorsTran_list = []
         blendColorsRot_list = []
         #blend joints together
-        for i_FK, i_IK, i in itertools.izip(fkJoint_list, ikJoint_list, main_arm_jnts):
+        for i_FK, i_IK, i in zip(fkJoint_list, ikJoint_list, main_arm_jnts):
             #create blend color nodes
             blendColorsTran = mc.createNode('blendColors', n= i + '_blendColorsTran')
             blendColorsRot = mc.createNode('blendColors', n= i + '_blendColorsRot')
@@ -219,7 +220,7 @@ class arm_rig():
 
 
         #parent ctrls and grps together
-        for i_grp, i_ctrl in itertools.izip(fk_ctrl_grp_list_temp, fk_ctrl_list_temp):
+        for i_grp, i_ctrl in zip(fk_ctrl_grp_list_temp, fk_ctrl_list_temp):
             mc.parent(i_grp, i_ctrl)
 
         
@@ -693,8 +694,7 @@ class arm_rig():
 
         
         #_______connect switch control to blendNodes_______#
-        for items_trans, items_rot in itertools.izip(   blendColorsTran_list, 
-                                                        blendColorsRot_list ):
+        for items_trans, items_rot in zip( blendColorsTran_list, blendColorsRot_list ):
             mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (items_trans + '.blender'), f=True)
             mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (items_rot + '.blender'), f=True)
 
@@ -825,7 +825,7 @@ class arm_rig():
                     mc.parent(arm_twist_list[currentIndex], arm_twist_list[currentIndex-1])
             
             #parent twist spline joints to twist main joints
-            for i_twist, i_foreArm in itertools.izip(arm_twist_list, foreArm_jnts):
+            for i_twist, i_foreArm in zip(arm_twist_list, foreArm_jnts):
                 # first and last forearm are already constrained/ parented
                 if i_twist != arm_twist_list[0] and i_twist != arm_twist_list[-1]:
                     if i_foreArm != foreArm_jnts[0] and i_foreArm != foreArm_jnts[-1]:
@@ -890,10 +890,13 @@ class arm_rig():
             mc.connectAttr(arm_endTwist_jnt + '.worldMatrix[0]', arm_twist_ikHandle[0] + '.dWorldUpMatrixEnd')
             #_____skin start and end joints to ik spline curve_____# (parenting twist jnts to start/end jnts)
             mc.skinCluster(arm_startTwist_jnt, arm_endTwist_jnt, arm_ikHandle_curve_newName, n= direction + '_skinCluster_arm_twist')
-            #RENAME twist curve TWEAK node
-            arm_ikHandle_curve_newName_shape = mc.listRelatives(arm_ikHandle_curve_newName, s=True)
-            arm_twist_curve_tweak = mc.listConnections(arm_ikHandle_curve_newName_shape, s=True, type='tweak')
-            mc.rename(arm_twist_curve_tweak, direction + '_tweak_arm_twist')
+
+            
+            # #RENAME twist curve TWEAK node,  #incorrect selection in python 3.xx
+            # arm_ikHandle_curve_newName_shape = mc.listRelatives(arm_ikHandle_curve_newName, s=True)
+            # arm_twist_curve_tweak = mc.listConnections(arm_ikHandle_curve_newName_shape[0], s=True, type='tweak')
+            # mc.rename(arm_twist_curve_tweak, direction + '_tweak_arm_twist')
+            
         elif twstJnts_checkbox == False:
             pass
         
@@ -1176,7 +1179,7 @@ class arm_rig():
             blendClr_con_list = []
             #blend joints together
             # arm_twist_list[1:] b/c first uneeded jnt already removed from other lists
-            for fk_ratio, ikTwst_ratio, twst_jnt in itertools.izip(fk_ratio_mult_ls, ikTwst_ratio_mult_ls, arm_twist_list[1:]):
+            for fk_ratio, ikTwst_ratio, twst_jnt in zip(fk_ratio_mult_ls, ikTwst_ratio_mult_ls, arm_twist_list[1:]):
                 #create blend color nodes
                 blnd_clrs_con = mc.createNode('blendColors', n= twst_jnt + '_blnd_clrs_con')
                 #connect twist blend color nodes to children

@@ -1,7 +1,7 @@
-import character_rig
-import fk_spine_rig
-import extra_rig
-import leg_rig
-import face_rig
-import clavicle_rig
-import arm_rig
+from . import character_rig
+from . import fk_spine_rig
+from . import extra_rig
+from . import leg_rig
+from . import face_rig
+from . import clavicle_rig
+from . import arm_rig

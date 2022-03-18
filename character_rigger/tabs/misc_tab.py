@@ -87,6 +87,7 @@ class misc_tab_class():
                 mc.setAttr(i + '.overrideEnabled', 1)
                 mc.setAttr(i + '.overrideDisplayType', 2)
 
+
     def rename_first(self):
         current_part = mc.textField('current_part_text', query=True, text=True)
         replace_part = mc.textField('replace_part_text', query=True, text=True)
@@ -96,6 +97,7 @@ class misc_tab_class():
             print(mySel_name)
             mc.rename(i, mySel_name)
 
+
     def parent_scale_multi(self):
         # parent and scale constrain between last two selectd objects
         mySel = mc.ls(sl=True)
@@ -103,6 +105,15 @@ class misc_tab_class():
             if i != mySel[-1] and i != mySel[-2]:
                 mc.parentConstraint([ mySel[-1], mySel[-2] ], i, mo=1, weight=1)
                 mc.scaleConstraint([ mySel[-1], mySel[-2] ], i, weight=1)
+
+
+    def parent_multi(self):
+        # parent constrain between last two selectd objects (no scale constrain)
+        mySel = mc.ls(sl=True)
+        for i in mySel:
+            if i != mySel[-1] and i != mySel[-2]:
+                mc.parentConstraint([ mySel[-1], mySel[-2] ], i, mo=1, weight=1)
+
 
     def multi_set_driven_key(self):
         # get textfield values
@@ -121,7 +132,6 @@ class misc_tab_class():
                 jnt_cnst_attr = mc.listAttr(jnt_cnst)
                 # get the weight names of the constrain
                 for i in jnt_cnst_attr:
-                    print[i]
                     if 'W0' in i:
                         weight_0_var = '.' + i
                     if 'W1' in i:

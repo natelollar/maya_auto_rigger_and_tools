@@ -138,6 +138,7 @@ class find_jnts():
             return low_x_val_jnt
 
 
+    
     # find head/ top of neck joint
     def find_head_jnt(self):
         chest_jnt = self.find_chest_jnt()

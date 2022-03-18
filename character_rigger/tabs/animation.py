@@ -36,19 +36,42 @@ class animation_class():
         mc.setAttr((myLoc[0] + ".localScale"), 15, 15, 15)
         mc.rename('temp_loc')
 
-    def mirror_ctrls(self):
+    def mirror_ctrls(self, row='1'):
         #selection
         mySel = mc.ls(sl=True)
-        #prefix text
-        left_prefix = mc.textField('l_ctrlObject_text', query=True, text=True)
-        right_prefix = mc.textField('r_ctrlObject_text', query=True, text=True)
-        #multiplier text
-        tranX_mult = mc.textField('translateX_text', query=True, text=True)
-        tranY_mult = mc.textField('translateY_text', query=True, text=True)
-        tranZ_mult = mc.textField('translateZ_text', query=True, text=True)
-        rotX_mult = mc.textField('rotateX_text', query=True, text=True)
-        rotY_mult = mc.textField('rotateY_text', query=True, text=True)
-        rotZ_mult = mc.textField('rotateZ_text', query=True, text=True)
+        if row == 1:
+            #prefix text
+            left_prefix = mc.textField('l_ctrlObject_text', query=True, text=True)
+            right_prefix = mc.textField('r_ctrlObject_text', query=True, text=True)
+            #multiplier text
+            tranX_mult = mc.textField('translateX_text', query=True, text=True)
+            tranY_mult = mc.textField('translateY_text', query=True, text=True)
+            tranZ_mult = mc.textField('translateZ_text', query=True, text=True)
+            rotX_mult = mc.textField('rotateX_text', query=True, text=True)
+            rotY_mult = mc.textField('rotateY_text', query=True, text=True)
+            rotZ_mult = mc.textField('rotateZ_text', query=True, text=True)
+        if row == 2:
+            #prefix text
+            left_prefix = mc.textField('l_ctrlObject_textA', query=True, text=True)
+            right_prefix = mc.textField('r_ctrlObject_textA', query=True, text=True)
+            #multiplier text
+            tranX_mult = mc.textField('translateX_textA', query=True, text=True)
+            tranY_mult = mc.textField('translateY_textA', query=True, text=True)
+            tranZ_mult = mc.textField('translateZ_textA', query=True, text=True)
+            rotX_mult = mc.textField('rotateX_textA', query=True, text=True)
+            rotY_mult = mc.textField('rotateY_textA', query=True, text=True)
+            rotZ_mult = mc.textField('rotateZ_textA', query=True, text=True)
+        if row == 3:
+            #prefix text
+            left_prefix = mc.textField('l_ctrlObject_textB', query=True, text=True)
+            right_prefix = mc.textField('r_ctrlObject_textB', query=True, text=True)
+            #multiplier text
+            tranX_mult = mc.textField('translateX_textB', query=True, text=True)
+            tranY_mult = mc.textField('translateY_textB', query=True, text=True)
+            tranZ_mult = mc.textField('translateZ_textB', query=True, text=True)
+            rotX_mult = mc.textField('rotateX_textB', query=True, text=True)
+            rotY_mult = mc.textField('rotateY_textB', query=True, text=True)
+            rotZ_mult = mc.textField('rotateZ_textB', query=True, text=True)
 
         #mirrioring values of ctrls with correct prefix
         for i in mySel:

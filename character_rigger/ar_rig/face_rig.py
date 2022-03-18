@@ -1,6 +1,9 @@
-from distutils import version
 import maya.cmds as mc
-import itertools
+
+try:
+    from itertools import izip as zip
+except ImportError: # will be 3.x series
+    pass
 
 from ..ar_functions import find_jnts
 from ..ar_functions import sel_joints
@@ -70,7 +73,7 @@ class face_rig():
         tongue_ctrl_list.pop(-1)
 
         #parent ctrls and grps together
-        for i_grp, i_ctrl in itertools.izip(tongue_grp_list, tongue_ctrl_list):
+        for i_grp, i_ctrl in zip(tongue_grp_list, tongue_ctrl_list):
             mc.parent(i_grp, i_ctrl)
         # parent top grp to head ctrl
         mc.parent(tongue_top_grp, parent_to)
@@ -246,7 +249,7 @@ class face_rig():
             r_ear_ctrl_list.pop(-1)
 
             #parent ctrls and grps together
-            for i_grp, i_ctrl in itertools.izip(r_ear_grp_list, r_ear_ctrl_list):
+            for i_grp, i_ctrl in zip(r_ear_grp_list, r_ear_ctrl_list):
                 mc.parent(i_grp, i_ctrl)
             # parent top grp to head ctrl
             mc.parent(r_ear_top_grp, parent_to)
@@ -273,7 +276,7 @@ class face_rig():
             l_ear_ctrl_list.pop(-1)
 
             #parent ctrls and grps together
-            for i_grp, i_ctrl in itertools.izip(l_ear_grp_list, l_ear_ctrl_list):
+            for i_grp, i_ctrl in zip(l_ear_grp_list, l_ear_ctrl_list):
                 mc.parent(i_grp, i_ctrl)
             # parent top grp to head ctrl
             mc.parent(l_ear_top_grp, parent_to)

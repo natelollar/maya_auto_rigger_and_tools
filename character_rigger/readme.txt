@@ -77,6 +77,7 @@ Check the included skeleton in the 'other' folder to see a possible joint setup.
 Finally, export skin weights with 'Deform < Export Weights...' as an .xml to use with the 'New Skinned Character Scene' button.
 The button automatically creates a new scene and skins the selected skeleton to the selected mesh with the xml weights.  
 First all weight is automatically applied to the root joint, and then skin weights applied, to avoid errors.
+And make sure the fbxmaya.dll plugin is loaded into Maya if importing fbx files for the body or skeleton.
 
 
 * _____'Rigging'_____Tab Notes_____*
@@ -183,7 +184,7 @@ The python scripts could be better organized.  Better uses of classes could also
 
 Finally, I would like to dig into the Maya API as well to add some interesting functionality to the Character Rigger Toolset.
 
+*___________________________________*
 
-
-
+The Toolset seams to work the same in Maya 2019 as the Maya Python version is the same as Maya 2020. from . import init
 

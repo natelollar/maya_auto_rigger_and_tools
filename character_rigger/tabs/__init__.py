@@ -1,6 +1,6 @@
-import rigging
-import modeling
-import animation
-import color_slider
-import auto_rig_tab
-import misc_tab
+from . import rigging
+from . import modeling
+from . import animation
+from . import color_slider
+from . import auto_rig_tab
+from . import misc_tab

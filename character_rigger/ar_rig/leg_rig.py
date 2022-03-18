@@ -2,7 +2,10 @@ import maya.cmds as mc
 
 import maya.api.OpenMaya as om
 
-import itertools
+try:
+    from itertools import izip as zip
+except ImportError: # will be 3.x series
+    pass
 
 from ..ar_functions import find_jnts
 from ..ar_functions import sel_joints
@@ -235,7 +238,7 @@ class leg_rig():
         blendColorsTran_list = []
         blendColorsRot_list = []
         #blend joints together
-        for i_FK, i_IK, i in itertools.izip(fkJoint_list, ikJoint_list, leg_chain):
+        for i_FK, i_IK, i in zip(fkJoint_list, ikJoint_list, leg_chain):
             #create blend color nodes
             blendColorsTran = mc.createNode('blendColors', n= i + '_blendColorsTran')
             blendColorsRot = mc.createNode('blendColors', n= i + 'blendColorsRot')
@@ -328,7 +331,7 @@ class leg_rig():
 
 
         #parent ctrls and grps together
-        for i_grp, i_ctrl in itertools.izip(fk_ctrl_grp_list_temp, fk_ctrl_list_temp):
+        for i_grp, i_ctrl in zip(fk_ctrl_grp_list_temp, fk_ctrl_list_temp):
             mc.parent(i_grp, i_ctrl)
 
         
@@ -669,8 +672,7 @@ class leg_rig():
 
 
         #_______connect switch control to blendNodes_______#
-        for items_trans, items_rot in itertools.izip(   blendColorsTran_list, 
-                                                        blendColorsRot_list ):
+        for items_trans, items_rot in zip( blendColorsTran_list, blendColorsRot_list ):
             mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (items_trans + '.blender'), f=True)
             mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (items_rot + '.blender'), f=True)
 
