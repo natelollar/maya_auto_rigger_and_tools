@@ -1,30 +1,30 @@
 ## Nate Tools Character Rigger Toolset ReadMe...<br/>
-> Mainly Tested in Maya 2020.4, Windows 10, Python 2.7.11 (though, should work in Maya 2022 and 2019)
-
-First, place the 'character_rigger' folder in root level of the Maya scripts folder.   
-> C:\Users\Bob\Documents\maya\2020\scripts
+> Mainly Tested in Maya 2020.4, Windows 10, Python 2.7.11 (though, should work in Maya 2022 and 2019)<br/> 
+##
+First, place the 'character_rigger' folder in root level of the Maya scripts folder.<br/> 
+> C:\Users\Bob\Documents\maya\2020\scripts<br/> 
   
-( or add path to maya.env as PYTHONPATH = ' ' )     
+( or add path to maya.env as PYTHONPATH = ' ' )<br/> 
+##
+'ar' stands for 'auto rig'<br/> 
+launch 'rigger_ui.py' in 'ar_ui' folder<br/> 
 
-*'ar' stands for 'auto rig'*  
-*launch 'rigger_ui.py' in 'ar_ui' folder*  
-
-Launch the UI with this Python code:
+Launch the UI with this Python code:<br/> 
 ```bash
 import character_rigger
 character_rigger.ar_ui.rigger_ui.rigger_ui_class().rigger_ui_method()
 ```
+##
+*make a shelf button by middle mouse dragging this code to a Maya shelf from the script editor*<br/> 
+    (the launch script is also in the 'launch_ui.py' file)<br/> 
+    (shelf button icon is in 'character_rigger < icons' folder)<br/> 
 
-*make a shelf button by middle mouse dragging this code to a Maya shelf from the script editor*  
-    (the launch script is also in the 'launch_ui.py' file)  
-    (shelf button icon is in 'character_rigger < icons' folder)  
+*if Maya has trouble importing files, use the 'import_reload.py' file to import and reload all files*<br/> 
+    ( consider making a shelf button of this too )<br/> 
+    
+<br/> 
 
-*if Maya has trouble importing files, use the 'import_reload.py' file to import and reload all files*  
-    ( consider making a shelf button of this too ) 
-
-
-
-## *'Auto Rig' Tab Notes*  
+## *'Auto Rig' Tab Notes*
 >Limitations and How-to
 
 1. No joint names or selections are needed.  The auto rigger automatically finds all the joints<br/> 
@@ -83,8 +83,9 @@ The button automatically creates a new scene and skins the selected skeleton to 
 First all weight is automatically applied to the root joint, and then skin weights applied, to avoid errors.<br/>
 And make sure the fbxmaya.dll plugin is loaded into Maya if importing fbx files for the body or skeleton.<br/>
 
+<br/> 
 
-## 'Rigging' Tab Notes  
+## 'Rigging' Tab Notes
 >Limitations and How-to
 
 1. For the rigging tab the functions are, FK chain creation, IK limb creation, FK IK blended chain creation,<br/>
@@ -98,6 +99,7 @@ creating a reverse foot setup based on locator positions, and creating several n
 4. The 'Mirror Ctrl Shapes' button allows a rigger to easily mirror the shapes of controls across the X axis without having to<br/>
 tediously match them manually or through some other means.<br/>
 
+<br/> 
 
 ## 'Animation' Tab Notes
 >limitations and How-to
@@ -110,8 +112,9 @@ This allows a full character to be rotated in world space.<br/>
 This would be useful if one was creating set driven keys for a hand and needed to easily copy the poses to the right hand.<br/>
 Also, if no opposite controls exist, the mirror control function will instead mirror the selected control to the other side.<br/>
 
+<br/> 
 
-## 'Modeling' Tab Notes 
+## 'Modeling' Tab Notes
 >limitations and How-to
 
 1. For the modeling tab there is a function to create random objects for testing.<br/> 
@@ -123,6 +126,7 @@ Also, if no opposite controls exist, the mirror control function will instead mi
 4. Finally, the modeling tab has a button to export multiple objects at once to individual .obj, .fbx, or .ma files.<br/>
 This is useful because Maya does not have a multi export built in for '.obj'.<br/>
 
+<br/> 
 
 ## 'Color' Tab Notes
 >limitations and How-to
@@ -132,6 +136,7 @@ There is also the option to change the outliner color of an object.<br/>
 These functions can be used to change joint color, control curve color, or the wireframe color of an object.<br/>
 An option to change the thickness of a curve has also been added.<br/>
 
+<br/> 
 
 ## 'Misc' Tab Notes
 >limitations and How-to
@@ -154,6 +159,7 @@ Next to that is the option to rename the first occurence of a string, in a name,
 7. Finally, there is an option to automatically set up Set Driven Keys to multiple objects with 1 contraint per object,<br/>
 tied to a switch control attribute.<br/>
 
+<br/> 
 
 ## Other Notes and Thoughts
 
