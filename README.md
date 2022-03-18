@@ -1,11 +1,13 @@
 # Nate Tools Character Rigger Toolset ReadMe...
 > Mainly Tested in Maya 2020.4, Windows 10, Python 2.7.11 (though, should work in Maya 2022 and 2019)
 
-First, place the 'character_rigger' folder in root level of the Maya scripts folder. ( or add path to maya.env as PYTHONPATH = ' ' )
-> C:\Users\Bob\Documents\maya\2020\scripts   
+First, place the 'character_rigger' folder in root level of the Maya scripts folder.   
+> C:\Users\Bob\Documents\maya\2020\scripts
+  
+( or add path to maya.env as PYTHONPATH = ' ' )     
 
-'ar' stands for 'auto rig'
-launch 'rigger_ui.py' in 'ar_ui' folder
+*'ar' stands for 'auto rig'*  
+*launch 'rigger_ui.py' in 'ar_ui' folder*  
 
 Launch the UI with this Python code:
 ```bash
@@ -82,7 +84,7 @@ First all weight is automatically applied to the root joint, and then skin weigh
 And make sure the fbxmaya.dll plugin is loaded into Maya if importing fbx files for the body or skeleton.
 
 
-**_____'Rigging' Tab Notes_____**
+##'Rigging' Tab Notes  
 *limitations and How-to*
 
 For the rigging tab the functions are, FK chain creation, IK limb creation, FK IK blended chain creation, 
@@ -109,17 +111,17 @@ This would be useful if one was creating set driven keys for a hand and needed t
 Also, if no opposite controls exist, the mirror control function will instead mirror the selected control to the other side.   
 
 
-**_____'Modeling' Tab Notes_____**
-*limitations and How-to*
+**_____'Modeling' Tab Notes_____**  
+*limitations and How-to*  
 
-For the modeling tab there is a function to create random objects for testing.  
+1. For the modeling tab there is a function to create random objects for testing.    
 
-Also, there is the ability to scatter objects randomly anywhere within a radius or to the verts of another object.   
+2. Also, there is the ability to scatter objects randomly anywhere within a radius or to the verts of another object.     
 
-In addition, the modeling tab has a button to import the default human sculpt model in Maya and also to create a polygon arch from code.
+3. In addition, the modeling tab has a button to import the default human sculpt model in Maya and also to create a polygon arch from code.  
 
-Finally, the modeling tab has a button to export multiple objects at once to individual .obj, .fbx, or .ma files.  
-This is useful because Maya does not have a multi export built in for '.obj'.
+4. Finally, the modeling tab has a button to export multiple objects at once to individual .obj, .fbx, or .ma files.    
+This is useful because Maya does not have a multi export built in for '.obj'.  
 
 
 **_____'Color' Tab Notes_____**
