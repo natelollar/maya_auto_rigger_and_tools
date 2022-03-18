@@ -1,13 +1,15 @@
-## Nate Tools Character Rigger Toolset ReadMe...<br/>
+## *Nate Tools Character Rigger Toolset ReadMe*<br/>
 > Mainly Tested in Maya 2020.4, Windows 10, Python 2.7.11 (though, should work in Maya 2022 and 2019)<br/> 
+>
 ##
 First, place the 'character_rigger' folder in root level of the Maya scripts folder.<br/> 
 > C:\Users\Bob\Documents\maya\2020\scripts<br/> 
-  
+
 ( or add path to maya.env as PYTHONPATH = ' ' )<br/> 
+
 ##
-'ar' stands for 'auto rig'<br/> 
-launch 'rigger_ui.py' in 'ar_ui' folder<br/> 
+- *'ar' stands for 'auto rig'*<br/> 
+- *launch 'rigger_ui.py' in 'ar_ui' folder*<br/> 
 
 Launch the UI with this Python code:<br/> 
 ```bash
@@ -15,13 +17,13 @@ import character_rigger
 character_rigger.ar_ui.rigger_ui.rigger_ui_class().rigger_ui_method()
 ```
 ##
-*make a shelf button by middle mouse dragging this code to a Maya shelf from the script editor*<br/> 
-    (the launch script is also in the 'launch_ui.py' file)<br/> 
-    (shelf button icon is in 'character_rigger < icons' folder)<br/> 
+make a shelf button by middle mouse dragging this code to a Maya shelf from the script editor<br/> 
+- *(the launch script is also in the 'launch_ui.py' file)*<br/> 
+- *(shelf button icon is in 'character_rigger < icons' folder)*<br/> 
 
-*if Maya has trouble importing files, use the 'import_reload.py' file to import and reload all files*<br/> 
-    ( consider making a shelf button of this too )<br/> 
-    
+if Maya has trouble importing files, use the 'import_reload.py' file to import and reload all files<br/> 
+- *( consider making a shelf button of this too )*<br/> 
+ 
 <br/> 
 
 ## *'Auto Rig' Tab Notes*
