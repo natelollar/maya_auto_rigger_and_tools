@@ -1,28 +1,29 @@
-*Nate Tools Character Rigger Toolset ReadMe...*
-- Mainly Tested in Maya 2020.4, Windows 10, Python 2.7.11 (though, should also work in Maya 2022 and 2019)
-
-# first, put 'character_rigger' folder in root level of maya scripts folder
-# C:\Users\Bob\Documents\maya\2020\scripts   (or add path to maya.env as PYTHONPATH = '')
-
-# 'ar' stands for 'auto rig'
-# launch 'rigger_ui.py' in 'ar_ui' folder
-
-# launch 'rigger_ui' with this python code:
-
-import character_rigger
-character_rigger.ar_ui.rigger_ui.rigger_ui_class().rigger_ui_method()
-
-# make a shelf button by middle mouse dragging this code to a Maya shelf from the script editor
-    # (the launch script is also in the 'launch_ui.py' file)
-    # (shelf button icon is in 'character_rigger < icons' folder)
-
-# if Maya has trouble importing files, use the 'import_reload.py' file to import and reload all files 
-    # ( consider making a shelf button of this too ) 
+# Nate Tools Character Rigger Toolset ReadMe...
+Mainly Tested in Maya 2020.4, Windows 10, Python 2.7.11 (though, should also work in Maya 2022 and 2019)
 
 
+*first, put 'character_rigger' folder in root level of maya scripts folder*
+> C:\Users\Bob\Documents\maya\2020\scripts   (or add path to maya.env as PYTHONPATH = '')
 
-* _____'Auto Rig'_____Tab Notes_____*
--limitations and How-to
+'ar' stands for 'auto rig'
+launch 'rigger_ui.py' in 'ar_ui' folder
+
+*launch 'rigger_ui' with this python code:*
+
+**import character_rigger**
+**character_rigger.ar_ui.rigger_ui.rigger_ui_class().rigger_ui_method()**
+
+*make a shelf button by middle mouse dragging this code to a Maya shelf from the script editor*
+    (the launch script is also in the 'launch_ui.py' file)
+    (shelf button icon is in 'character_rigger < icons' folder)
+
+*if Maya has trouble importing files, use the 'import_reload.py' file to import and reload all files*
+    ( consider making a shelf button of this too ) 
+
+
+
+**_____'Auto Rig' Tab Notes_____**
+*limitations and How-to*
 
 No joint names or selections are needed.  The auto rigger automatically finds all the joints 
 and rigs the skeleton when RIG ME! is clicked.
@@ -81,8 +82,8 @@ First all weight is automatically applied to the root joint, and then skin weigh
 And make sure the fbxmaya.dll plugin is loaded into Maya if importing fbx files for the body or skeleton.
 
 
-* _____'Rigging'_____Tab Notes_____*
--limitations and How-to
+**_____'Rigging' Tab Notes_____**
+*limitations and How-to*
 
 For the rigging tab the functions are, FK chain creation, IK limb creation, FK IK blended chain creation, 
 auto creating a blend color node blend, automatically creating FK IK joint chains connected with blend color nodes to a main joint chain, 
@@ -96,8 +97,8 @@ The 'Mirror Ctrl Shapes' button allows a rigger to easily mirror the shapes of c
 tediously match them manually or through some other means.
 
 
-* _____'Animation'_____Tab Notes_____*
--limitations and How-to
+**_____'Animation' Tab Notes_____**
+*limitations and How-to*
 
 The animation tab includes a multi-parent constraint for moving multiple controls in worldspace.  
 One would key the controls after they were moved and delete the locator they are parented to, auto deleting the constraints.  
@@ -108,8 +109,8 @@ This would be useful if one was creating set driven keys for a hand and needed t
 Also, if no opposite controls exist, the mirror control function will instead mirror the selected control to the other side.   
 
 
-* _____'Modeling'_____Tab Notes_____*
--limitations and How-to
+**_____'Modeling' Tab Notes_____**
+*limitations and How-to*
 
 For the modeling tab there is a function to create random objects for testing.  
 
@@ -121,8 +122,8 @@ Finally, the modeling tab has a button to export multiple objects at once to ind
 This is useful because Maya does not have a multi export built in for '.obj'.
 
 
-* _____'Color'_____Tab Notes_____*
--limitations and How-to
+**_____'Color' Tab Notes_____**
+*limitations and How-to*
 
 The color tab has the ability to change the color of shapes, transforms, and the wire color of shapes and transforms.  
 There is also the option to change the outliner color of an object.  
@@ -130,8 +131,8 @@ These functions can be used to change joint color, control curve color, or the w
 An option to change the thickness of a curve has also been added.
 
 
-* _____'Misc'_____Tab Notes_____*
--limitations and How-to
+**_____'Misc' Tab Notes_____**
+*limitations and How-to*
 
 The miscellaneous tab has extra functions that have not been organized into the other tabs yet, 
 or that don't belong in one of the categories.
@@ -153,8 +154,8 @@ tied to a switch control attribute.
 
 
 
-* _____Other Notes and Thoughts_____*
-*___________________________________*
+**_____Other Notes and Thoughts_____**
+**___________________________________**
 
 In the future bounding box selection may be implemented to the auto rigger for a hybrid approach.
 It seams finding the joints via other joints, for instance, the root joint being the joint with the most children in the scene,
@@ -186,7 +187,7 @@ The python scripts could be better organized.  Better use of classes could also 
 
 Finally, I would like to dig into the Maya API as well to add some interesting functionality to the Character Rigger Toolset.
 
-*___________________________________*
+**___________________________________**
 
 The toolset has been mainly test in Maya 2020 Python 2.7, but has also been tested in Python 3 for Maya 2022.
 
