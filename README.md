@@ -23,7 +23,14 @@ make a shelf button by middle mouse dragging this code to a Maya shelf from the 
 
 if Maya has trouble importing files, use the 'import_reload.py' file to import and reload all files<br/> 
 - *( consider making a shelf button of this too )*<br/> 
- 
+
+##
+
+#### Rigger Toolset Video Demo<br/> 
+- https://youtu.be/nm6rtZPfLnY
+
+## 
+
 <br/> 
 
 ## *'Auto Rig' Tab Notes*
