@@ -87,54 +87,54 @@ And make sure the fbxmaya.dll plugin is loaded into Maya if importing fbx files 
 ## 'Rigging' Tab Notes  
 >Limitations and How-to
 
-For the rigging tab the functions are, FK chain creation, IK limb creation, FK IK blended chain creation, 
-auto creating a blend color node blend, automatically creating FK IK joint chains connected with blend color nodes to a main joint chain, 
+1. For the rigging tab the functions are, FK chain creation, IK limb creation, FK IK blended chain creation,<br/>
+auto creating a blend color node blend, automatically creating FK IK joint chains connected with blend color nodes to a main joint chain,<br/>
 creating a reverse foot setup based on locator positions, and creating several nurbs curve controls.   
 
-In addition, there is a button to create a new bind pose for a skeleton while deleting the old bindpose.
+2. In addition, there is a button to create a new bind pose for a skeleton while deleting the old bindpose.<br/>
 
-Also, the 'Print Object Type' button prints the type of the selected object in the script editor.
+3. Also, the 'Print Object Type' button prints the type of the selected object in the script editor.<br/>
 
-The 'Mirror Ctrl Shapes' button allows a rigger to easily mirror the shapes of controls across the X axis without having to 
-tediously match them manually or through some other means.
-
-
-**_____'Animation' Tab Notes_____**
-*limitations and How-to*
-
-The animation tab includes a multi-parent constraint for moving multiple controls in worldspace.  
-One would key the controls after they were moved and delete the locator they are parented to, auto deleting the constraints.  
-This allows a full character to be rotated in world space.  
-
-In addition there is a function to mirror left control attributes to the right side.   
-This would be useful if one was creating set driven keys for a hand and needed to easily copy the poses to the right hand.  
-Also, if no opposite controls exist, the mirror control function will instead mirror the selected control to the other side.   
+4. The 'Mirror Ctrl Shapes' button allows a rigger to easily mirror the shapes of controls across the X axis without having to<br/>
+tediously match them manually or through some other means.<br/>
 
 
-**_____'Modeling' Tab Notes_____**  
-*limitations and How-to*  
+## 'Animation' Tab Notes
+>limitations and How-to
 
-1. For the modeling tab there is a function to create random objects for testing.    
+The animation tab includes a multi-parent constraint for moving multiple controls in worldspace.<br/>
+One would key the controls after they were moved and delete the locator they are parented to, auto deleting the constraints.<br/>
+This allows a full character to be rotated in world space.<br/>
 
-2. Also, there is the ability to scatter objects randomly anywhere within a radius or to the verts of another object.     
-
-3. In addition, the modeling tab has a button to import the default human sculpt model in Maya and also to create a polygon arch from code.  
-
-4. Finally, the modeling tab has a button to export multiple objects at once to individual .obj, .fbx, or .ma files.    
-This is useful because Maya does not have a multi export built in for '.obj'.  
-
-
-**_____'Color' Tab Notes_____**
-*limitations and How-to*
-
-The color tab has the ability to change the color of shapes, transforms, and the wire color of shapes and transforms.  
-There is also the option to change the outliner color of an object.  
-These functions can be used to change joint color, control curve color, or the wireframe color of an object.
-An option to change the thickness of a curve has also been added.
+In addition there is a function to mirror left control attributes to the right side.<br/>
+This would be useful if one was creating set driven keys for a hand and needed to easily copy the poses to the right hand.<br/>
+Also, if no opposite controls exist, the mirror control function will instead mirror the selected control to the other side.<br/>
 
 
-**_____'Misc' Tab Notes_____**
-*limitations and How-to*
+## 'Modeling' Tab Notes 
+>limitations and How-to
+
+1. For the modeling tab there is a function to create random objects for testing.<br/> 
+
+2. Also, there is the ability to scatter objects randomly anywhere within a radius or to the verts of another object.<br/>
+
+3. In addition, the modeling tab has a button to import the default human sculpt model in Maya and also to create a polygon arch from code.<br/>
+
+4. Finally, the modeling tab has a button to export multiple objects at once to individual .obj, .fbx, or .ma files.<br/>
+This is useful because Maya does not have a multi export built in for '.obj'.<br/>
+
+
+## 'Color' Tab Notes
+>limitations and How-to
+
+The color tab has the ability to change the color of shapes, transforms, and the wire color of shapes and transforms.<br/>
+There is also the option to change the outliner color of an object.<br/>
+These functions can be used to change joint color, control curve color, or the wireframe color of an object.<br/>
+An option to change the thickness of a curve has also been added.<br/>
+
+
+## 'Misc' Tab Notes
+>limitations and How-to
 
 The miscellaneous tab has extra functions that have not been organized into the other tabs yet, 
 or that don't belong in one of the categories.
@@ -156,8 +156,7 @@ tied to a switch control attribute.
 
 
 
-**_____Other Notes and Thoughts_____**
-**___________________________________**
+## Other Notes and Thoughts
 
 In the future bounding box selection may be implemented to the auto rigger for a hybrid approach.
 It seams finding the joints via other joints, for instance, the root joint being the joint with the most children in the scene,
@@ -189,8 +188,8 @@ The python scripts could be better organized.  Better use of classes could also 
 
 Finally, I would like to dig into the Maya API as well to add some interesting functionality to the Character Rigger Toolset.
 
-**___________________________________**
+## 
 
-The toolset has been mainly test in Maya 2020 Python 2.7, but has also been tested in Python 3 for Maya 2022.
+The toolset has been mainly test in Maya 2020 Python 2.7, but has also been tested in Python 3 for Maya 2022.<br/>
 
 
