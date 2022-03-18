@@ -102,11 +102,11 @@ tediously match them manually or through some other means.<br/>
 ## 'Animation' Tab Notes
 >limitations and How-to
 
-The animation tab includes a multi-parent constraint for moving multiple controls in worldspace.<br/>
+1. The animation tab includes a multi-parent constraint for moving multiple controls in worldspace.<br/>
 One would key the controls after they were moved and delete the locator they are parented to, auto deleting the constraints.<br/>
 This allows a full character to be rotated in world space.<br/>
 
-In addition there is a function to mirror left control attributes to the right side.<br/>
+2. In addition there is a function to mirror left control attributes to the right side.<br/>
 This would be useful if one was creating set driven keys for a hand and needed to easily copy the poses to the right hand.<br/>
 Also, if no opposite controls exist, the mirror control function will instead mirror the selected control to the other side.<br/>
 
@@ -127,7 +127,7 @@ This is useful because Maya does not have a multi export built in for '.obj'.<br
 ## 'Color' Tab Notes
 >limitations and How-to
 
-The color tab has the ability to change the color of shapes, transforms, and the wire color of shapes and transforms.<br/>
+1. The color tab has the ability to change the color of shapes, transforms, and the wire color of shapes and transforms.<br/>
 There is also the option to change the outliner color of an object.<br/>
 These functions can be used to change joint color, control curve color, or the wireframe color of an object.<br/>
 An option to change the thickness of a curve has also been added.<br/>
@@ -136,57 +136,56 @@ An option to change the thickness of a curve has also been added.<br/>
 ## 'Misc' Tab Notes
 >limitations and How-to
 
-The miscellaneous tab has extra functions that have not been organized into the other tabs yet, 
-or that don't belong in one of the categories.
+1. The miscellaneous tab has extra functions that have not been organized into the other tabs yet,<br/>
+or that don't belong in one of the categories.<br/>
 
-The Maya and Python version can be printed out in the script editor console.  There is a button to add a test function.
-And a funciton to print out the positions of the vertices in a curve, including multiple shapes in a curve.
+2. The Maya and Python version can be printed out in the script editor console.  There is a button to add a test function.<br/>
+And a funciton to print out the positions of the vertices in a curve, including multiple shapes in a curve.<br/>
 
-An option to change the display type of a curve to 'reference,' for instance, to avoid selection of a global control during animation.
-Next to that is the option to rename the first occurence of a string, in a name, to something.
+3. An option to change the display type of a curve to 'reference,' for instance, to avoid selection of a global control during animation.<br/>
+Next to that is the option to rename the first occurence of a string, in a name, to something.<br/>
 
-Also, there is a button to constrain a group of objects between the last two selected objects.  
+4. Also, there is a button to constrain a group of objects between the last two selected objects.<br/>
 
-An option to scale constrain an object to multiple objects at once, not possible in default Maya.
+5. An option to scale constrain an object to multiple objects at once, not possible in default Maya.<br/>
 
-One can set the numerical value of an objects attribute name as well.
+6. One can set the numerical value of an objects attribute name as well.<br/>
 
-Finally, there is an option to automatically set up Set Driven Keys to multiple objects with 1 contraint per object, 
-tied to a switch control attribute.
-
+7. Finally, there is an option to automatically set up Set Driven Keys to multiple objects with 1 contraint per object,<br/>
+tied to a switch control attribute.<br/>
 
 
 ## Other Notes and Thoughts
 
-In the future bounding box selection may be implemented to the auto rigger for a hybrid approach.
-It seams finding the joints via other joints, for instance, the root joint being the joint with the most children in the scene,
-lacks some flexibility for modularity.  If one would want 5 arms coming out of a toe, this becomes unnecessarily complicated
-to look at all the other joints around when one could just place a bounding box selector at the root of each appendage instead.
-I think placing bounding box selectors, where joints may be unpredictable, like the face, would be a good hybrid approach. 
-In addition to finding joints based on other joints and based on bounding boxes; world position, vectors based on other joints, 
-or joint labels could also be used.  This all allows the rig to operate without joint names making it more flexible and easier to use,
-not requring selecting joints or typing in names, both repetitive tasks.
+1. In the future bounding box selection may be implemented to the auto rigger for a hybrid approach.<br/>
+It seams finding the joints via other joints, for instance, the root joint being the joint with the most children in the scene,<br/>
+lacks some flexibility for modularity.  If one would want 5 arms coming out of a toe, this becomes unnecessarily complicated<br/>
+to look at all the other joints around when one could just place a bounding box selector at the root of each appendage instead.<br/>
+I think placing bounding box selectors, where joints may be unpredictable, like the face, would be a good hybrid approach.<br/>
+In addition to finding joints based on other joints and based on bounding boxes; world position, vectors based on other joints,<br/>
+or joint labels could also be used.  This all allows the rig to operate without joint names making it more flexible and easier to use,<br/>
+not requring selecting joints or typing in names, both repetitive tasks.<br/>
 
-Though, a fully modular setup may be better for the auto rigger, where placing stand-in objects would represent joints and
-then joint orientation could be better accounted for.  It is nice to be able to use an auto rigger on a pre-existing skeleton,
-but this could be managed by having an easy way to import skin weights onto the new skeleton from an old weighted skeleton.
+2. Though, a fully modular setup may be better for the auto rigger, where placing stand-in objects would represent joints and<br/>
+then joint orientation could be better accounted for.  It is nice to be able to use an auto rigger on a pre-existing skeleton,<br/>
+but this could be managed by having an easy way to import skin weights onto the new skeleton from an old weighted skeleton.<br/>
 
-Snappable knees and elbows need to be added.  Possibly bendy limbs could be combined with this addition.  I like the full scalability
-of all the limbs, and joints including twist joints but I wonder if this adds unnecessary complication to worry about scaling all the rig functions individually.
-And how often do individual joints need to be scaled unless for a cartoony character.  Though global character scale is more important.
+3. Snappable knees and elbows need to be added.  Possibly bendy limbs could be combined with this addition.  I like the full scalability<br/>
+of all the limbs, and joints including twist joints but I wonder if this adds unnecessary complication to worry about scaling all the rig functions individually.<br/>
+And how often do individual joints need to be scaled unless for a cartoony character.  Though global character scale is more important.<br/>
 
-A spline IK spine option may be added.  Auto clavicle/ scapula could also be included.
+4. A spline IK spine option may be added.  Auto clavicle/ scapula could also be included.<br/>
 
-Possibly premade set driven keys for the fingers and face ctrls.  For basic facial and hand expresions like fingers spread and fist.
+5. Possibly premade set driven keys for the fingers and face ctrls.  For basic facial and hand expresions like fingers spread and fist.<br/>
 
-It would be neat to add a rag doll checkbox to the rig.  I made one with bullet physics that could move with the rig.  
-However, bullet physics seams clunky and possibly nCloth might be a better route for ragdoll.
+6. It would be neat to add a rag doll checkbox to the rig.  I made one with bullet physics that could move with the rig.<br/>
+However, bullet physics seams clunky and possibly nCloth might be a better route for ragdoll.<br/>
 
-I hope to add a pose saver to the rigging toolset.
+7. I hope to add a pose saver to the rigging toolset.<br/>
 
-The python scripts could be better organized.  Better use of classes could also be made to reduce repeating code.
+8. The python scripts could be better organized.  Better use of classes could also be made to reduce repeating code.<br/>
 
-Finally, I would like to dig into the Maya API as well to add some interesting functionality to the Character Rigger Toolset.
+9. Finally, I would like to dig into the Maya API as well to add some interesting functionality to the Character Rigger Toolset.<br/>
 
 ## 
 
