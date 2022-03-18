@@ -1,4 +1,4 @@
-# Nate Tools Character Rigger Toolset ReadMe...
+## Nate Tools Character Rigger Toolset ReadMe...<br/>
 > Mainly Tested in Maya 2020.4, Windows 10, Python 2.7.11 (though, should work in Maya 2022 and 2019)
 
 First, place the 'character_rigger' folder in root level of the Maya scripts folder.   
@@ -15,77 +15,77 @@ import character_rigger
 character_rigger.ar_ui.rigger_ui.rigger_ui_class().rigger_ui_method()
 ```
 
-*make a shelf button by middle mouse dragging this code to a Maya shelf from the script editor*
-    (the launch script is also in the 'launch_ui.py' file)
-    (shelf button icon is in 'character_rigger < icons' folder)
+*make a shelf button by middle mouse dragging this code to a Maya shelf from the script editor*  
+    (the launch script is also in the 'launch_ui.py' file)  
+    (shelf button icon is in 'character_rigger < icons' folder)  
 
-*if Maya has trouble importing files, use the 'import_reload.py' file to import and reload all files*
+*if Maya has trouble importing files, use the 'import_reload.py' file to import and reload all files*  
     ( consider making a shelf button of this too ) 
 
 
 
-**_____'Auto Rig' Tab Notes_____**
-*limitations and How-to*
+## *'Auto Rig' Tab Notes*  
+>Limitations and How-to
 
-No joint names or selections are needed.  The auto rigger automatically finds all the joints 
-and rigs the skeleton when RIG ME! is clicked.
+1. No joint names or selections are needed.  The auto rigger automatically finds all the joints<br/> 
+and rigs the skeleton when RIG ME! is clicked.<br/>
 
-Mid Face Jnts selects the lowest top face joints in the Y position. 
-Mid Face Jnts constrains the joints halfway between the head and the jaw, opposed to just the head.
+2. Mid Face Jnts selects the lowest top face joints in the Y position.<br/>
+Mid Face Jnts constrains the joints halfway between the head and the jaw, opposed to just the head.<br/>
 
-The forearm twist chain should be considered seperate and only parented to the elbow.
-In other words, the wrist should be parented to the elbow and not the twist joints.
-Nothing should be parented to the end of the twist chain for the current setup.
+3. The forearm twist chain should be considered seperate and only parented to the elbow.<br/>
+In other words, the wrist should be parented to the elbow and not the twist joints.<br/>
+Nothing should be parented to the end of the twist chain for the current setup.<br/>
 
-The foot locators are not required but will give the reverse foot pivots exact positions instead of the preset.
+4. The foot locators are not required but will give the reverse foot pivots exact positions instead of the preset.<br/>
 
-Currently the 'head joints' require top face jnts parented to the head, a jaw jnt parented to the head jnt, 
-bottom face jnts parented to the jaw, and a tongue jnt chain parented to the jaw jnt. 
-Ears are considered top face jnts with a child/s jnt and there would be two ears, but they are not required.
-(The head and top neck joint refer to the same joint.)
+5. Currently the 'head joints' require top face jnts parented to the head, a jaw jnt parented to the head jnt,<br/> 
+bottom face jnts parented to the jaw, and a tongue jnt chain parented to the jaw jnt.<br/> 
+Ears are considered top face jnts with a child/s jnt and there would be two ears, but they are not required.<br/>
+(The head and top neck joint refer to the same joint.)<br/>
 
-Uncheck 'Head Jnts' if there are no before mentioned head joints and only a top neck joint. Or if the head controls are not needed.
+6. Uncheck 'Head Jnts' if there are no before mentioned head joints and only a top neck joint. Or if the head controls are not needed.<br/>
 
-There is currently only a forearm twist.  The single twist joint or chain should be parented to the elbow and nothing parented to it.
-Uncheck the 'Forearm Twst Jnts' if the character has no forearm twist joints.
+7. There is currently only a forearm twist.  The single twist joint or chain should be parented to the elbow and nothing parented to it.<br/>
+Uncheck the 'Forearm Twst Jnts' if the character has no forearm twist joints.<br/>
 
-The Elbow and Knee 'PV Dist' text field sets the preset distance the IK elbow and knee ctrls are away from the elbows and knees.
-This can be changed after auto rigging by translating the parent grp of each control on its main axis.
+8. The Elbow and Knee 'PV Dist' text field sets the preset distance the IK elbow and knee ctrls are away from the elbows and knees.<br/>
+This can be changed after auto rigging by translating the parent grp of each control on its main axis.<br/>
 
-Currently the main axis for the rig is X down the chain and Y pointing outwards.  
-This is Y up on the arms and fingers, and Y forward on the legs, spine and neck.
-If X is not directly down the chain, the IK elbows and knees may move unwantingly on rig creation.
+9. Currently the main axis for the rig is X down the chain and Y pointing outwards.<br/>
+This is Y up on the arms and fingers, and Y forward on the legs, spine and neck.<br/>
+If X is not directly down the chain, the IK elbows and knees may move unwantingly on rig creation.<br/>
 
-Currently, the ankle and toe jnt should be level with the ground, so that the ankle and toe ctrls are not at a downward angle.  
-Otherwise x down the chain like the other jnts.
+10. Currently, the ankle and toe jnt should be level with the ground, so that the ankle and toe ctrls are not at a downward angle.<br/>
+Otherwise x down the chain like the other jnts.<br/>
 
-However, the 'head joints' aside from the tongue can be oriented to the default world position.
+11. However, the 'head joints' aside from the tongue can be oriented to the default world position.<br/>
 
-It should be noted that the right arm and leg are mirriored across YZ with the mirror function set to 'Behavior'
-with the 'Skeleton < Mirror Joints' setting.  The same as multiplying the translate x,y,z * (-1,1,1) and rotation x,y,z * (1,-1,-1)
-and then substracting 180 degrees from the rotate X. This should be noted if mirroring reverse foot locators across X axis.
+12. It should be noted that the right arm and leg are mirriored across YZ with the mirror function set to 'Behavior'<br/>
+with the 'Skeleton < Mirror Joints' setting.  The same as multiplying the translate x,y,z * (-1,1,1) and rotation x,y,z * (1,-1,-1)<br/>
+and then substracting 180 degrees from the rotate X. This should be noted if mirroring reverse foot locators across X axis.<br/>
 
-XYZ is currently the rotation order for all the joints.   
+13. XYZ is currently the rotation order for all the joints.<br/>   
 
-Note there should be a bend in the elbow and knees of the skeleton.
+14. Note there should be a bend in the elbow and knees of the skeleton.<br/>
 
-There is no real limit on the spine, neck or finger jnt chain length.
+15. There is no real limit on the spine, neck or finger jnt chain length.<br/>
 
-The rig is made at Maya's default distance scale, where 1 unit = 1 cm. A 6ft human would be 182.88 maya units (cm) tall.
-In other words the same as Unreal Engine. And also the size of the humanBody base sculpt mesh in the Maya 'content browser'.
+16. The rig is made at Maya's default distance scale, where 1 unit = 1 cm. A 6ft human would be 182.88 maya units (cm) tall.<br/>
+In other words the same as Unreal Engine. And also the size of the humanBody base sculpt mesh in the Maya 'content browser'.<br/>
 
-The rig supports global scaling and uniform scaling of most all individual joints. Non-uniform joint scaling is not currently supported.
+17. The rig supports global scaling and uniform scaling of most all individual joints. Non-uniform joint scaling is not currently supported.<br/>
 
-Check the included skeleton in the 'other' folder to see a possible joint setup. 
+18. Check the included skeleton in the 'other' folder to see a possible joint setup.<br/>
 
-Finally, export skin weights with 'Deform < Export Weights...' as an .xml to use with the 'New Skinned Character Scene' button.
-The button automatically creates a new scene and skins the selected skeleton to the selected mesh with the xml weights.  
-First all weight is automatically applied to the root joint, and then skin weights applied, to avoid errors.
-And make sure the fbxmaya.dll plugin is loaded into Maya if importing fbx files for the body or skeleton.
+19. Finally, export skin weights with 'Deform < Export Weights...' as an .xml to use with the 'New Skinned Character Scene' button.<br/>
+The button automatically creates a new scene and skins the selected skeleton to the selected mesh with the xml weights.<br/>
+First all weight is automatically applied to the root joint, and then skin weights applied, to avoid errors.<br/>
+And make sure the fbxmaya.dll plugin is loaded into Maya if importing fbx files for the body or skeleton.<br/>
 
 
-##'Rigging' Tab Notes  
-*limitations and How-to*
+## 'Rigging' Tab Notes  
+>Limitations and How-to
 
 For the rigging tab the functions are, FK chain creation, IK limb creation, FK IK blended chain creation, 
 auto creating a blend color node blend, automatically creating FK IK joint chains connected with blend color nodes to a main joint chain, 
