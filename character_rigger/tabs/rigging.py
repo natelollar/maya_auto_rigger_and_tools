@@ -43,9 +43,9 @@ class rigging_class():
                                         (-1, -1, -1)
                                         ])
             #curve size
-            mc.setAttr(".scaleX", 4)
-            mc.setAttr(".scaleY", 4)
-            mc.setAttr(".scaleZ", 4)
+            mc.setAttr(".scaleX", 10)
+            mc.setAttr(".scaleY", 10)
+            mc.setAttr(".scaleZ", 10)
             #freeze transforms
             mc.makeIdentity(apply=True)
             #select curve box's shape
@@ -77,6 +77,10 @@ class rigging_class():
 
             #parent constrain ctrls to fk jnts
             mc.parentConstraint(myCurve_name, i)
+            mc.scaleConstraint(myCurve_name, i)
+
+            # to work better with scaling (maybe)
+            mc.setAttr( i + '.segmentScaleCompensate', 0 )
 
         #remove first and last of lists to correctly parent ctrls and grps together in for loop
         fk_ctrl_grp_list.pop(0)

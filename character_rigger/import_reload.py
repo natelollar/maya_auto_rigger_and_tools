@@ -19,11 +19,13 @@ import character_rigger.ar_functions.sel_near_jnt
 import character_rigger.ar_rig
 import character_rigger.ar_rig.arm_rig
 import character_rigger.ar_rig.character_rig
+import character_rigger.ar_rig.character_rig_quadruped
 import character_rigger.ar_rig.clavicle_rig
 import character_rigger.ar_rig.extra_rig
 import character_rigger.ar_rig.face_rig
 import character_rigger.ar_rig.fk_spine_rig
 import character_rigger.ar_rig.leg_rig
+import character_rigger.ar_rig.quadruped_leg_rig
 
 import character_rigger.ar_tools
 import character_rigger.ar_tools.fk_chain
@@ -56,11 +58,13 @@ imp.reload( character_rigger.ar_functions.sel_near_jnt)
 imp.reload( character_rigger.ar_rig)
 imp.reload( character_rigger.ar_rig.arm_rig)
 imp.reload( character_rigger.ar_rig.character_rig)
+imp.reload( character_rigger.ar_rig.character_rig_quadruped)
 imp.reload( character_rigger.ar_rig.clavicle_rig)
 imp.reload( character_rigger.ar_rig.extra_rig)
 imp.reload( character_rigger.ar_rig.face_rig)
 imp.reload( character_rigger.ar_rig.fk_spine_rig)
 imp.reload( character_rigger.ar_rig.leg_rig)
+imp.reload( character_rigger.ar_rig.quadruped_leg_rig)
 
 imp.reload( character_rigger.ar_tools)
 imp.reload( character_rigger.ar_tools.fk_chain)

@@ -5,7 +5,7 @@ import sys
 from PySide2 import QtCore
 import PySide2
 
-from re import search
+from ..ar_rig import quadruped_leg_rig
 
 
 class misc_tab_class():
@@ -35,7 +35,18 @@ class misc_tab_class():
         print('|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|') 
         print('TEST!!! TEST!!! TEST!!!')
         print('|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|/\/\/\/\/\|') 
-
+        quadruped_leg_rig.leg_rig().create_fk_ik_leg(direction = 'left', 
+                            ft_loc_dist = '15',
+                            offset_parent_jnt = 'testJnt_spine1_Root', 
+                            swch_ctrl_dist = '40',
+                            toe_wiggle_size = '2',
+                            rev_foot_size = '3',
+                            fk_ctrl_size = '12', 
+                            ik_ctrl_size = '12', 
+                            pv_ctrl_size = '1', 
+                            knee_dist_mult = '20',
+                            spine_root_ctrl = 'spint_root_ctrl_test', 
+                            global_ctrl = 'global_ctrl_test')
 
     def curve_vert_pos(self):
         #find nurbs curve CV's locations (control vertex's)

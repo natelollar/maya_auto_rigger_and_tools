@@ -52,7 +52,16 @@ class rigger_ui_class():
                                         h=120, 
                                         w=220, 
                                         command = 'character_rigger.ar_rig.character_rig.character_rig()',
-                                        statusBarMessage='Auto Rig Character.  No Joint Names Required. Must have tongue, bot face joints, and top face joints.'
+                                        statusBarMessage='Auto Rig Character.  No Joint Names Required. Must have tongue, bot face joints, and top face joints. Else uncheck "Head Jnts."',
+                                        ann='Auto Rig Character.  No Joint Names Required. Must have tongue, bot face joints, and top face joints. Else uncheck "Head Jnts."'
+                                    )
+        auto_rig_b1a = mc.button(  label='Quadruped Legs Rig (Wyvern)',
+                                        h=30, 
+                                        w=175, 
+                                        command = 'character_rigger.ar_rig.character_rig_quadruped.character_rig()',
+                                        bgc = (.2,.5,0), 
+                                        statusBarMessage='Same as RIG ME! button, except quaruped legs (double knees), instead of normal biped legs. For something like a bipedal wyvern or dragon.',
+                                        ann='Same as RIG ME! button, except quaruped legs (double knees), instead of normal biped legs. For something like a bipedal wyvern or dragon.',
                                     )
         auto_rig_b2 = mc.button(label='L \n Rev Foot \n Locators', 
                                 h=50, 
@@ -148,7 +157,7 @@ class rigger_ui_class():
         # check boxes
         headJnts_checkbox = mc.checkBox('headJnts_checkbox', 
                                         label='Head Jnts', 
-                                        value=True, 
+                                        value=False, 
                                         bgc=(.4,0,.4), 
                                         width=115, 
                                         height=24,
@@ -222,6 +231,7 @@ class rigger_ui_class():
                                     (auto_rig_s4 , 'top', 0),(auto_rig_s4 , 'left', 454),
                                     # buttons
                                     (auto_rig_b1 , 'top', 77),(auto_rig_b1 , 'left', 130),
+                                    (auto_rig_b1a , 'top', 280),(auto_rig_b1a , 'left', 150),
                                     (auto_rig_b2 , 'top', 15),(auto_rig_b2 , 'left', 325),
                                     (auto_rig_b3 , 'top', 15),(auto_rig_b3 , 'left', 390),
                                     (auto_rig_b4 , 'top', 86),(auto_rig_b4 , 'left', 15),
