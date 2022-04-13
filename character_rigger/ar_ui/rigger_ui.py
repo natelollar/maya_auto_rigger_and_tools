@@ -490,6 +490,40 @@ class rigger_ui_class():
         mc.text(label = '', height=5, width=222, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
         mc.setParent("..")
 
+        # Text Input Row
+        mc.rowLayout(numberOfColumns = 15)
+        mc.textField('offs_grp_suffix_text', width=82, h=24, text='_grp_offset')
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+        mc.button(  label='Shape to Offset Grp', 
+                    w=113, 
+                    command = 'character_rigger.tabs.rigging.rigging_class().add_shape_to_offset_grp()', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage = 'Add Shape to Similar Named Offset Grp With Suffix (ex. _offset_grp).' +
+                    'Good for adding shape to empty grp for set driven key animation.',
+                    ann = 'Add Shape to Similar Named Offset Grp With Suffix (ex. _offset_grp).' +
+                    'Good for adding shape to empty grp for set driven key animation.' )
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+        mc.button(  label='Shape Vis Off', 
+                    w=113, 
+                    command = 'character_rigger.tabs.rigging.rigging_class().shape_vis_off()', 
+                    bgc = (0.5,0.2,0), 
+                    statusBarMessage = 'Select Transforms. Shape/s Visibility Off',
+                    ann = 'Select Transforms. Shape/s Visibility Off' )
+        mc.separator(style='none', w=10, h=23, bgc=(0.25,0.7,0))
+        mc.button(  label='Shape Vis On', 
+                    w=113, 
+                    command = 'character_rigger.tabs.rigging.rigging_class().shape_vis_on()', 
+                    bgc = (0.2,0.5,0), 
+                    statusBarMessage = 'Select Transforms. Shape/s Visibility On',
+                    ann = 'Select Transforms. Shape/s Visibility On' )
+        mc.separator(style='none', w=10, h=23, bgc=(0.25,0.7,0))
+        mc.setParent("..")
+
+        # green seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=222, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.setParent("..")
+
 
         #parent column to tab
         mc.setParent('..')
@@ -766,7 +800,7 @@ class rigger_ui_class():
         mc.intSlider('slider_value', 
         w=200, 
         minValue=0, 
-        max=11, 
+        max=12, 
         value=0, 
         step=1, 
         dc = 'character_rigger.tabs.color_slider.color_class().slider_move()' )

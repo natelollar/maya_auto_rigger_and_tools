@@ -1260,3 +1260,107 @@ class rigging_class():
                 for i in mySel_locked_attr:
                     mc.setAttr((mySel + '.' + i), lock=True, keyable=False, channelBox=False)
                     mc.setAttr((mySel_opp + '.' + i), lock=True, keyable=False, channelBox=False)
+
+
+    def add_shape_to_offset_grp(self):
+        # offset grp suffix
+        offs_grp_suffix = mc.textField('offs_grp_suffix_text', query=True, text=True)
+        # get selection list
+        mySel_list = mc.ls(sl=True)
+        # itterate through selected
+        for mySel in mySel_list:
+            mc.select(mySel) # if error sometimes reselect will fix
+            # list locked attr to unlock and relock later
+            mySel_locked_attr = mc.listAttr(mySel, locked=True)
+            # unlock all locked attributes
+            if mySel_locked_attr: # if locked attr exist /have value
+                for i in mySel_locked_attr:
+                    mc.setAttr((mySel + '.' + i), lock=False, keyable=True, channelBox=True)
+
+            # duplicate, delete children, unparent
+            mySel_dup = mc.duplicate(mySel, renameChildren=True)
+            mySel_dup_childs = mc.listRelatives(mySel_dup, ad=True, type='transform')
+            mc.delete(mySel_dup_childs)
+            mc.Unparent(mySel_dup[0])
+            '''
+            # parent duplicated ctrl under world origin grp
+            myGrp = mc.group(em=1)
+            mc.parent(mySel_dup[0], myGrp)
+            # flip grp to other side and freeze scale of -1 back to 1
+            mc.setAttr(myGrp + '.scaleX', -1)
+            mc.Unparent(mySel_dup[0]) # unparent from flip grp
+            #delete flip grp
+            mc.delete(myGrp)
+            '''
+
+            # find opposite side ctrl of orignal duplicated
+            mySel_off_grp = mySel + offs_grp_suffix
+            #unlock all attributes
+            if mySel_locked_attr:
+                for i in mySel_locked_attr:
+                    mc.setAttr((mySel_off_grp + '.' + i), lock=False, keyable=True, channelBox=True)
+            '''
+            # get shape of opposite side ctrl to delete later
+            mySel_opp_shape = mc.listRelatives(mySel_off_grp, s=True)
+            '''
+            #parent under opposite ctrl and freeze attributes to get same exact trans, rot, scale
+            mc.parent(mySel_dup[0], mySel_off_grp)
+            mc.setAttr(mySel_dup[0] + '.scale', 0.7, 0.7, 0.7)
+            mc.makeIdentity(mySel_dup[0], translate=True, rotate=True, scale=True, apply=True)
+            mc.Unparent(mySel_dup[0])
+
+            # resize new ctrl
+            #mc.setAttr(mySel_dup[0] + '.scale', 0.7, 0.7, 0.7)
+            #mc.makeIdentity(mySel_dup[0], translate=True, rotate=True, scale=True, apply=True)
+            # set color
+            mySel_dup_shape = mc.listRelatives(mySel_dup[0], s=True)
+            #color nurbs circle shape
+            mc.setAttr((mySel_dup_shape[0] + ".overrideEnabled"), 1)
+            mc.setAttr((mySel_dup_shape[0] + ".overrideRGBColors"), 1)
+            mc.setAttr((mySel_dup_shape[0] + ".overrideColorRGB"), 0, 1, 1)
+
+            #find shape of duplicated control
+            mySel_dup_shape = mc.listRelatives(mySel_dup[0], s=True)
+            # parent flipped shape under other side ctrl
+            mc.parent(mySel_dup_shape, mySel_off_grp, r=True, s=True)
+            # delete unused duplicate transform
+            mc.delete(mySel_dup[0])
+            '''
+            #delete old shape under opposite ctrl
+            mc.delete(mySel_opp_shape)
+            '''
+
+            #rename new shape after opposite ctrl parent
+            for shape in mySel_dup_shape: # for loop in case more than one shape
+                myIndex = mySel_dup_shape.index(shape)
+                # alphabet_list + '_'
+                alphabet_list = '_' + string.ascii_uppercase[:] 
+                if shape != mySel_dup_shape[0]:
+                    mc.rename(shape, mySel_off_grp + alphabet_list[myIndex] + 'Shape')
+                elif shape == mySel_dup_shape[0]:
+                    mc.rename(shape, mySel_off_grp + 'Shape')
+
+            # relock and hide attritues
+            if mySel_locked_attr:
+                for i in mySel_locked_attr:
+                    mc.setAttr((mySel + '.' + i), lock=True, keyable=False, channelBox=False)
+                    mc.setAttr((mySel_off_grp + '.' + i), lock=True, keyable=False, channelBox=False)
+
+    def shape_vis_off(self):
+        #shape vis off
+        mySel = mc.ls(sl=1)
+
+        for i in mySel:
+            shape = mc.listRelatives(i, s=True)
+            for i in shape:
+                mc.setAttr(i + '.visibility', 0)
+
+    def shape_vis_on(self):
+        #shape vis off
+        mySel = mc.ls(sl=1)
+
+        for i in mySel:
+            shape = mc.listRelatives(i, s=True)
+            for i in shape:
+                mc.setAttr(i + '.visibility', 1)
+

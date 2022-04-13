@@ -5,6 +5,9 @@ import maya.cmds as mc
 
 class color_class():
 
+    #_______________________________#
+    #change color of selection "Shape/s"
+    #_______________________________#
     def slider_move(self):
         #query current slider value
         color1 = mc.intSlider('slider_value', q=True, value=True)
@@ -15,86 +18,106 @@ class color_class():
             mc.iconTextButton('color', e=True, bgc=(0.5, .5, 0.5))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 0)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 0)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), 0.5, 0.5, 0.5)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 0)
+                    mc.setAttr((shape + ".overrideRGBColors"), 0)
+                    mc.setAttr((shape + ".overrideColorRGB"), 0.5, 0.5, 0.5)
         if color1 == 1: 
             mc.iconTextButton('color', e=True, bgc=(.8, 0, .9))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 1)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 1)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), .8, 0, .9)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), .8, 0, .9)
         if color1 == 2: 
             mc.iconTextButton('color', e=True, bgc=(1, .2, 0))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 1)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 1)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), 1, .2, 0)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), 1, .2, 0)
         if color1 == 3: 
             mc.iconTextButton('color', e=True, bgc=(1, 1, 0))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 1)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 1)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), 1, 1, 0)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), 1, 1, 0)
         if color1 == 4: 
             mc.iconTextButton('color', e=True, bgc=(0.6, 0, 0.15))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 1)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 1)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), 0.6, 0, 0.15)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), 0.6, 0, 0.15)
         if color1 == 5: 
             mc.iconTextButton('color', e=True, bgc=(0, .7, 0))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 1)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 1)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), 0, .7, 0)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), 0, .7, 0)
         if color1 == 6: 
             mc.iconTextButton('color', e=True, bgc=(1, 0, 0))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 1)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 1)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), 1, 0, 0)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), 1, 0, 0)
         if color1 == 7: 
             mc.iconTextButton('color', e=True, bgc=(0, 1, 0))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 1)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 1)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), 0, 1, 0)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), 0, 1, 0)
         if color1 == 8: 
             mc.iconTextButton('color', e=True, bgc=(0, 0, 1))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 1)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 1)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), 0, 0, 1)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), 0, 0, 1)
         if color1 == 9: 
             mc.iconTextButton('color', e=True, bgc=(0, 1, 1))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 1)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 1)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), 0, 1, 1)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), 0, 1, 1)
         if color1 == 10: 
             mc.iconTextButton('color', e=True, bgc=(1, 0, 1))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 1)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 1)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), 1, 0, 1)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), 1, 0, 1)
         if color1 == 11: 
             mc.iconTextButton('color', e=True, bgc=(.5, 0, 1))
             for i in mySel:
                 selShape = mc.listRelatives(i, s=True)
-                mc.setAttr((selShape[0] + ".overrideEnabled"), 1)
-                mc.setAttr((selShape[0] + ".overrideRGBColors"), 1)
-                mc.setAttr((selShape[0] + ".overrideColorRGB"), .5, 0, 1)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), .5, 0, 1)
+        if color1 == 12: 
+            mc.iconTextButton('color', e=True, bgc=(.5, 1, 0))
+            for i in mySel:
+                selShape = mc.listRelatives(i, s=True)
+                for shape in selShape:
+                    mc.setAttr((shape + ".overrideEnabled"), 1)
+                    mc.setAttr((shape + ".overrideRGBColors"), 1)
+                    mc.setAttr((shape + ".overrideColorRGB"), .5, 1, 0)
         
         
 
