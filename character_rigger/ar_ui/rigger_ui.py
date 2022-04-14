@@ -800,7 +800,7 @@ class rigger_ui_class():
         mc.intSlider('slider_value', 
         w=200, 
         minValue=0, 
-        max=12, 
+        max=14, 
         value=0, 
         step=1, 
         dc = 'character_rigger.tabs.color_slider.color_class().slider_move()' )
