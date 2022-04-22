@@ -31,7 +31,7 @@ mc.setAttr(mySel[0] + '.Pose', e=1, channelBox=1)
 
 import maya.cmds as mc
 
-offset_list = [ 'sknJnt_r_wingA1_ctrl_grp_offset', 
+offset_listR = [ 'sknJnt_r_wingA1_ctrl_grp_offset', 
                 'sknJnt_r_wingC2_ctrl_grp_offset', 
                 'sknJnt_r_wingB2_ctrl_grp_offset', 
                 'sknJnt_r_wingB1_ctrl_grp_offset', 
@@ -44,11 +44,34 @@ offset_list = [ 'sknJnt_r_wingA1_ctrl_grp_offset',
                 'FK_sknJnt_r_foreArm3_ctrl_grp_offset']
 
 
-for i in offset_list:
-    mc.setDrivenKeyframe( i + '.rotate', currentDriver = 'FK_sknJnt_r_foreArm3_ctrl.Wing_Up_Down' )
-    mc.setDrivenKeyframe( i + '.translate', currentDriver = 'FK_sknJnt_r_foreArm3_ctrl.Wing_Up_Down' )
+for i in offset_listR:
+    mc.setDrivenKeyframe( i + '.rotate', currentDriver = 'FK_sknJnt_r_foreArm3_ctrl.Wing_In_Out' )
+    mc.setDrivenKeyframe( i + '.translate', currentDriver = 'FK_sknJnt_r_foreArm3_ctrl.Wing_In_Out' )
+
+
+#________________________#
+
+import maya.cmds as mc
+
+offset_listL = [ 'sknJnt_l_wingA1_ctrl_grp_offset', 
+                'sknJnt_l_wingC2_ctrl_grp_offset', 
+                'sknJnt_l_wingB2_ctrl_grp_offset', 
+                'sknJnt_l_wingB1_ctrl_grp_offset', 
+                'sknJnt_l_wingC1_ctrl_grp_offset', 
+                'sknJnt_l_pointerFinger1_ctrl_grp_offset', 
+                'sknJnt_l_thumb1_ctrl_grp_offset', 
+                'FK_sknJnt_l_foreArm1_ctrl_grp_offset', 
+                'FK_sknJnt_l_clavicle_ctrl_grp_offset', 
+                'FK_sknJnt_l_upperArm1_ctrl_grp_offset', 
+                'FK_sknJnt_l_foreArm3_ctrl_grp_offset']
+
+
+for i in offset_listL:
+    mc.setDrivenKeyframe( i + '.rotate', currentDriver = 'FK_sknJnt_l_foreArm3_ctrl.Wing_In_Out' )
+    mc.setDrivenKeyframe( i + '.translate', currentDriver = 'FK_sknJnt_l_foreArm3_ctrl.Wing_In_Out' )
     
     
+
 
 #________________________#
 
