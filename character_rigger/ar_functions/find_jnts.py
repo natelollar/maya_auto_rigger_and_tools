@@ -95,10 +95,10 @@ class find_jnts():
         low_x_val_jnt = [jointSel[low_x_val_ind]]
 
         # if argument left or right str() choose appropriate joint
-        if direction == 'left':
+        if direction == 'l':
             mc.select(high_x_val_jnt)
             return high_x_val_jnt
-        elif direction == 'right':
+        elif direction == 'r':
             mc.select(low_x_val_jnt)
             return low_x_val_jnt
 
@@ -130,10 +130,10 @@ class find_jnts():
         low_x_val_jnt = [jointSelC[low_x_val_ind]]
     
         # select left or right most chest children
-        if direction == 'left':
+        if direction == 'l':
             mc.select(high_x_val_jnt)
             return high_x_val_jnt
-        elif direction == 'right':
+        elif direction == 'r':
             mc.select(low_x_val_jnt)
             return low_x_val_jnt
 
@@ -149,8 +149,8 @@ class find_jnts():
         chest_children_jnts_sel = mc.ls(sl=True)
         
         # get l and r clavicle
-        l_clav = self.l_r_clavicle_jnt('left')
-        r_clav = self.l_r_clavicle_jnt('right')
+        l_clav = self.l_r_clavicle_jnt('l')
+        r_clav = self.l_r_clavicle_jnt('r')
         # if not l or r clavicle, must be neck
         for child_jnt in chest_children_jnts_sel:
             if child_jnt != l_clav[0] and child_jnt != r_clav[0]:

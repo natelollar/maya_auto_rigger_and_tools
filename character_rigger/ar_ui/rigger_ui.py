@@ -58,7 +58,7 @@ class rigger_ui_class():
         auto_rig_b1a = mc.button(  label='Quadruped Legs Rig (Wyvern)',
                                         h=30, 
                                         w=175, 
-                                        command = 'character_rigger.ar_rig.character_rig_quadruped.character_rig()',
+                                        command = 'character_rigger.ar_rig.quadruped_leg_rig.leg_rig().create_fk_ik_leg()',
                                         bgc = (.2,.5,0), 
                                         statusBarMessage='Same as RIG ME! button, except quaruped legs (double knees), instead of normal biped legs. For something like a bipedal wyvern or dragon.',
                                         ann='Same as RIG ME! button, except quaruped legs (double knees), instead of normal biped legs. For something like a bipedal wyvern or dragon.',

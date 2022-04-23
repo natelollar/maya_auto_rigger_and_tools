@@ -86,10 +86,10 @@ class leg_rig():
             mc.setAttr((loc_toe_end[0] + '.localScale'), 5, 5, 5)
             mc.setAttr((loc_toe_end[0] + '.translate'), toe_jnt_pos[0], 0, toe_jnt_pos[2])
             mc.setAttr((loc_toe_end[0] + '.rotate'), toe_jnt_rot[0], toe_jnt_rot[1], toe_jnt_rot[2])
-            if direction == 'left':
+            if direction == 'l':
                 mc.move( (ft_loc_dist), 0, 0, (loc_toe_end[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_toe_end[0] + '.ty'),  0)  #set at gound level
-            if direction == 'right':
+            if direction == 'r':
                 mc.move( -(ft_loc_dist), 0, 0, (loc_toe_end[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_toe_end[0] + '.ty'),  0)  #set at gound level
         else:
@@ -104,10 +104,10 @@ class leg_rig():
             mc.setAttr((loc_heel[0] + '.localScale'), 5, 5, 5)
             mc.setAttr((loc_heel[0] + '.translate'), ankle_jnt_pos[0], 0, ankle_jnt_pos[2])
             mc.setAttr((loc_heel[0] + '.rotate'), ankle_jnt_rot[0], ankle_jnt_rot[1], ankle_jnt_rot[2])
-            if direction == 'left':
+            if direction == 'l':
                 mc.move( -(ft_loc_dist), 0, 0, (loc_heel[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_heel[0] + '.ty'),  0)  #set at gound level
-            if direction == 'right':
+            if direction == 'r':
                 mc.move( (ft_loc_dist), 0, 0, (loc_heel[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_heel[0] + '.ty'),  0) #set at gound level
         else:
@@ -122,10 +122,10 @@ class leg_rig():
             mc.setAttr((loc_outer_foot[0] + '.localScale'), 5, 5, 5)
             mc.setAttr((loc_outer_foot[0] + '.translate'), toe_jnt_pos[0], 0, toe_jnt_pos[2])
             mc.setAttr((loc_outer_foot[0] + '.rotate'), toe_jnt_rot[0], toe_jnt_rot[1], toe_jnt_rot[2])
-            if direction == 'left':
+            if direction == 'l':
                 mc.move( 0, 0, -(ft_loc_dist), (loc_outer_foot[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_outer_foot[0] + '.ty'),  0)  #set at gound level
-            if direction == 'right':
+            if direction == 'r':
                 mc.move( 0, 0, (ft_loc_dist), (loc_outer_foot[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_outer_foot[0] + '.ty'),  0)  #set at gound level
         else:
@@ -140,10 +140,10 @@ class leg_rig():
             mc.setAttr((loc_inner_foot[0] + '.localScale'), 5, 5, 5)
             mc.setAttr((loc_inner_foot[0] + '.translate'), toe_jnt_pos[0], 0, toe_jnt_pos[2])
             mc.setAttr((loc_inner_foot[0] + '.rotate'), toe_jnt_rot[0], toe_jnt_rot[1], toe_jnt_rot[2])
-            if direction == 'left':
+            if direction == 'l':
                 mc.move( 0, 0, (ft_loc_dist), (loc_inner_foot[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_inner_foot[0] + '.ty'),  0)  #set at gound level
-            if direction == 'right':
+            if direction == 'r':
                 mc.move( 0, 0, -(ft_loc_dist), (loc_inner_foot[0]), r=1, os=1, wd=1)
                 mc.setAttr((loc_inner_foot[0] + '.ty'),  0)  #set at gound level
         else:
@@ -165,22 +165,23 @@ class leg_rig():
                             knee_dist_mult,
                             spine_root_ctrl, 
                             global_ctrl):
-        
+        '''
         # find leg joints using method from own class
         jnt_info = self.find_leg_jnts(direction)
         leg_chain = jnt_info[0]
 
         '''
         leg_chain = [
-                    'sknJnt_l_leg1',
-                    'sknJnt_l_leg2',
-                    'sknJnt_l_leg3',
-                    'sknJnt_l_foot1',
-                    'sknJnt_l_foot2',
-                    'sknJnt_l_foot3_End'
+                    'tmpJnt_l_leg1',
+                    'tmpJnt_l_leg2',
+                    'tmpJnt_l_leg3',
+                    'tmpJnt_l_foot1',
+                    'tmpJnt_l_foot2',
+                    'tmpJnt_l_foot3_End'
                     ]
-        '''
-
+        
+        sknJnt_preSuff = 'tmpJnt_'
+        
         #______________________________#
         #_____Blended Joint Chain______#
         #______________________________#
@@ -200,12 +201,10 @@ class leg_rig():
             mc.setAttr('.overrideRGBColors', 1)
             mc.setAttr('.overrideColorRGB', 1, 0, 0.1)
             
-            fkJoint = mc.rename(fkJoint_orig, ('FK_' + i))
+            fkJoint_rename = i.replace(sknJnt_preSuff, 'fkJnt_')
+            fkJoint = mc.rename(fkJoint_orig, fkJoint_rename)
             mc.Unparent(fkJoint)
 
-            # scale constraint instead of blend joint (for proper ctrl and global scale)
-            mc.scaleConstraint(fkJoint, i)
-            
             # create list of fk joints
             fkJoint_list.append(fkJoint)
             
@@ -220,11 +219,10 @@ class leg_rig():
             mc.setAttr('.overrideRGBColors', 1)
             mc.setAttr('.overrideColorRGB', .1, .9, 0.1)
             
-            ikJoint = mc.rename(ikJoint_orig, ('IK_' + i))
+            ikJoint_rename = i.replace(sknJnt_preSuff, 'ikJnt_')
+            ikJoint = mc.rename(ikJoint_orig, ikJoint_rename)
             mc.Unparent(ikJoint)
 
-            # scale constraint instead of blend joint (for proper ctrl and global scale)
-            mc.scaleConstraint(ikJoint, i)
 
             # create list of ik joints
             ikJoint_list.append(ikJoint)
@@ -240,20 +238,12 @@ class leg_rig():
             mc.setAttr('.overrideRGBColors', 1)
             mc.setAttr('.overrideColorRGB', 0, 0, 1)
             
-            ikDriverJoint = mc.rename(ikDriverJoint_orig, ('ikDriver_' + i))
+            ikDriverJoint_rename = i.replace(sknJnt_preSuff, 'drvJnt_')
+            ikDriverJoint = mc.rename(ikDriverJoint_orig, ikDriverJoint_rename)
             mc.Unparent(ikDriverJoint)
-
-            # scale constraint instead of blend joint (for proper ctrl and global scale)
-            mc.scaleConstraint(ikDriverJoint, i)
 
             # create list of ik joints
             ikDriverJoint_list.append(ikDriverJoint)
-
-            # set leg jnt scale comp off to avoid double scale (when global scale)
-            mc.setAttr( i + '.segmentScaleCompensate', 0 )
-            mc.setAttr( ('FK_' + i) + '.segmentScaleCompensate', 0 )
-            mc.setAttr( ('IK_' + i) + '.segmentScaleCompensate', 0 )
-            mc.setAttr( ('ikDriver_' + i) + '.segmentScaleCompensate', 0 )
 
 
         #parent FK joints together based on current index
@@ -371,7 +361,6 @@ class leg_rig():
 
             #parent and scale constrain ctrls to fk jnts
             mc.parentConstraint(myCurve_name, i)
-            mc.scaleConstraint(myCurve_name, i)
 
         
         #remove first and last of lists to correctly parent ctrls and grps together in for loop
@@ -648,8 +637,6 @@ class leg_rig():
             #unparent group (since it has correct position)
             mc.Unparent(myGroup)
 
-            #parent grp to global grp to organize
-            #mc.parent(myGroup, myLegGrp)
 
             #append grp for outside use
             ik_hip_group_list.append(myGroup)
@@ -661,8 +648,9 @@ class leg_rig():
 
         # parent constrain hip joint translation to control
         mc.parentConstraint(ik_hip_ctrl_list[0], ikJoint_list[0], sr=('x', 'y', 'z'))
-        #scale constrain ctrl to jnt
-        mc.scaleConstraint(ik_hip_ctrl_list[0], ikJoint_list[0])
+        # parent constrain hip joint driv jnt top
+        mc.parentConstraint(ik_hip_ctrl_list[0], ikDriverJoint_list[0], sr=('x', 'y', 'z'))
+
         # lock and hide rotation values for hip control
         mc.setAttr((ik_hip_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
         mc.setAttr((ik_hip_ctrl_list[0] + '.ry'), lock=True, keyable=False, channelBox=False)
@@ -770,11 +758,11 @@ class leg_rig():
         switch_ctrl_grp_list = []
         for i in range(0,1):
             #name circle curves
-            if direction == 'left':
+            if direction == 'l':
                 switchCurveA_name = 'l_legSwtch_ctrl'
                 switchCurveB_name = 'l_legSwtch_ctrlA'
                 switchCurveC_name = 'l_legSwtch_ctrlB'
-            if direction == 'right':
+            if direction == 'r':
                 switchCurveA_name = 'r_legSwtch_ctrl'
                 switchCurveB_name = 'r_legSwtch_ctrlA'
                 switchCurveC_name = 'r_legSwtch_ctrlB'
@@ -819,9 +807,9 @@ class leg_rig():
             switchCurveA_l_grp_offset = mc.group(switchCurveA, n = (switchCurveA_name + '_grp_offset'))
 
             #_______move ctrl shapes in -z_______#
-            if direction == 'left':
+            if direction == 'l':
                 mc.setAttr((switchCurveA[0] + '.tx'), -(swch_ctrl_dist))
-            elif direction == 'right':
+            elif direction == 'r':
                 mc.setAttr((switchCurveA[0] + '.tx'), (swch_ctrl_dist))
             mc.xform (switchCurveA, ws=True, piv= (0, 0, 0))
             mc.makeIdentity(switchCurveA, apply=True)
@@ -834,7 +822,6 @@ class leg_rig():
 
             # parent and scale constrain switch ctrl to ankle
             mc.parentConstraint(leg_chain[3], switchCurveA_grp, mo=True)
-            mc.scaleConstraint(leg_chain[3], switchCurveA_grp, mo=True)
 
             #_______add IK FK Blend attr to switch ctrl_______#
             mc.addAttr(switchCurveA, ln = 'fk_ik_blend', min=0, max=1, k=True)
@@ -886,23 +873,6 @@ class leg_rig():
             mc.setDrivenKeyframe((ik_hip_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 
-        # scale constraint switch
-        for jnt in leg_chain:
-            # 1 is fk, 0 is ik
-            mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0)
-            # alternative is to disconnect/ unlock and use '.target[0].targetWeight'
-            mc.setAttr( (jnt + '_scaleConstraint1.FK_' + jnt + 'W0'),  0)
-            mc.setAttr( (jnt + '_scaleConstraint1.IK_' + jnt + 'W1'),  1)
-
-            mc.setDrivenKeyframe((jnt + '_scaleConstraint1.FK_' + jnt + 'W0'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
-            mc.setDrivenKeyframe((jnt + '_scaleConstraint1.IK_' + jnt + 'W1'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
-
-            mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 1)
-            mc.setAttr( (jnt + '_scaleConstraint1.FK_' + jnt + 'W0'),  1)
-            mc.setAttr( (jnt + '_scaleConstraint1.IK_' + jnt + 'W1'),  0)
-
-            mc.setDrivenKeyframe((jnt + '_scaleConstraint1.FK_' + jnt + 'W0'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
-            mc.setDrivenKeyframe((jnt + '_scaleConstraint1.IK_' + jnt + 'W1'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 
     
     #________________________________________________________________________________#
@@ -912,24 +882,24 @@ class leg_rig():
         #____________________________________________________#
 
         # create locators for reverse foot if not exist, also declare locator list
-        if direction == 'right':
-            self.rev_foot_locators(direction ='right', ft_loc_dist = ft_loc_dist)
+        if direction == 'r':
+            self.rev_foot_locators(direction ='r', ft_loc_dist = ft_loc_dist)
             # declare locator list          
-            rvFoot_loc_list = ( 'right_loc_ankle', 
-                                'right_loc_toe', 
-                                'right_loc_toe_end', 
-                                'right_loc_heel', 
-                                'right_loc_outer_foot', 
-                                'right_loc_inner_foot')
-        elif direction == 'left':
-            self.rev_foot_locators(direction ='left', ft_loc_dist = ft_loc_dist)
+            rvFoot_loc_list = ( 'r_loc_ankle', 
+                                'r_loc_toe', 
+                                'r_loc_toe_end', 
+                                'r_loc_heel', 
+                                'r_loc_outer_foot', 
+                                'r_loc_inner_foot')
+        elif direction == 'l':
+            self.rev_foot_locators(direction ='l', ft_loc_dist = ft_loc_dist)
             # declare locator list          
-            rvFoot_loc_list = ( 'left_loc_ankle', 
-                                'left_loc_toe', 
-                                'left_loc_toe_end', 
-                                'left_loc_heel', 
-                                'left_loc_outer_foot', 
-                                'left_loc_inner_foot')
+            rvFoot_loc_list = ( 'l_loc_ankle', 
+                                'l_loc_toe', 
+                                'l_loc_toe_end', 
+                                'l_loc_heel', 
+                                'l_loc_outer_foot', 
+                                'l_loc_inner_foot')
 
         # create controls for locators
         ftCtrl_list = []
@@ -1032,7 +1002,7 @@ class leg_rig():
             mc.setAttr((curveShape[0] + '.overrideRGBColors'), 1)
             mc.setAttr((curveShape[0] + '.overrideColorRGB'), 1, 0, 1)
             #rename curve
-            myCurve = mc.rename('ftCtrl_' + direction + '_toeWiggle')
+            myCurve = mc.rename(direction + '_ftCtrl' + '_toe_wiggle')
             #group curve
             curveGrouped = mc.group(myCurve)
             curveGrouped_offset = mc.group(myCurve)
@@ -1051,14 +1021,9 @@ class leg_rig():
         
         #___________reverse foot joint parenting___________#
 
-        # parent reverse foot ankle ctrl to pole vector ctrl
-        #mc.parentConstraint(ftCtrl_list[0], pv_group_list[0], mo=True)
-
         #parent reverse foot ankle ctrl to ikHandle trans and ankle joint rotate
         mc.parentConstraint(ftCtrl_list[0], ikHandleDriver_var[0], mo=True, sr=('x', 'y', 'z'))
         mc.parentConstraint(ftCtrl_list[0], ikJoint_list[3], mo=True, st=('x', 'y', 'z')) 
-        #scale constrain top reverse foot/ankle ctrl to ankle jnt
-        mc.scaleConstraint(ftCtrl_list[0], ikJoint_list[3] )
 
         # parent toe
         mc.parentConstraint(toe_wiggle_list[0], ikJoint_list[4], mo=True, st=('x', 'y', 'z')) #rotation only parent
@@ -1073,8 +1038,6 @@ class leg_rig():
         #connect plusMinus with offset toe value into ik toe jnt, to replace the clunky point constraint alternative
         mc.connectAttr(toe_plusMinusAv + '.output3D', ikJoint_list[4] + '.translate', f=True)
 
-        # scale constrain ik toe wiggle to jnt
-        mc.scaleConstraint(toe_wiggle_list[0], ikJoint_list[4])
 
 
         
@@ -1120,12 +1083,12 @@ class leg_rig():
         ankle_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_ankle_len_con' )
         foot_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_ankle_foot_con' )
         #set operation to 'greater than'
-        if direction == 'left':
+        if direction == 'l':
             mc.setAttr(knee_len_con + '.operation', 2)
             mc.setAttr(ankle_len_con + '.operation', 2)
             mc.setAttr(foot_len_con + '.operation', 2)
         #set operation to 'less than'
-        elif direction == 'right':
+        elif direction == 'r':
             mc.setAttr(knee_len_con + '.operation', 4)
             mc.setAttr(ankle_len_con + '.operation', 4)
             mc.setAttr(foot_len_con + '.operation', 4)
@@ -1136,9 +1099,9 @@ class leg_rig():
         mc.connectAttr( (global_ctrl + '.scaleX'), (globalScale_off + '.input2X'), f=True )
 
         # connect ruler distance over total distance of joints
-        if direction == 'left':
+        if direction == 'l':
             mc.connectAttr( (globalScale_off + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
-        elif direction == 'right':
+        elif direction == 'r':
             # (right) invert to negative translate X (since x is up the chain instead of down the chain)
             invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_invert_value' )
             mc.setAttr( (invert_value + '.input2X'), -1 )
@@ -1146,22 +1109,10 @@ class leg_rig():
             mc.connectAttr( (invert_value + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
         
         #__________#
-        # must create expression to account for offset of knee and ankle length when scaling
-        # must normalize pole vector scale since it only scales lower leg
-        # find the shin length scale percentage of total length
-        # shin length percentage
-        shin_len_prc = ( (to_ankle_len) / (to_knee_len + to_ankle_len + to_foot_len) )
-        # get difference of scale - 1
-        shin_len_prc_diff = mc.getAttr(pv_ctrl_list[0] + '.scaleX') - 1 # not used, only in expression below
-        # multiply difference by percentage of total length, then add back to one (should acount for scale down)
-        pv_shin_scale = 1 + (shin_len_prc_diff * shin_len_prc)  # not used, only in expression below
+        # Stretch alteration Expression
 
         # soft ik, a little less than total length to keep some bend in knee joint
-        mc.expression ( s = leg_dist_ratio + '.input2X = ' + str(to_knee_len + to_ankle_len + to_foot_len) + ' * ' + ik_ctrl_list[0] + '.IK_strch_amnt' + ' * ' +   # .999  #soft_ik_mult
-                        # shin length amount of pv scale
-                        '(1 + ' '( ( (' + pv_ctrl_list[0] + '.scaleX ) - 1 ) * ' + str(shin_len_prc) + ') ) *' +
-                        spine_root_ctrl + '.scaleX * ' + 
-                        ik_hip_ctrl_list[0] + '.scaleX', n = direction + '_leg_IK_stretch_exp' )
+        mc.expression ( s = leg_dist_ratio + '.input2X = ' + str(to_knee_len + to_ankle_len + to_foot_len) + ' * ' + ik_ctrl_list[0] + '.stretch_AT_length' )
 
         #_____________#
 
@@ -1231,5 +1182,4 @@ class leg_rig():
 
         # return top ik and fk controls to parent to hip
         return ik_hip_group_list[0], fk_ctrl_grp_list[0], myLegGrp
-        
-        
+
