@@ -42,6 +42,9 @@ import character_rigger.tabs.modeling
 import character_rigger.tabs.rigging
 import character_rigger.tabs.misc_tab
 
+import character_rigger.samples
+import character_rigger.samples.soft_ik_native
+
 
 #_______________________________________________#
 # reimport all
@@ -80,6 +83,9 @@ imp.reload( character_rigger.tabs.color_slider)
 imp.reload( character_rigger.tabs.modeling)
 imp.reload( character_rigger.tabs.rigging)
 imp.reload( character_rigger.tabs.misc_tab)
+
+imp.reload( character_rigger.samples)
+imp.reload( character_rigger.samples.soft_ik_native)
 
 #_______________________________________________#
 # relaunch UI

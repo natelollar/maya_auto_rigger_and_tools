@@ -739,7 +739,7 @@ class leg_rig():
             mc.poleVectorConstraint(myCurve, ikHandle_var[0])
 
             # connect scale of knee and pole vector control (scale constraint creates cyclical error)
-            mc.connectAttr( (myCurve + '.scale'), ( ikJoint_list[1] ) + '.scale', f=True)
+            #mc.connectAttr( (myCurve + '.scale'), ( ikJoint_list[1] ) + '.scale', f=True)
 
             #parent grp to global grp to organize
             mc.parent(myGroup, global_ctrl)
@@ -1078,7 +1078,6 @@ class leg_rig():
         ratio_ankle_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_ankle_mult' )
         ratio_foot_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_foot_mult' )
         #create condition nodes for if greater than length, to prevent negative stretching
-        #set operation to 'greater than'
         knee_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_knee_len_con' )
         ankle_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_ankle_len_con' )
         foot_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_ankle_foot_con' )
@@ -1112,7 +1111,18 @@ class leg_rig():
         # Stretch alteration Expression
 
         # soft ik, a little less than total length to keep some bend in knee joint
-        mc.expression ( s = leg_dist_ratio + '.input2X = ' + str(to_knee_len + to_ankle_len + to_foot_len) + ' * ' + ik_ctrl_list[0] + '.stretch_AT_length' )
+        #mc.expression ( s = leg_dist_ratio + '.input2X = ' + str(to_knee_len + to_ankle_len + to_foot_len) + ' * ' + ik_ctrl_list[0] + '.stretch_AT_length' )
+
+        # create nodes instead of expression (which causes visual glitch at startup)
+        total_jnt_len = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_jnt_len_sum' )
+        #set mult 1x to sum of all leg jnt length
+        mc.setAttr( (total_jnt_len + '.input1X'), (to_knee_len + to_ankle_len + to_foot_len) )
+
+        # divide with leg_dist_ratio (global scale mult offset)
+        mc.connectAttr( (total_jnt_len + '.outputX'), (leg_dist_ratio + '.input2X'), f=True )
+
+        # multiply stretch at with jnt length sum
+        mc.connectAttr( (ik_ctrl_list[0] + '.stretch_AT_length'), (total_jnt_len + '.input2X'), f=True )
 
         #_____________#
 

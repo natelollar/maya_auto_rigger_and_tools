@@ -49,6 +49,10 @@ class auto_rig_options():
             mc.setAttr(i +  '.jointOrientY', cb=True)
             mc.setAttr(i +  '.jointOrientZ', cb=True)
 
+            mc.setAttr(i +  '.wireColorR', cb=True)
+            mc.setAttr(i +  '.wireColorG', cb=True)
+            mc.setAttr(i +  '.wireColorB', cb=True)
+
     def hide_orient_axis(self):
         mySel = mc.ls(sl=True)
         for i in mySel:
