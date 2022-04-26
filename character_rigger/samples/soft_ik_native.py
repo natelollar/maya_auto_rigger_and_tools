@@ -280,8 +280,8 @@ def soft_ik_native():
 
     kneeElbow_strch = mc.shadingNode( 'multiplyDivide', asUtility=1, n = prefix + '_kneeElbow_strch' )
 
-    kneeElbow_smooth_setDrvKey = mc.shadingNode( 'animCurveUU', asUtility=1, n = prefix + '_kneeElbow_smooth_setDrvKey' )
-    mc.setAttr(kneeElbow_smooth_setDrvKey + '.preInfinity', 1)
+    mainJnts_smooth_setDrvKey = mc.shadingNode( 'animCurveUU', asUtility=1, n = prefix + '_mainJnts_smooth_setDrvKey' )
+    mc.setAttr(mainJnts_smooth_setDrvKey + '.preInfinity', 1)
 
     kneeElbow_smooth_offs = mc.shadingNode( 'multiplyDivide', asUtility=1, n = prefix + '_kneeElbow_smooth_offs' )
 
@@ -294,8 +294,8 @@ def soft_ik_native():
 
     ankleWrist_strch = mc.shadingNode( 'multiplyDivide', asUtility=1, n = prefix + '_ankleWrist_strch' )
 
-    ankleWrist_smooth_setDrvKey = mc.shadingNode( 'animCurveUU', asUtility=1, n = prefix + '_ankleWrist_smooth_setDrvKey' )
-    mc.setAttr(ankleWrist_smooth_setDrvKey + '.preInfinity', 1)
+    #ankleWrist_smooth_setDrvKey = mc.shadingNode( 'animCurveUU', asUtility=1, n = prefix + '_ankleWrist_smooth_setDrvKey' )
+    #mc.setAttr(ankleWrist_smooth_setDrvKey + '.preInfinity', 1)
 
     ankleWrist_smooth_offs = mc.shadingNode( 'multiplyDivide', asUtility=1, n = prefix + '_ankleWrist_smooth_offs' )
 
@@ -356,16 +356,16 @@ def soft_ik_native():
     mc.connectAttr( stretch_dist_ratio + '.outputX', kneeElbow_strch + '.input1X', f=1 ) # kneeElbow stretch amount, base length multiplied by stretch ratio
     mc.setAttr(kneeElbow_strch + '.input2X', kneeElbow_jnt_len)
     
-    mc.connectAttr( stretch_dist_ratio + '.outputX', kneeElbow_smooth_setDrvKey + '.input', f=1 ) # smooth offset keys
+    mc.connectAttr( stretch_dist_ratio + '.outputX', mainJnts_smooth_setDrvKey + '.input', f=1 ) # smooth offset keys
     
-    mc.setKeyframe(kneeElbow_smooth_setDrvKey, float=0.4, value=2.4956, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change
-    mc.setKeyframe(kneeElbow_smooth_setDrvKey, float=1, value=1)
-    mc.setKeyframe(kneeElbow_smooth_setDrvKey, float=1.761, value=0.921)
+    mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.4, value=2.4956, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change
+    mc.setKeyframe(mainJnts_smooth_setDrvKey, float=1, value=1)
+    mc.setKeyframe(mainJnts_smooth_setDrvKey, float=1.761, value=0.921)
     # mc.cutKey('animCurveUU_test', float=(6, 6) ) # how to delete key
     
 
     mc.connectAttr( kneeElbow_strch + '.outputX', kneeElbow_smooth_offs + '.input1X', f=1 ) # smooth stretch offset, with set driven key
-    mc.connectAttr( kneeElbow_smooth_setDrvKey + '.output', kneeElbow_smooth_offs + '.input2X', f=1 )
+    mc.connectAttr( mainJnts_smooth_setDrvKey + '.output', kneeElbow_smooth_offs + '.input2X', f=1 )
 
     mc.connectAttr( kneeElbow_smooth_offs + '.outputX', kneeElbow_stretch_clamp + '.inputR', f=1 ) # connect jnt length to have bottom value clamped during stretch
     mc.setAttr(kneeElbow_stretch_clamp + '.minR', ( kneeElbow_jnt_len * 0.80) ) #clamp smallest length value  #0.83, exact from test  
@@ -383,16 +383,16 @@ def soft_ik_native():
     mc.connectAttr( stretch_dist_ratio + '.outputX', ankleWrist_strch + '.input1X', f=1 )
     mc.setAttr(ankleWrist_strch + '.input2X', ankleWrist_jnt_len)
     
-    mc.connectAttr( stretch_dist_ratio + '.outputX', ankleWrist_smooth_setDrvKey + '.input', f=1 ) # smooth offset keys
+    #mc.connectAttr( stretch_dist_ratio + '.outputX', ankleWrist_smooth_setDrvKey + '.input', f=1 ) # smooth offset keys
     
-    mc.setKeyframe(ankleWrist_smooth_setDrvKey, float=0.4, value=2.4956, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change
-    mc.setKeyframe(ankleWrist_smooth_setDrvKey, float=1, value=1)
-    mc.setKeyframe(ankleWrist_smooth_setDrvKey, float=1.761, value=0.921)
+    #mc.setKeyframe(ankleWrist_smooth_setDrvKey, float=0.4, value=2.4956, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change
+    #mc.setKeyframe(ankleWrist_smooth_setDrvKey, float=1, value=1)
+    #mc.setKeyframe(ankleWrist_smooth_setDrvKey, float=1.761, value=0.921)
     # mc.cutKey('animCurveUU_test', float=(6, 6) ) # how to delete key
     
 
     mc.connectAttr( ankleWrist_strch + '.outputX', ankleWrist_smooth_offs + '.input1X', f=1 ) # smooth stretch offset, with set driven key
-    mc.connectAttr( ankleWrist_smooth_setDrvKey + '.output', ankleWrist_smooth_offs + '.input2X', f=1 )
+    mc.connectAttr( mainJnts_smooth_setDrvKey + '.output', ankleWrist_smooth_offs + '.input2X', f=1 )
 
     mc.connectAttr( ankleWrist_smooth_offs + '.outputX', ankleWrist_stretch_clamp + '.inputR', f=1 ) # connect jnt length to have bottom value clamped during stretch
     mc.setAttr(ankleWrist_stretch_clamp + '.minR', ( ankleWrist_jnt_len * 0.80) ) #clamp smallest length value  #0.83, exact from test  
