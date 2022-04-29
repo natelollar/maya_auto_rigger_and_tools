@@ -182,6 +182,10 @@ class leg_rig():
         
         sknJnt_preSuff = 'tmpJnt_'
         
+
+        #group for organization
+        myLegGrp = mc.group(em=True, n= direction + '_leg_grp')
+
         #______________________________#
         #_____Blended Joint Chain______#
         #______________________________#
@@ -197,9 +201,8 @@ class leg_rig():
             #joint visual size
             mc.setAttr('.radius', 4)
             #joint color
-            mc.setAttr('.overrideEnabled', 1)
-            mc.setAttr('.overrideRGBColors', 1)
-            mc.setAttr('.overrideColorRGB', 1, 0, 0.1)
+            mc.setAttr('.useObjectColor', 2)
+            mc.setAttr('.wireColorRGB', 1, 0, 0.1)
             
             fkJoint_rename = i.replace(sknJnt_preSuff, 'fkJnt_')
             fkJoint = mc.rename(fkJoint_orig, fkJoint_rename)
@@ -215,9 +218,8 @@ class leg_rig():
             #joint visual size
             mc.setAttr('.radius', 5)
             #joint color
-            mc.setAttr('.overrideEnabled', 1)
-            mc.setAttr('.overrideRGBColors', 1)
-            mc.setAttr('.overrideColorRGB', .1, .9, 0.1)
+            mc.setAttr('.useObjectColor', 2)
+            mc.setAttr('.wireColorRGB', .1, .9, 0.1)
             
             ikJoint_rename = i.replace(sknJnt_preSuff, 'ikJnt_')
             ikJoint = mc.rename(ikJoint_orig, ikJoint_rename)
@@ -234,9 +236,8 @@ class leg_rig():
             #joint visual size
             mc.setAttr('.radius', 6)
             #joint color
-            mc.setAttr('.overrideEnabled', 1)
-            mc.setAttr('.overrideRGBColors', 1)
-            mc.setAttr('.overrideColorRGB', 0, 0, 1)
+            mc.setAttr('.useObjectColor', 2)
+            mc.setAttr('.wireColorRGB', 0, 0, 1)
             
             ikDriverJoint_rename = i.replace(sknJnt_preSuff, 'drvJnt_')
             ikDriverJoint = mc.rename(ikDriverJoint_orig, ikDriverJoint_rename)
@@ -300,6 +301,46 @@ class leg_rig():
         mc.parent(ikJoint_list[0], offset_parent_jnt)
 
         mc.parent(ikDriverJoint_list[0], offset_parent_jnt)
+
+
+        #_______________Stretch Length Joints___________________#
+        #_______________________________________________________#
+        leg_chain_strchJnts = [ leg_chain[0], leg_chain[3] ]
+        strchJnt_lst = []
+        for i in leg_chain_strchJnts:
+            #______________________#
+            #____create FK chain___#
+            strchJoint_orig = mc.joint(i)
+            
+            #joint visual size
+            mc.setAttr('.radius', 7)
+            #joint color
+            mc.setAttr('.useObjectColor', 2)
+            mc.setAttr('.wireColorRGB', 1, .8, 0)
+            #show attr
+            mc.setAttr('.rotateOrder', cb=True)
+            mc.setAttr('.rotateAxis', cb=True)
+            mc.setAttr('.rotateAxisY', cb=True)
+            mc.setAttr('.rotateAxisZ', cb=True)
+            mc.setAttr('.jointOrientX', cb=True)
+            mc.setAttr('.jointOrientY', cb=True)
+            mc.setAttr('.jointOrientZ', cb=True)
+
+            #rename jnt
+            strchJoint_rename = i.replace(sknJnt_preSuff, 'strchJnt_')
+            strchJoint = mc.rename(strchJoint_orig, strchJoint_rename)
+            mc.Unparent(strchJoint)
+
+            # create list of fk joints
+            strchJnt_lst.append(strchJoint)
+
+
+        # parent stretch joint together
+        mc.parent(strchJnt_lst[1], strchJnt_lst[0])
+        #orient joints
+        mc.joint(strchJnt_lst[0], e=True, oj='xyz', secondaryAxisOrient='yup')
+        mc.setAttr(strchJnt_lst[1] +  '.jointOrient', 0, 0, 0)
+
 
 
         #______________________________#
@@ -377,12 +418,16 @@ class leg_rig():
         #_____________________________________#
         #______________IK Ctrls_______________#
         #_____________________________________#
-        # no foot does not work if end jnt on toe end
-        #ikJoint_list_noFoot = ikJoint_list[0:-1]
 
-        #group for organization
-        myLegGrp = mc.group(em=True, n= direction + '_leg_grp')
+        #___________create IK HANDLE, for softIK, stretch joint top to bottom, Single Chain Solver____________#
 
+        #main ik handle, RPS ___________
+        ikHndl_strch = mc.ikHandle(n='strchJnts_ikHndl', sj=strchJnt_lst[0], ee=strchJnt_lst[1])
+        # rename effector
+        ikHndl_strch_eff = mc.listConnections(ikHndl_strch, s=True, type='ikEffector')
+        mc.rename(ikHndl_strch_eff, ikHndl_strch[0] + '_effector')
+        # parented at bottom
+        
 
         #___________create IK HANDLE, driver chain hip to foot, Spring Solver____________#
         # activate/ import spring solver
@@ -401,15 +446,31 @@ class leg_rig():
         mc.setAttr(ikHandleDriver_var[0] + '.visibility', 0)
 
         #parent grp to global grp to organize
-        mc.parent(ikHandleDriver_var[0], myLegGrp)
+        #mc.parent(ikHandleDriver_var[0], myLegGrp)
 
 
-        #___________create IK HANDLE, ankle to foot, Single Chaine Solver____________#
+        
 
-        ikHandleFoot_var = mc.ikHandle( n=direction + '_foot_ikHandkle', 
-                                    sj=ikJoint_list[2], 
-                                    ee=ikJoint_list[3], 
-                                    sol= 'ikSCsolver')
+        
+        #___________create IK HANDLE, hip to ankle, Rotate Plane Solver____________#
+
+        ikHandleAnkle_var = mc.ikHandle(n=direction + '_ankle_ikHandkle', sj=ikJoint_list[0], ee=ikJoint_list[2])
+
+        mc.setAttr((ikHandleAnkle_var[0] + '.poleVectorX'), 0)
+        mc.setAttr((ikHandleAnkle_var[0] + '.poleVectorY'), 0)
+        mc.setAttr((ikHandleAnkle_var[0] + '.poleVectorZ'), 0)
+
+        ikHandle_effector_var = mc.listConnections(ikHandleAnkle_var, s=True, type='ikEffector')
+
+        mc.rename(ikHandle_effector_var, ikHandleAnkle_var[0] + '_effector')
+
+        #hide ikHandle
+        mc.setAttr(ikHandleAnkle_var[0] + '.visibility', 0)
+
+
+        #___________create IK HANDLE, knee to foot, Rotate Plane Solver____________#
+
+        ikHandleFoot_var = mc.ikHandle( n=direction + '_foot_ikHandkle', sj=ikJoint_list[1], ee=ikJoint_list[3] )
 
         mc.setAttr((ikHandleFoot_var[0] + '.poleVectorX'), 0)
         mc.setAttr((ikHandleFoot_var[0] + '.poleVectorY'), 0)
@@ -425,24 +486,7 @@ class leg_rig():
         #parent ikHandle ankle to ikDriver foot joint
         mc.parent(ikHandleFoot_var[0], ikDriverJoint_list[3])
 
-        
-        #___________create IK HANDLE, hip to ankle, Rotate Plane Solver____________#
 
-        ikHandle_var = mc.ikHandle(n=direction + '_ankle_ikHandkle', sj=ikJoint_list[0], ee=ikJoint_list[2])
-
-        mc.setAttr((ikHandle_var[0] + '.poleVectorX'), 0)
-        mc.setAttr((ikHandle_var[0] + '.poleVectorY'), 0)
-        mc.setAttr((ikHandle_var[0] + '.poleVectorZ'), 0)
-
-        ikHandle_effector_var = mc.listConnections(ikHandle_var, s=True, type='ikEffector')
-
-        mc.rename(ikHandle_effector_var, ikHandle_var[0] + '_effector')
-
-        #hide ikHandle
-        mc.setAttr(ikHandle_var[0] + '.visibility', 0)
-
-        #parent grp to global grp to organize
-        mc.parent(ikHandle_var[0], myLegGrp)
 
 
         #___________ikHandle ankle offset ctrl____________#
@@ -470,6 +514,9 @@ class leg_rig():
                                         ])
             #curve size # *.9 to make smaller than FK ctrls
             mc.setAttr((myCurve + '.scale'), ik_ctrl_size * .5, ik_ctrl_size * .5, ik_ctrl_size * .5)
+            mc.setAttr((myCurve + '.translate'), -13, 40, 0)
+            # pivot to world origin
+            mc.xform (myCurve, ws=True, piv= (0, 0, 0))
             #freeze transforms
             mc.makeIdentity(myCurve, apply=True)
             #select curve box's shape
@@ -501,23 +548,25 @@ class leg_rig():
             ikAnkleOff_ctrl_list.append(myCurve)
 
         #so that l is oriented same as right
-        mc.setAttr((ikAnkleOff_group_list[0] + '.rotate'), 0, -90, 0)
+        #mc.setAttr((ikAnkleOff_group_list[0] + '.rotate'), 0, -90, 0)
 
         #lock and hide unneeded ankle offset ctrl attributes
-        mc.setAttr((ikAnkleOff_ctrl_list[0] + '.tx'), lock=True, keyable=False, channelBox=False)
-        mc.setAttr((ikAnkleOff_ctrl_list[0] + '.ty'), lock=True, keyable=False, channelBox=False)
-        mc.setAttr((ikAnkleOff_ctrl_list[0] + '.tz'), lock=True, keyable=False, channelBox=False)
-        mc.setAttr((ikAnkleOff_ctrl_list[0] + '.sx'), lock=True, keyable=False, channelBox=False)
-        mc.setAttr((ikAnkleOff_ctrl_list[0] + '.sy'), lock=True, keyable=False, channelBox=False)
-        mc.setAttr((ikAnkleOff_ctrl_list[0] + '.sz'), lock=True, keyable=False, channelBox=False)
-        mc.setAttr((ikAnkleOff_ctrl_list[0] + '.visibility'), lock=True, keyable=False, channelBox=False)
+        # mc.setAttr((ikAnkleOff_ctrl_list[0] + '.tx'), lock=True, keyable=False, channelBox=False)
+        # mc.setAttr((ikAnkleOff_ctrl_list[0] + '.ty'), lock=True, keyable=False, channelBox=False)
+        # mc.setAttr((ikAnkleOff_ctrl_list[0] + '.tz'), lock=True, keyable=False, channelBox=False)
+        # mc.setAttr((ikAnkleOff_ctrl_list[0] + '.sx'), lock=True, keyable=False, channelBox=False)
+        # mc.setAttr((ikAnkleOff_ctrl_list[0] + '.sy'), lock=True, keyable=False, channelBox=False)
+        # mc.setAttr((ikAnkleOff_ctrl_list[0] + '.sz'), lock=True, keyable=False, channelBox=False)
+        # mc.setAttr((ikAnkleOff_ctrl_list[0] + '.visibility'), lock=True, keyable=False, channelBox=False)
 
         #________________________#
         # parent constain ankle ik handle to offset ctrl
-        mc.parentConstraint( ikAnkleOff_ctrl_list[0], ikHandle_var[0], mo=True , sr=('x','y','z') )
+        #mc.parentConstraint( ikAnkleOff_ctrl_list[0], ikHandleAnkle_var[0], mo=True , sr=('x','y','z') )
+        mc.parent( ikHandleAnkle_var[0], ikAnkleOff_ctrl_list[0])
+        mc.parent( ikAnkleOff_group_list[0], ikDriverJoint_list[2])
 
         # parent constrain offset ctrl grp to driver ankle joint
-        mc.parentConstraint( ikDriverJoint_list[3], ikAnkleOff_group_list[0], mo=True )
+        #mc.parentConstraint( ikDriverJoint_list[3], ikAnkleOff_group_list[0], mo=True )
 
 
         #___________ikHandle foot CTRL____________#
@@ -576,17 +625,10 @@ class leg_rig():
             ik_ctrl_list.append(myCurve)
 
             # add Soft Ik/ No Ik stretch ctrl
-            mc.addAttr(myCurve, ln='stretch_AT_length', nn='stretch_AT_length', at='double', dv=1, k=1)
+            mc.addAttr(myCurve, ln='Stretch_Blend', nn='Stretch_Blend', min=0, max=1, at='double', dv=1, k=1)
         
         #so that l is oriented same as right
         mc.setAttr((ik_group_list[0] + '.rotate'), 0, -90, 0)
-
-        #_____________parent ikHandles to ik foot ctrl______________#
-        #parent ikHandle toe to ik foot ctrl
-        #mc.parent(ikHandleToe_var[0], ik_ctrl_list[0])
-
-        #parent ikHandleDriver to ik foot ctrl
-        #mc.parent(ikHandleDriver_var[0], ik_ctrl_list[0])
 
 
         #___________ik hip CTRL____________#
@@ -646,10 +688,12 @@ class leg_rig():
         #set ctrl grp rotate to (to be world space flat, and similar to joint orient)
         mc.setAttr((ik_hip_group_list[0] + '.rotate'), 0, 0, 0)
 
-        # parent constrain hip joint translation to control
+        # parent constrain hip ctrl to hip jnt (translation only)
         mc.parentConstraint(ik_hip_ctrl_list[0], ikJoint_list[0], sr=('x', 'y', 'z'))
-        # parent constrain hip joint driv jnt top
+        # parent constrain hip ctrl to drv jnt top
         mc.parentConstraint(ik_hip_ctrl_list[0], ikDriverJoint_list[0], sr=('x', 'y', 'z'))
+        # parent constrain hip ctrl to top strch jnt
+        mc.parentConstraint(ik_hip_ctrl_list[0], strchJnt_lst[0], sr=('x', 'y', 'z'))
 
         # lock and hide rotation values for hip control
         mc.setAttr((ik_hip_ctrl_list[0] + '.rx'), lock=True, keyable=False, channelBox=False)
@@ -658,7 +702,7 @@ class leg_rig():
         
         
 
-        #_________________POLE VECTOR Start___________________#
+        #_________________POLE VECTOR KNEE___________________#
         #_____________________________________________________#
         pv_group_list = []
         pv_ctrl_list = []
@@ -736,7 +780,7 @@ class leg_rig():
             mc.delete(myAimConst)
 
             #___connect pole vector
-            mc.poleVectorConstraint(myCurve, ikHandle_var[0])
+            mc.poleVectorConstraint(myCurve, ikHandleAnkle_var[0])
 
             # connect scale of knee and pole vector control (scale constraint creates cyclical error)
             #mc.connectAttr( (myCurve + '.scale'), ( ikJoint_list[1] ) + '.scale', f=True)
@@ -749,6 +793,98 @@ class leg_rig():
 
         #parent pole vector control under ik foot ctrl
         mc.parent(pv_group_list[0], ik_ctrl_list[0])
+
+
+        #_________________POLE VECTOR ANKLE___________________#
+        #_____________________________________________________#
+        anklePV_group_list = []
+        anklePV_ctrl_list = []
+        for i in range(0,1):
+            #create pyramid curve______
+            myCurve = mc.curve(d=1, p=[ (0, 5, -5), 
+                                        (-5, 0, -5), 
+                                        (0, -5, -5),
+                                        (5, 0, -5),
+                                        (0, 5, -5), 
+                                        (0, 0, 5), 
+                                        (5, 0, -5), 
+                                        (0, -5, -5), 
+                                        (0, 0, 5), 
+                                        (-5, 0, -5), 
+                                        ])
+            #curve size
+            mc.setAttr((myCurve + '.scale'), pv_ctrl_size, pv_ctrl_size, pv_ctrl_size)
+
+            #freeze transforms
+            mc.makeIdentity(myCurve, apply=True)
+            #select curve box's shape
+            curveShape = mc.listRelatives(myCurve, s=True)
+            #color curve box's shape red
+            mc.setAttr((curveShape[0] + '.overrideEnabled'), 1)
+            mc.setAttr((curveShape[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((curveShape[0] + '.overrideColorRGB'), 1, 1, 0)
+            #rename curve
+            myCurve = mc.rename(direction + '_ankle_poleVector_ctrl')
+            #group curve
+            curveGrouped = mc.group(myCurve)
+            curveGrouped_offset = mc.group(myCurve)
+            #rename group
+            myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
+            myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
+            
+            
+            #length of main limb
+            limb_lenA = 0
+            for i in ikJoint_list[1:3]:
+                limb_lenA += mc.getAttr(i + '.translateX')
+
+            #length of upper half of limb 
+            upperLimb_lenA = mc.getAttr(ikJoint_list[1] + '.translateX')
+
+            #divide sum of leg lengths by upper leg length (for more accurate mid point)
+            better_midPoint_var = (limb_lenA / upperLimb_lenA)
+
+            #__vector math____#
+            #vector positions of knee, ankle, foot
+            knee_pos = om.MVector(mc.xform(ikJoint_list[1], q=True, rp=True, ws=True))
+            ankle_pos = om.MVector(mc.xform(ikJoint_list[2], q=True, rp=True, ws=True))
+            foot_pos = om.MVector(mc.xform(ikJoint_list[3], q=True, rp=True, ws=True))
+
+            #finding vector point of pv ankle (on plane of knee, ankle, foot)
+            knee_to_foot = foot_pos - knee_pos
+            knee_to_foot_scaled = knee_to_foot / better_midPoint_var #/two-ish
+            mid_point = knee_pos + knee_to_foot_scaled
+            mid_point_to_ankle_vec = ankle_pos - mid_point
+            mid_point_to_ankle_vec_scaled = mid_point_to_ankle_vec * knee_dist_mult  #pv ctrl distance from ankle multiplier
+            mid_point_to_ankle_point = mid_point + mid_point_to_ankle_vec_scaled
+
+            #final polve vector point (to avoid ankle changing position on creation)
+            final_PV_point = mc.xform(myGroup, t=mid_point_to_ankle_point)
+
+            myAimConst = mc.aimConstraint(  ikJoint_list[2], 
+                                            myGroup, 
+                                            offset=(0, 0, 0), 
+                                            weight=1, 
+                                            aimVector=(0, 0, 1), 
+                                            upVector=(0, 1, 0), 
+                                            worldUpType=('vector'), 
+                                            worldUpVector=(0, 1, 0) )
+            mc.delete(myAimConst)
+
+            #___connect pole vector
+            mc.poleVectorConstraint(myCurve, ikHandleFoot_var[0])
+
+            #parent grp to global grp to organize
+            mc.parent(myGroup, global_ctrl)
+
+            anklePV_group_list.append(myGroup)
+            anklePV_ctrl_list.append(myCurve)
+
+        #parent pole vector control under ik foot ctrl
+        mc.parent(anklePV_group_list[0], ik_ctrl_list[0])
+
+
+
         
         #______________________________________________________________________________#
         #____________________________IK/ FK Switch Ctrl _______________________________#
@@ -1022,7 +1158,6 @@ class leg_rig():
         #___________reverse foot joint parenting___________#
 
         #parent reverse foot ankle ctrl to ikHandle trans and ankle joint rotate
-        mc.parentConstraint(ftCtrl_list[0], ikHandleDriver_var[0], mo=True, sr=('x', 'y', 'z'))
         mc.parentConstraint(ftCtrl_list[0], ikJoint_list[3], mo=True, st=('x', 'y', 'z')) 
 
         # parent toe
@@ -1038,9 +1173,25 @@ class leg_rig():
         #connect plusMinus with offset toe value into ik toe jnt, to replace the clunky point constraint alternative
         mc.connectAttr(toe_plusMinusAv + '.output3D', ikJoint_list[4] + '.translate', f=True)
 
+        # post reverse foot parenting
+        #_________________________________________________#
+        # stretch jnt mechanism parenting
+        #ikHndl_stretch parent to foot ctrl
+        mc.parent(ikHndl_strch[0], ftCtrl_list[0])
+        # create grp and offset grp for ik RPS
+        # ikHndl grp
+        ikHndl_strch_grp0 = mc.group(em=1)
+        ikHndl_strch_grp_offs0 = mc.group(em=1)
+        #rename group
+        ikHndl_strch_grp1 = mc.rename(ikHndl_strch_grp0, (ikHndl_strch[0] + '_grp'))
+        ikHndl_strch_grp_offs1 = mc.rename(ikHndl_strch_grp_offs0, (ikHndl_strch[0] + '_grp_offset'))
+        #pos parent grp
+        mc.parent(ikHndl_strch_grp_offs1, ikHndl_strch_grp1, r=1)
+        mc.parent(ikHndl_strch_grp1, strchJnt_lst[1], r=1)
+        mc.parent(ikHandleDriver_var[0], ikHndl_strch_grp_offs1)
 
 
-        
+
         # ______________________________________________________#
         # __________________ IK stretchy leg ___________________#
         # ______________________________________________________#
@@ -1065,111 +1216,218 @@ class leg_rig():
         mc.parentConstraint(ik_hip_ctrl_list[0], leg_loc_0 )
         mc.parentConstraint(ftCtrl_list[0], leg_loc_1 )
 
-        # make nodes for stretchy limb
-        leg_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_dist_ratio' )
-        # set mulDiv node to Divide
-        mc.setAttr(leg_dist_ratio + '.operation', 2)
-        # global scale offset multDiv node
-        globalScale_off = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_globalScale_off' )
-        # operation to divide
-        mc.setAttr(globalScale_off + '.operation', 2)
-        # create mult/div nodes for ratio * length
-        ratio_knee_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_knee_mult' )
-        ratio_ankle_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_ankle_mult' )
-        ratio_foot_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_ratio_foot_mult' )
-        #create condition nodes for if greater than length, to prevent negative stretching
-        knee_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_knee_len_con' )
-        ankle_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_ankle_len_con' )
-        foot_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_ankle_foot_con' )
-        #set operation to 'greater than'
-        if direction == 'l':
-            mc.setAttr(knee_len_con + '.operation', 2)
-            mc.setAttr(ankle_len_con + '.operation', 2)
-            mc.setAttr(foot_len_con + '.operation', 2)
-        #set operation to 'less than'
-        elif direction == 'r':
-            mc.setAttr(knee_len_con + '.operation', 4)
-            mc.setAttr(ankle_len_con + '.operation', 4)
-            mc.setAttr(foot_len_con + '.operation', 4)
 
-        # connect leg distance to global scale offset
-        mc.connectAttr( (ik_jnt_ruler + '.distance'), (globalScale_off + '.input1X'), f=True )
-        # connect global ctrl scale X to global scale offset
-        mc.connectAttr( (global_ctrl + '.scaleX'), (globalScale_off + '.input2X'), f=True )
+        #______________________________#
 
-        # connect ruler distance over total distance of joints
-        if direction == 'l':
-            mc.connectAttr( (globalScale_off + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
-        elif direction == 'r':
-            # (right) invert to negative translate X (since x is up the chain instead of down the chain)
-            invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_invert_value' )
-            mc.setAttr( (invert_value + '.input2X'), -1 )
-            mc.connectAttr( (globalScale_off + '.outputX'), (invert_value + '.input1X'), f=True )
-            mc.connectAttr( (invert_value + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
+        prefix = 'leg'
+
+        #______Function Variables_______#
+        #variable ... ruler distance output
+        ruler_dist = ik_jnt_ruler + '.distance'
+        ruler_dist_result = mc.getAttr(ik_jnt_ruler + '.distance')
+
+        #variable ... global_ctrl scale X
+        global_ctrl_sclX = global_ctrl + '.scaleX'
+
+        #variable
+        stretch_blend = ik_ctrl_list[0] + '.Stretch_Blend'
+
+
+
+        # _______________create nodes____________________#
+
+        # part1 ... ikHandle grp nodes
+        stretch_dist_ratio = mc.shadingNode('multiplyDivide', asUtility=1, n = direction + '_' + prefix + '_stretch_dist_ratio' ) # create multDiv node
+        mc.setAttr(stretch_dist_ratio + '.operation', 2) # set to Divide
+
+        global_scale_offs = mc.shadingNode('multiplyDivide', asUtility=1, n = direction + '_' + prefix + '_global_scale_offs' ) # default is multiply
+
+        ikHndl_fllw_pma = mc.shadingNode('plusMinusAverage', asUtility=1, n = direction + '_' + prefix + '_ikHandle_follow_pma' ) # for ik handle to follow hip ctrl
+        mc.setAttr(ikHndl_fllw_pma + '.operation', 2) # set to Subtract
+
+        glbl_offs_ikHndl_fllw = mc.shadingNode('multiplyDivide', asUtility=1, n = direction + '_' + prefix + '_global_scale_offs_ikHndl_follow' ) # global scale offset for ikHandle follow grp
+        mc.setAttr(glbl_offs_ikHndl_fllw + '.operation', 2) # set to Divide
+
+        clamp_end_stop = mc.shadingNode('clamp', asUtility=1, n = direction + '_' + prefix + '_clamp_end_stop' ) # limit ikHndl follow grp from going past ankle/ wrist
+
+        invert_node = mc.shadingNode('multiplyDivide', asUtility=1, n = direction + '_' + prefix + '_invert_node' ) # invert value to negative, or positive, if already neg
+
+        softIk_fllw_grp_blend = mc.shadingNode('blendColors', asUtility=1, n = direction + '_' + prefix + '_softIk_fllw_grp_blend' ) # blend between 0 or follow
+
+        softIk_fllw_offs_grp_blend = mc.shadingNode('blendColors', asUtility=1, n = direction + '_' + prefix + '_softIk_fllw_offs_grp_blend' ) # smooth ikHndl grp follow
+
+
+        # part2 ... joint nodes
+
+        drvJnt_strch_ratio = mc.shadingNode( 'multiplyDivide', asUtility=1, n = direction + '_' + prefix + '_drvJnt_strch_ratio' )
+
+        ikHdl_grp_smooth_setDrvKey = mc.shadingNode( 'animCurveUU', asUtility=1, n = direction + '_' + prefix + '_ikHdl_grp_smooth_setDrvKey' )
+
+
+        # knee joints nodes
+
+        knee_strch = mc.shadingNode( 'multiplyDivide', asUtility=1, n = direction + '_' + prefix + '_knee_strch' )
+
+        mainJnts_smooth_setDrvKey = mc.shadingNode( 'animCurveUU', asUtility=1, n = direction + '_' + prefix + '_mainJnts_smooth_setDrvKey' )
+        mc.setAttr(mainJnts_smooth_setDrvKey + '.preInfinity', 1)
+
+        knee_smooth_offs = mc.shadingNode( 'multiplyDivide', asUtility=1, n = direction + '_' + prefix + '_knee_smooth_offs' )
+
+        knee_stretch_clamp = mc.shadingNode('clamp', asUtility=1, n = direction + '_' + prefix + '_knee_stretch_clamp' )
+
+        knee_stretch_blend = mc.shadingNode('blendColors', asUtility=1, n = direction + '_' + prefix + '_knee_stretch_blend' )
+
+
+        # ankle jnt nodes
+
+        ankle_strch = mc.shadingNode( 'multiplyDivide', asUtility=1, n = direction + '_' + prefix + '_ankle_strch' )
+
+        ankle_smooth_offs = mc.shadingNode( 'multiplyDivide', asUtility=1, n = direction + '_' + prefix + '_ankle_smooth_offs' )
+
+        ankle_stretch_clamp = mc.shadingNode('clamp', asUtility=1, n = direction + '_' + prefix + '_ankle_stretch_clamp' )
+
+        ankle_stretch_blend = mc.shadingNode('blendColors', asUtility=1, n = direction + '_' + prefix + '_ankle_stretch_blend' )
+
+
+        # foot jnt nodes
+
+        foot_strch = mc.shadingNode( 'multiplyDivide', asUtility=1, n = direction + '_' + prefix + '_foot_strch' )
+
+        foot_smooth_offs = mc.shadingNode( 'multiplyDivide', asUtility=1, n = direction + '_' + prefix + '_foot_smooth_offs' )
+
+        foot_stretch_clamp = mc.shadingNode('clamp', asUtility=1, n = direction + '_' + prefix + '_foot_stretch_clamp' )
+
+        foot_stretch_blend = mc.shadingNode('blendColors', asUtility=1, n = direction + '_' + prefix + '_foot_stretch_blend' )
+
+        # _______________connect nodes/ set attributes____________________#
+        # part1 ... ikHandle grp connections
+
+        mc.connectAttr( global_ctrl_sclX, global_scale_offs + '.input2X', f=1 ) # create global scale offset node
+        mc.setAttr(global_scale_offs + '.input1X', ruler_dist_result) #set to ruler distance
+
+        mc.connectAttr( global_scale_offs + '.outputX', ikHndl_fllw_pma + '.input1D[0]', f=1 ) # global scale offset to 1D[0]
+        mc.connectAttr( ruler_dist, ikHndl_fllw_pma + '.input1D[1]', f=1 ) # ruler distance to ikHndl follow 1D[1]
+
+        mc.connectAttr( ikHndl_fllw_pma + '.output1D', glbl_offs_ikHndl_fllw + '.input1X', f=1 ) # ikHandle follow to input 1x  # scale offset for ikHandle grp follow distance
+        mc.connectAttr( global_ctrl_sclX, glbl_offs_ikHndl_fllw + '.input2X', f=1 ) # global scale x to input 2x
+
+        mc.connectAttr( glbl_offs_ikHndl_fllw + '.outputX', clamp_end_stop + '.inputR', f=1 ) # follow distance w/ scl offset, to 0 clamp
+        mc.setAttr(clamp_end_stop + '.minR', -1000) #set to ruler distance
+
+        mc.connectAttr( clamp_end_stop + '.outputR', invert_node + '.input1X', f=1 ) # make value positive, to go correct X direction
+        mc.setAttr(invert_node + '.input2X', -1) # -1 to multiply and get posative value, since already negative
+
+        mc.connectAttr( invert_node + '.outputX', ikHdl_grp_smooth_setDrvKey + '.input', f=1 )
+
+        mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=0, value=0, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change
+        mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=50, value=15)
+        mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=150, value=23.5)
+
+        mc.connectAttr( clamp_end_stop + '.outputR', softIk_fllw_grp_blend + '.color2R', f=1 )  # sets follow grp to follow constant distance from hip ctrl
+        mc.setAttr(softIk_fllw_grp_blend + '.color1R', 0) # set ikHndl grp follow to 0, to stay at ankle/ wrist
+        mc.connectAttr( stretch_blend, softIk_fllw_grp_blend + '.blender', f=1 )
+
+        mc.connectAttr( ikHdl_grp_smooth_setDrvKey + '.output', softIk_fllw_offs_grp_blend + '.color2R', f=1 )  # sets follow offset grp to smoothly adjust follow distance for softIK
+        mc.setAttr(softIk_fllw_offs_grp_blend + '.color1R', 0) # set ikHndl offset grp follow to 0, to have no effect
+        mc.connectAttr( stretch_blend, softIk_fllw_offs_grp_blend + '.blender', f=1 )
+
+        mc.connectAttr( softIk_fllw_offs_grp_blend + '.outputR', ikHndl_strch_grp_offs1 + '.tx', f=1 ) # connect to ikHandle Grp
+        mc.connectAttr( softIk_fllw_grp_blend + '.outputR', ikHndl_strch_grp1 + '.tx', f=1 ) # connect to ikHandle Grp offset
+
         
-        #__________#
-        # Stretch alteration Expression
 
-        # soft ik, a little less than total length to keep some bend in knee joint
-        #mc.expression ( s = leg_dist_ratio + '.input2X = ' + str(to_knee_len + to_ankle_len + to_foot_len) + ' * ' + ik_ctrl_list[0] + '.stretch_AT_length' )
+        # part2 ... joint connections
 
-        # create nodes instead of expression (which causes visual glitch at startup)
-        total_jnt_len = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_jnt_len_sum' )
-        #set mult 1x to sum of all leg jnt length
-        mc.setAttr( (total_jnt_len + '.input1X'), (to_knee_len + to_ankle_len + to_foot_len) )
+        mc.connectAttr( ruler_dist, stretch_dist_ratio + '.input1X', f=1 ) # create stretch ratio
+        mc.connectAttr( global_scale_offs + '.outputX', stretch_dist_ratio + '.input2X', f=1 ) # create stretch ratio
 
-        # divide with leg_dist_ratio (global scale mult offset)
-        mc.connectAttr( (total_jnt_len + '.outputX'), (leg_dist_ratio + '.input2X'), f=True )
-
-        # multiply stretch at with jnt length sum
-        mc.connectAttr( (ik_ctrl_list[0] + '.stretch_AT_length'), (total_jnt_len + '.input2X'), f=True )
-
-        #_____________#
+        mc.connectAttr( stretch_dist_ratio + '.outputX', drvJnt_strch_ratio + '.input1X', f=1 ) # create drv jnt stretch ratio
+        mc.setAttr(drvJnt_strch_ratio + '.input2X', ruler_dist_result) #set drv jnt stretch ratio 2X to static ruler distance default
+        mc.connectAttr( drvJnt_strch_ratio + '.outputX', strchJnt_lst[1] + '.translateX', f=1 ) # create drv jnt stretch ratio
 
 
-        # connect length ratio to apply to x length of knee and ankle (fraction * distance)
-        mc.connectAttr( (leg_dist_ratio + '.outputX'), (ratio_knee_mult + '.input2X'), f=True )
-        mc.connectAttr( (leg_dist_ratio + '.outputX'), (ratio_ankle_mult + '.input2X'), f=True )
-        mc.connectAttr( (leg_dist_ratio + '.outputX'), (ratio_foot_mult + '.input2X'), f=True )
-        # joint length to input 1X
-        mc.setAttr( (ratio_knee_mult + '.input1X'), to_knee_len )
-        mc.setAttr( (ratio_ankle_mult + '.input1X'), to_ankle_len )
-        mc.setAttr( (ratio_foot_mult + '.input1X'), to_foot_len )
 
-        # connect mult ratio nodes to condition node (if length greater, then stretch)
-        mc.connectAttr( (ratio_knee_mult + '.outputX'), (knee_len_con + '.colorIfTrueR'), f=True )
-        mc.connectAttr( (ratio_knee_mult + '.outputX'), (knee_len_con + '.firstTerm'), f=True )
+        # knee / elbow jnt connections _______________________________
+        mc.connectAttr( stretch_dist_ratio + '.outputX', knee_strch + '.input1X', f=1 ) # knee stretch amount, base length multiplied by stretch ratio
+        mc.setAttr(knee_strch + '.input2X', to_knee_len)
+        
+        mc.connectAttr( stretch_dist_ratio + '.outputX', mainJnts_smooth_setDrvKey + '.input', f=1 ) # smooth offset keys
+        
+        mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.5, value=1.85, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change
+        mc.setKeyframe(mainJnts_smooth_setDrvKey, float=1, value=1)
+        mc.setKeyframe(mainJnts_smooth_setDrvKey, float=2, value=0.865)
+        
 
-        mc.connectAttr( (ratio_ankle_mult + '.outputX'), (ankle_len_con + '.colorIfTrueR'), f=True )
-        mc.connectAttr( (ratio_ankle_mult + '.outputX'), (ankle_len_con + '.firstTerm'), f=True )
+        mc.connectAttr( knee_strch + '.outputX', knee_smooth_offs + '.input1X', f=1 ) # smooth stretch offset, with set driven key
+        mc.connectAttr( mainJnts_smooth_setDrvKey + '.output', knee_smooth_offs + '.input2X', f=1 )
 
-        mc.connectAttr( (ratio_foot_mult + '.outputX'), (foot_len_con + '.colorIfTrueR'), f=True )
-        mc.connectAttr( (ratio_foot_mult + '.outputX'), (foot_len_con + '.firstTerm'), f=True )
+        #mc.connectAttr( knee_smooth_offs + '.outputX', knee_stretch_clamp + '.inputR', f=1 ) # connect jnt length to have bottom value clamped during stretch
+        #mc.setAttr(knee_stretch_clamp + '.minR', ( to_knee_len * 0.80) ) #clamp smallest length value  #0.83, exact from test  
+        #mc.setAttr(knee_stretch_clamp + '.maxR', 1000) # just to have a high that will not be reached
 
-        # add joint lengths to base value, if false
-        mc.setAttr( (knee_len_con + '.colorIfFalseR'), to_knee_len )
-        mc.setAttr( (knee_len_con + '.secondTerm'), to_knee_len )
+        mc.connectAttr( knee_smooth_offs + '.outputX', knee_stretch_blend + '.color1R', f=1 )
+        #mc.connectAttr( knee_stretch_clamp + '.outputR', knee_stretch_blend + '.color1R', f=1 ) # blend between stretch and no stretch default static length
+        mc.setAttr(knee_stretch_blend + '.color2R', to_knee_len )  # set to default jnt length, static value
 
-        mc.setAttr( (ankle_len_con + '.colorIfFalseR'), to_ankle_len )
-        mc.setAttr( (ankle_len_con + '.secondTerm'), to_ankle_len )
+        mc.connectAttr( knee_stretch_blend + '.outputR', ikJoint_list[1] + '.translateX', f=1 ) # connect blend to jnt translate X length
+        mc.connectAttr( knee_stretch_blend + '.outputR', ikDriverJoint_list[1] + '.translateX', f=1 ) # connect blend to drvJnt translate X length
 
-        mc.setAttr( (foot_len_con + '.colorIfFalseR'), to_foot_len )
-        mc.setAttr( (foot_len_con + '.secondTerm'), to_foot_len )
+        mc.connectAttr( stretch_blend, knee_stretch_blend + '.blender', f=1 )  # foot ctrl stretch blend attr
 
-        #connect stretch lengths to joint translate x
-        mc.connectAttr( (knee_len_con + '.outColorR'), (ikJoint_list[1] + '.tx'), f=True )
-        mc.connectAttr( (ankle_len_con + '.outColorR'), (ikJoint_list[2] + '.tx'), f=True )
-        mc.connectAttr( (foot_len_con + '.outColorR'), (ikJoint_list[3] + '.tx'), f=True )
 
-        #and to translate x of driver joints
-        mc.connectAttr( (knee_len_con + '.outColorR'), (ikDriverJoint_list[1] + '.tx'), f=True )
-        mc.connectAttr( (ankle_len_con + '.outColorR'), (ikDriverJoint_list[2] + '.tx'), f=True )
-        mc.connectAttr( (foot_len_con + '.outColorR'), (ikDriverJoint_list[3] + '.tx'), f=True )
+        # ankle jnt _______________________________
+        mc.connectAttr( stretch_dist_ratio + '.outputX', ankle_strch + '.input1X', f=1 )
+        mc.setAttr(ankle_strch + '.input2X', to_ankle_len)
+        
+
+        mc.connectAttr( ankle_strch + '.outputX', ankle_smooth_offs + '.input1X', f=1 ) # smooth stretch offset, with set driven key
+        mc.connectAttr( mainJnts_smooth_setDrvKey + '.output', ankle_smooth_offs + '.input2X', f=1 )
+
+        #mc.connectAttr( ankle_smooth_offs + '.outputX', ankle_stretch_clamp + '.inputR', f=1 ) # connect jnt length to have bottom value clamped during stretch
+        #mc.setAttr(ankle_stretch_clamp + '.minR', ( to_ankle_len * 0.80) ) #clamp smallest length value  #0.83, exact from test  
+        #mc.setAttr(ankle_stretch_clamp + '.maxR', 1000) # just to have a high that will not be reached
+
+        mc.connectAttr( ankle_smooth_offs + '.outputX', ankle_stretch_blend + '.color1R', f=1 )
+        #mc.connectAttr( ankle_stretch_clamp + '.outputR', ankle_stretch_blend + '.color1R', f=1 ) # blend between stretch and no stretch default static length
+        mc.setAttr(ankle_stretch_blend + '.color2R', to_ankle_len )  # set to default jnt length, static value
+
+        mc.connectAttr( ankle_stretch_blend + '.outputR', ikJoint_list[2] + '.translateX', f=1 ) # connect blend to jnt translate X length
+        mc.connectAttr( ankle_stretch_blend + '.outputR', ikDriverJoint_list[2] + '.translateX', f=1 ) # connect blend to drvJnt translate X length
+
+        mc.connectAttr( stretch_blend, ankle_stretch_blend + '.blender', f=1 )  # foot ctrl stretch blend attr
+
+
+        # foot jnt _______________________________
+        mc.connectAttr( stretch_dist_ratio + '.outputX', foot_strch + '.input1X', f=1 )
+        mc.setAttr(foot_strch + '.input2X', to_foot_len)
+        
+
+        mc.connectAttr( foot_strch + '.outputX', foot_smooth_offs + '.input1X', f=1 ) # smooth stretch offset, with set driven key
+        mc.connectAttr( mainJnts_smooth_setDrvKey + '.output', foot_smooth_offs + '.input2X', f=1 )
+
+        #mc.connectAttr( foot_smooth_offs + '.outputX', foot_stretch_clamp + '.inputR', f=1 ) # connect jnt length to have bottom value clamped during stretch
+        #mc.setAttr(foot_stretch_clamp + '.minR', ( to_foot_len * 0.80) ) #clamp smallest length value  #0.83, exact from test  
+        #mc.setAttr(foot_stretch_clamp + '.maxR', 1000) # just to have a high that will not be reached
+
+        mc.connectAttr( foot_smooth_offs + '.outputX', foot_stretch_blend + '.color1R', f=1 )
+        #mc.connectAttr( foot_stretch_clamp + '.outputR', foot_stretch_blend + '.color1R', f=1 ) # blend between stretch and no stretch default static length
+        mc.setAttr(foot_stretch_blend + '.color2R', to_foot_len )  # set to default jnt length, static value
+
+        mc.connectAttr( foot_stretch_blend + '.outputR', ikJoint_list[3] + '.translateX', f=1 ) # connect blend to jnt translate X length
+        mc.connectAttr( foot_stretch_blend + '.outputR', ikDriverJoint_list[3] + '.translateX', f=1 ) # connect blend to drvJnt translate X length
+
+        mc.connectAttr( stretch_blend, foot_stretch_blend + '.blender', f=1 )  # foot ctrl stretch blend attr
+
+
+        #________________#
+        #________________#
+
 
         
         #___________________________________________________________________#
         #___________________Visibility and Parenting________________________#
         #___________________________________________________________________#
+
         # set ankle reverse foot control to invisible (not needed to be seen)
         mc.setAttr(ftCtrl_grp_list[0] + '.visibility', 0)
         # hide dist loc and tool
