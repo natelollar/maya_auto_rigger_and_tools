@@ -13,10 +13,18 @@ class create_jnts():
         myJoint = mc.joint( n = self.name )
         #size and color
         mc.setAttr('.radius', self.size)
-        mc.setAttr('.overrideEnabled', 1)
-        mc.setAttr('.overrideRGBColors', 1)
-        mc.setAttr('.overrideColorRGB', self.colorR, self.colorG, self.colorB)
+        mc.setAttr('.useObjectColor', 2)
+        mc.setAttr('.wireColorRGB', self.colorR, self.colorG, self.colorB)
         #turn off scale compensate to prevent double scaling (when global scaling)
-        mc.setAttr('.segmentScaleCompensate', 0 )
+        #mc.setAttr('.segmentScaleCompensate', 0 )
+
+        #show attr
+        mc.setAttr('.rotateOrder', cb=True)
+        mc.setAttr('.rotateAxisX', cb=True)
+        mc.setAttr('.rotateAxisY', cb=True)
+        mc.setAttr('.rotateAxisZ', cb=True)
+        mc.setAttr('.jointOrientX', cb=True)
+        mc.setAttr('.jointOrientY', cb=True)
+        mc.setAttr('.jointOrientZ', cb=True)
 
         return myJoint

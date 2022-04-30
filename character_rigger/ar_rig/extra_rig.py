@@ -32,7 +32,7 @@ class extra_rig():
             mc.makeIdentity(myJoint, apply=True)
 
             #turn off scale compensate to prevent double scaling (when global scaling)
-            mc.setAttr(myJoint + '.segmentScaleCompensate', 0 )
+            #mc.setAttr(myJoint + '.segmentScaleCompensate', 0 )
             
             mc.parentConstraint(parentTo, myJoint)
             mc.scaleConstraint(parentTo, myJoint)  

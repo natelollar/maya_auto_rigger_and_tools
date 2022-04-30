@@ -165,7 +165,7 @@ class leg_rig():
                             knee_dist_mult,
                             spine_root_ctrl, 
                             global_ctrl):
-        '''
+        
         # find leg joints using method from own class
         jnt_info = self.find_leg_jnts(direction)
         leg_chain = jnt_info[0]
@@ -179,8 +179,8 @@ class leg_rig():
                     'tmpJnt_l_foot2',
                     'tmpJnt_l_foot3_End'
                     ]
-        
-        sknJnt_preSuff = 'tmpJnt_'
+        '''
+        sknJnt_preSuff = 'sknJnt_'
         
 
         #group for organization
@@ -293,6 +293,7 @@ class leg_rig():
             blendColorsTran_list.append(blendColorsTran)
             blendColorsRot_list.append(blendColorsRot)
         
+
         #__________________________________________________________________#
         # parent top joints to original root spine0 to offset blend Color nodes
         #__________________________________________________________________#
@@ -319,7 +320,7 @@ class leg_rig():
             mc.setAttr('.wireColorRGB', 1, .8, 0)
             #show attr
             mc.setAttr('.rotateOrder', cb=True)
-            mc.setAttr('.rotateAxis', cb=True)
+            mc.setAttr('.rotateAxisX', cb=True)
             mc.setAttr('.rotateAxisY', cb=True)
             mc.setAttr('.rotateAxisZ', cb=True)
             mc.setAttr('.jointOrientX', cb=True)
@@ -340,6 +341,10 @@ class leg_rig():
         #orient joints
         mc.joint(strchJnt_lst[0], e=True, oj='xyz', secondaryAxisOrient='yup')
         mc.setAttr(strchJnt_lst[1] +  '.jointOrient', 0, 0, 0)
+
+
+        # parent stretch jnt to spine1 offset jnt
+        mc.parent(strchJnt_lst[0], offset_parent_jnt)
 
 
 
@@ -421,8 +426,8 @@ class leg_rig():
 
         #___________create IK HANDLE, for softIK, stretch joint top to bottom, Single Chain Solver____________#
 
-        #main ik handle, RPS ___________
-        ikHndl_strch = mc.ikHandle(n='strchJnts_ikHndl', sj=strchJnt_lst[0], ee=strchJnt_lst[1])
+        #main ik handle, SCS ___________
+        ikHndl_strch = mc.ikHandle(n=direction + '_strchJnts_ikHndl', sj=strchJnt_lst[0], ee=strchJnt_lst[1], sol='ikSCsolver')
         # rename effector
         ikHndl_strch_eff = mc.listConnections(ikHndl_strch, s=True, type='ikEffector')
         mc.rename(ikHndl_strch_eff, ikHndl_strch[0] + '_effector')
@@ -563,7 +568,9 @@ class leg_rig():
         # parent constain ankle ik handle to offset ctrl
         #mc.parentConstraint( ikAnkleOff_ctrl_list[0], ikHandleAnkle_var[0], mo=True , sr=('x','y','z') )
         mc.parent( ikHandleAnkle_var[0], ikAnkleOff_ctrl_list[0])
-        mc.parent( ikAnkleOff_group_list[0], ikDriverJoint_list[2])
+        mc.parent( ikAnkleOff_group_list[0], myLegGrp)
+        mc.parentConstraint(ikDriverJoint_list[2], ikAnkleOff_group_list[0], mo=True)
+        mc.scaleConstraint(ikDriverJoint_list[2], ikAnkleOff_group_list[0]) # for global scale
 
         # parent constrain offset ctrl grp to driver ankle joint
         #mc.parentConstraint( ikDriverJoint_list[3], ikAnkleOff_group_list[0], mo=True )
@@ -792,7 +799,8 @@ class leg_rig():
             pv_ctrl_list.append(myCurve)
 
         #parent pole vector control under ik foot ctrl
-        mc.parent(pv_group_list[0], ik_ctrl_list[0])
+        #mc.parent(pv_group_list[0], ik_ctrl_list[0])
+        #mc.parent(pv_group_list[0], global_ctrl[0])
 
 
         #_________________POLE VECTOR ANKLE___________________#
@@ -881,7 +889,8 @@ class leg_rig():
             anklePV_ctrl_list.append(myCurve)
 
         #parent pole vector control under ik foot ctrl
-        mc.parent(anklePV_group_list[0], ik_ctrl_list[0])
+        #mc.parent(anklePV_group_list[0], ik_ctrl_list[0])
+        #mc.parent(anklePV_group_list[0], global_ctrl[0])
 
 
 
@@ -942,11 +951,16 @@ class leg_rig():
             switchCurveA_grp = mc.group(switchCurveA, n = (switchCurveA_name + '_grp'))
             switchCurveA_l_grp_offset = mc.group(switchCurveA, n = (switchCurveA_name + '_grp_offset'))
 
+
+            '''
             #_______move ctrl shapes in -z_______#
             if direction == 'l':
                 mc.setAttr((switchCurveA[0] + '.tx'), -(swch_ctrl_dist))
             elif direction == 'r':
                 mc.setAttr((switchCurveA[0] + '.tx'), (swch_ctrl_dist))
+            '''
+            mc.setAttr((switchCurveA[0] + '.tx'), -(swch_ctrl_dist))
+
             mc.xform (switchCurveA, ws=True, piv= (0, 0, 0))
             mc.makeIdentity(switchCurveA, apply=True)
 
@@ -958,6 +972,7 @@ class leg_rig():
 
             # parent and scale constrain switch ctrl to ankle
             mc.parentConstraint(leg_chain[3], switchCurveA_grp, mo=True)
+            mc.scaleConstraint(leg_chain[3], switchCurveA_grp)
 
             #_______add IK FK Blend attr to switch ctrl_______#
             mc.addAttr(switchCurveA, ln = 'fk_ik_blend', min=0, max=1, k=True)
@@ -1173,23 +1188,41 @@ class leg_rig():
         #connect plusMinus with offset toe value into ik toe jnt, to replace the clunky point constraint alternative
         mc.connectAttr(toe_plusMinusAv + '.output3D', ikJoint_list[4] + '.translate', f=True)
 
+        
+        # ______________________________________________________#
         # post reverse foot parenting
-        #_________________________________________________#
-        # stretch jnt mechanism parenting
-        #ikHndl_stretch parent to foot ctrl
-        mc.parent(ikHndl_strch[0], ftCtrl_list[0])
-        # create grp and offset grp for ik RPS
-        # ikHndl grp
+        #________________________________#
+        # stretch jnt ik handle parenting
+        
         ikHndl_strch_grp0 = mc.group(em=1)
         ikHndl_strch_grp_offs0 = mc.group(em=1)
         #rename group
         ikHndl_strch_grp1 = mc.rename(ikHndl_strch_grp0, (ikHndl_strch[0] + '_grp'))
         ikHndl_strch_grp_offs1 = mc.rename(ikHndl_strch_grp_offs0, (ikHndl_strch[0] + '_grp_offset'))
+        
         #pos parent grp
-        mc.parent(ikHndl_strch_grp_offs1, ikHndl_strch_grp1, r=1)
-        mc.parent(ikHndl_strch_grp1, strchJnt_lst[1], r=1)
-        mc.parent(ikHandleDriver_var[0], ikHndl_strch_grp_offs1)
-
+        mc.parent(ikHndl_strch_grp_offs1, ikHndl_strch_grp1)
+        mc.parent(ikHndl_strch_grp1, ftCtrl_list[0], r=1) # to position
+        mc.parent(ikHndl_strch_grp1, myLegGrp) # final spot
+        mc.parent(ikHndl_strch[0], ikHndl_strch_grp_offs1)
+        # parent constrain translation only
+        mc.parentConstraint( ftCtrl_list[0], ikHndl_strch_grp1, mo=True , sr=('x','y','z') )
+        
+        
+        #______________________________________#
+        # spring solver jnt ik handle parenting
+        # ikHndl grp
+        ikHndl_drv_grp0 = mc.group(em=1)
+        ikHndl_drv_grp_offs0 = mc.group(em=1)
+        #rename group
+        ikHndl_drv_grp1 = mc.rename(ikHndl_drv_grp0, (ikHandleDriver_var[0] + '_grp'))
+        ikHndl_drv_grp_offs1 = mc.rename(ikHndl_drv_grp_offs0, (ikHandleDriver_var[0] + '_grp_offset'))
+        #pos parent grp
+        mc.parent(ikHndl_drv_grp_offs1, ikHndl_drv_grp1, r=1)
+        #parent to bottom stretch joint
+        mc.parent(ikHndl_drv_grp1, strchJnt_lst[1], r=1)
+        mc.parent(ikHandleDriver_var[0], ikHndl_drv_grp_offs1)
+        
 
 
         # ______________________________________________________#
@@ -1331,8 +1364,8 @@ class leg_rig():
         mc.setAttr(softIk_fllw_offs_grp_blend + '.color1R', 0) # set ikHndl offset grp follow to 0, to have no effect
         mc.connectAttr( stretch_blend, softIk_fllw_offs_grp_blend + '.blender', f=1 )
 
-        mc.connectAttr( softIk_fllw_offs_grp_blend + '.outputR', ikHndl_strch_grp_offs1 + '.tx', f=1 ) # connect to ikHandle Grp
-        mc.connectAttr( softIk_fllw_grp_blend + '.outputR', ikHndl_strch_grp1 + '.tx', f=1 ) # connect to ikHandle Grp offset
+        mc.connectAttr( softIk_fllw_offs_grp_blend + '.outputR', ikHndl_drv_grp_offs1 + '.tx', f=1 ) # connect to ikHandle Grp
+        mc.connectAttr( softIk_fllw_grp_blend + '.outputR', ikHndl_drv_grp1 + '.tx', f=1 ) # connect to ikHandle Grp offset
 
         
 
@@ -1353,7 +1386,7 @@ class leg_rig():
         
         mc.connectAttr( stretch_dist_ratio + '.outputX', mainJnts_smooth_setDrvKey + '.input', f=1 ) # smooth offset keys
         
-        mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.5, value=1.85, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change
+        mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.5, value=1.75, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change # also ajust spline afterwards
         mc.setKeyframe(mainJnts_smooth_setDrvKey, float=1, value=1)
         mc.setKeyframe(mainJnts_smooth_setDrvKey, float=2, value=0.865)
         
@@ -1430,6 +1463,8 @@ class leg_rig():
 
         # set ankle reverse foot control to invisible (not needed to be seen)
         mc.setAttr(ftCtrl_grp_list[0] + '.visibility', 0)
+        # stretch joint ik handle grp to invisible
+        mc.setAttr(ikHndl_strch_grp1 + '.visibility', 0)
         # hide dist loc and tool
         mc.setAttr(ruler_loc_list_parent + '.visibility', 0)
         mc.setAttr(leg_loc_0 + '.visibility', 0)
@@ -1450,4 +1485,4 @@ class leg_rig():
 
         # return top ik and fk controls to parent to hip
         return ik_hip_group_list[0], fk_ctrl_grp_list[0], myLegGrp
-
+        

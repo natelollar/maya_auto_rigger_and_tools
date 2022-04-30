@@ -78,7 +78,7 @@ def character_rig():
     # hide blend joint and blend leg joints as result
     mc.setAttr(spine_blend_offset_info + '.visibility', 0)
 
-
+    
     #________________________________________________________________________#
     # head joints on/ off
     if headJnts_checkbox == True:
@@ -138,7 +138,7 @@ def character_rig():
     # left leg ctrls
     # parent to spine root control (global_ctrl for scale offset)
     left_leg_rig_info = quadruped_leg_rig.leg_rig().create_fk_ik_leg(  
-                        direction='left',
+                        direction='l',
                         ft_loc_dist = (15 * float(control_size) ),
                         offset_parent_jnt=spine_blend_offset_info,
                         swch_ctrl_dist = (40 * float(control_size) ),
@@ -166,7 +166,7 @@ def character_rig():
     # right leg ctrls
     # parent to spine root control (global_ctrl for scale offset)
     right_leg_rig_info = quadruped_leg_rig.leg_rig().create_fk_ik_leg(  
-                        direction='right',
+                        direction='r',
                         ft_loc_dist = (15 * float(control_size) ),
                         offset_parent_jnt=spine_blend_offset_info,
                         swch_ctrl_dist = (40 * float(control_size) ),
@@ -187,7 +187,7 @@ def character_rig():
     mc.parent(right_leg_rig_info[1], fk_spine_rig_info[1])
     # parent other grps to global misc grp
     mc.parent(right_leg_rig_info[2], character_misc_grp)
-    
+    '''
     #________________________________________________________________________#
     # create offset joints for blend color arms
     
@@ -212,7 +212,7 @@ def character_rig():
     # hide blend joint and blend arm joints as result
     mc.setAttr(chest_blend_offset_info + '.visibility', 0)
     
-
+    
     #________________________________________________________________________#
     # create l arm ctrls
     l_arm_rig_class = arm_rig.arm_rig()
@@ -249,8 +249,8 @@ def character_rig():
                                             global_ctrl=global_ctrl_info[1],
                                             global_misc_grp=character_misc_grp,
                                             twstJnts_checkbox=twstJnts_checkbox )
-
-
+    
+    '''
     #________________________________________________________________________#
     # grp misc and global ctrl grp in final grp
     final_grp = mc.group(em=1, n='character_all_grp')
@@ -262,13 +262,13 @@ def character_rig():
     allNurbsCtrls = mc.listRelatives(final_grp, ad=True, type='nurbsCurve')
     allNurbsCtrls_parent = mc.listRelatives(allNurbsCtrls, p=True)
     mc.select(allNurbsCtrls_parent)
-
+    '''
     # remove arm twist splines from tag selection
     if l_arm_rig_return:
         mc.select(l_arm_rig_return, d=True)
     if r_arm_rig_return:
         mc.select(r_arm_rig_return, d=True)
-
+    '''
     # tag most all ctrls as Controller (for parallel evaluation)
     mc.TagAsController()
 
