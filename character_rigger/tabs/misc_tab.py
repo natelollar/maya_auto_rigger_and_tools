@@ -67,7 +67,7 @@ class misc_tab_class():
 
                     # change brackets to work with cmds.curve()
                     vertLoc_rounded_listA = str(vertLoc_rounded_list).replace('[', '(')
-                    vertLoc_rounded_listB = vertLoc_rounded_listA.replace(']', ')')
+                    vertLoc_rounded_listB = vertLoc_rounded_listA.replace(']', '),')
 
                     # print rounded cv/ vert position for user
                     #print (vertLoc) #test if match 
