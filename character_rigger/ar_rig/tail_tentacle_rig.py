@@ -1,3 +1,4 @@
+from re import I
 import maya.cmds as mc
 
 import string
@@ -10,9 +11,11 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
                         fkJnt_prefix = 'fkJnt_', 
                         ikJnt_prefix = 'ikJnt_',
                         offs_prntJnt = 'offs_prntJnt_hips', 
+                        hip_ctrl = 'hip_ctrl',
+                        global_ctrl = 'global_ctrl',
                         fk_ctrl_size = 10):
     #_______ initial joints ________#
-
+    
     spineRoot_jnt = sel_near_jnt.sel_near_jnt('standin_obj_spine_root')
     tailStart_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tail_start')
     tailEnd_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tail_end')
@@ -30,8 +33,6 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
     name0 = jnt_chain[0].replace(defaultJnt_prefix, '')
     name = ''.join([i for i in name0 if not i.isdigit()]) 
 
-    # organization group
-    organizeGrp = mc.group(em=True, n=name + '_grp')
 
     
     #______________________________#
@@ -234,9 +235,7 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
     ikHndl_crv0 = mc.listConnections(ikHndl_var[0], s=True, type='nurbsCurve')
     ikHndl_crv = mc.rename(ikHndl_crv0, ikHndl_var[0] + '_curve')
 
-    #parent ik Hndl global grp to organize
-    mc.parent(ikHndl_var[0], organizeGrp)
-
+    
 
 
     #_______________________________________#
@@ -271,86 +270,286 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
     #_____skin start and end joints to ik spline curve_____#
     mc.skinCluster( ikSpline_jnt_lst[0], 
                     ikSpline_jnt_lst[1], 
-                    ikSpline_jnt_lst[2],    
+                    ikSpline_jnt_lst[2],
                     ikHndl_crv, 
-                    n = ikHndl_crv + '_skinCluster')
+                    n = ikHndl_crv + '_skinCluster',
+                    dropoffRate = 2)
+
+    # to organize and global scale
+    mc.parent(ikSpline_jnt_lst, offs_prntJnt)
+    
+    # ______ arrow twist curve _______   #
+    # for last spline ctrl, to represent twist
+    arrowTwist_list = []
+    for i in range(0,1):
+        myCurve0 = mc.curve(p=[ 
+                            (-6.97, -0.0, -50.0),
+                            (-6.97, -0.0, -50.0),
+                            (-8.499, -25.022, -47.673),
+                            (-10.39, -41.372, -29.961),
+                            (-12.015, -52.16, -9.608),
+                            (-12.5, -47.005, 21.995),
+                            (-12.5, -38.326, 32.149),
+                            (-12.5, -38.326, 32.149),
+                            (-12.5, -38.326, 32.149),
+                            (-20.974, -36.448, 34.227),
+                            (-20.974, -36.448, 34.227),
+                            (-20.974, -36.448, 34.227),
+                            (-13.57, -27.743, 42.15),
+                            (-5.718, -14.063, 48.981),
+                            (0.0, 0.0, 50.0),
+                            (0.0, 0.0, 50.0),
+                            (0.0, 0.0, 50.0),
+                            (5.545, -14.063, 48.981),
+                            (13.506, -27.743, 42.15),
+                            (20.974, -36.448, 34.227),
+                            (20.974, -36.448, 34.227),
+                            (20.974, -36.448, 34.227),
+                            (12.5, -38.326, 32.149),
+                            (12.5, -38.326, 32.149),
+                            (12.5, -38.326, 32.149),
+                            (12.5, -47.005, 21.995),
+                            (12.015, -52.16, -9.608),
+                            (10.39, -41.372, -29.961),
+                            (8.499, -25.022, -47.673),
+                            (6.97, -0.0, -50.0),
+                            (6.97, -0.0, -50.0),
+                            (6.97, -0.0, -50.0),
+                            (-6.97, -0.0, -50.0),
+                            ] )
+                            
+                            
+        myCurve1 = mc.duplicate(myCurve0)
+        mc.setAttr(myCurve1[0] + '.scaleY', -1)
+        mc.setAttr(myCurve1[0] + '.rotateY', -180)
+        mc.makeIdentity(myCurve1, apply=True)
+
+        crv_lst = [myCurve0, myCurve1[0]]
+
+        crvShp_lst = []
+        for i in crv_lst:
+            #change transform scale
+            mc.setAttr(i + '.scale', .35, .85, .85)
+            mc.makeIdentity(i, apply=True)
+            #change shape color, line width
+            crv_shp = mc.listRelatives(i, s=True)
+            mc.setAttr((crv_shp[0] + '.overrideEnabled'), 1)
+            mc.setAttr((crv_shp[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((crv_shp[0] + '.overrideColorRGB'), .6, .8, 0)
+            mc.setAttr((crv_shp[0] + '.lineWidth'), 1.5)
+
+            crvShp_lst.append(crv_shp)
+
+        
+        mc.parent(crvShp_lst[1], myCurve0, r=1, s=1)
+        
+        mc.delete(myCurve1) # delete empty transform
+            
+        myCurve = mc.rename(myCurve0, 'arrowTwist_ctrl')
+
+        arrowTwist_list.append(myCurve)
 
 
+    
+    #___________ik Spline CTRLs____________#
+    ik_splineCtrl_list = []
+    ik_splineGrp_list = []
+    for i in ikSpline_jnt_lst:
+        current_index = ikSpline_jnt_lst.index(i) # above other for loops in loop, b/c share i 
+        myJnt = i # to know what i referreing too
+        #______ create curve shape ______#
+        myCurve0 = mc.curve(p=[ 
+                            (-71.438, 0.0, -71.438),
+                            (-57.509, 0.0, -84.796),
+                            (-41.145, 0.0, -92.642),
+                            (-26.517, 0.0, -97.227),
+                            (-26.517, 0.0, -97.227),
+                            (-26.517, 0.0, -97.227),
+                            (-24.436, 0.0, -118.027),
+                            (-24.436, 0.0, -118.027),
+                            (-24.436, 0.0, -118.027),
+                            (-48.922, 0.0, -117.978),
+                            (-48.922, 0.0, -117.978),
+                            (-48.922, 0.0, -117.978),
+                            (0.0, 0.0, -205.925),
+                            (0.0, 0.0, -205.925),
+                            (0.0, 0.0, -205.925),
+                            (49.02, 0.0, -118.175),
+                            (49.02, 0.0, -118.175),
+                            (49.02, 0.0, -118.175),
+                            (24.535, 0.0, -118.126),
+                            (24.535, 0.0, -118.126),
+                            (24.535, 0.0, -118.126),
+                            (26.517, 0.0, -97.227),
+                            (26.517, 0.0, -97.227),
+                            (26.517, 0.0, -97.227),
+                            (42.538, 0.0, -91.659),
+                            (58.975, 0.0, -83.918),
+                            (71.438, 0.0, -71.438)
+                            ] )
 
-    '''
-    #___________ik handle CTRL____________#
-    ik_group_list = []
-    #create curve box
-    for items in range(0,1):
-        myCurve = mc.curve(d=1, p=[ (-1, 1, 1), 
-                                    (-1, 1, -1), 
-                                    (1, 1, -1), 
-                                    (1, 1, 1), 
-                                    (-1, 1, 1), 
-                                    (-1, -1, 1), 
-                                    (-1, -1, -1), 
-                                    (1, -1, -1), 
-                                    (1, -1, 1), 
-                                    (-1, -1, 1), 
-                                    (-1, 1, 1), 
-                                    (1, 1, 1), 
-                                    (1, -1, 1), 
-                                    (1, -1, -1), 
-                                    (1, 1, -1), 
-                                    (-1, 1, -1), 
-                                    (-1, -1, -1)
-                                    ])
+        myCurve1 = mc.duplicate(myCurve0)
+        mc.setAttr(myCurve1[0] + '.scaleZ', -1)
+        mc.makeIdentity(myCurve1, apply=True)
+
+        myCurve2 = mc.duplicate(myCurve0)
+        mc.setAttr(myCurve2[0] + '.rotateY', -90)
+        mc.makeIdentity(myCurve2, apply=True)
+
+        myCurve3 = mc.duplicate(myCurve0)
+        mc.setAttr(myCurve3[0] + '.rotateY', 90)
+        mc.makeIdentity(myCurve3, apply=True)
+
+        myCurveCircle = mc.circle(r=93, nr=(0,1,0), ch=0)
+
+        crv_lst = [myCurve0, myCurve1, myCurve2, myCurve3, myCurveCircle]
+
+        crvShp_lst = []
+        for i in crv_lst:
+            crv_shp = mc.listRelatives(i, s=True)
+            mc.setAttr((crv_shp[0] + '.overrideEnabled'), 1)
+            mc.setAttr((crv_shp[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((crv_shp[0] + '.overrideColorRGB'), .1, .8, 0)
+            mc.setAttr((crv_shp[0] + '.lineWidth'), 1.5)
+
+            crvShp_lst.append(crv_shp)
+
+        for i in crvShp_lst[1:]:
+            mc.parent(i, myCurve0, r=1, s=1)
+
+        for i in crv_lst[1:]:
+            mc.delete(i) # delete empty transforms
+            
+        for i in crvShp_lst:
+            mc.rename(i, 'fourArrow_ctrlShape') # to make sure all shapes get renamed # glitch with circle shape
+            
+
+        myCurve = mc.rename(myCurve0, name + '_ik_ctrl' + string.ascii_uppercase[current_index])
+
+        #_____________create curve shape END______________#
+
+        #curve orient
+        mc.setAttr(myCurve + '.rotate', 0, 0, 90)
         #curve size
-        mc.setAttr((myCurve + ".scaleX"), 5)
-        mc.setAttr((myCurve + ".scaleY"), 5)
-        mc.setAttr((myCurve + ".scaleZ"), 5)
+        mc.setAttr(myCurve + '.scale', .2, .2, .2)
         #freeze transforms
         mc.makeIdentity(myCurve, apply=True)
-        #select curve box's shape
-        curveShape = mc.listRelatives(myCurve, s=True)
-        #color curve box's shape red
-        mc.setAttr((curveShape[0] + ".overrideEnabled"), 1)
-        mc.setAttr((curveShape[0] + ".overrideRGBColors"), 1)
-        mc.setAttr((curveShape[0] + ".overrideColorR"), 0.1)
-        mc.setAttr((curveShape[0] + ".overrideColorG"), 1)
-        mc.setAttr((curveShape[0] + ".overrideColorB"), 0)
-        #rename curve
-        myCurve = mc.rename(ikJoint_list[0] + '_ik_ctrl')
+        
         #group curve
-        curveGrouped = mc.group(myCurve)
         curveGrouped_offset = mc.group(myCurve)
+
+        curveGrouped = mc.group(curveGrouped_offset)
+        
+        
         #rename group
-        myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
         myGroup_offset = mc.rename(curveGrouped_offset, (myCurve + '_grp_offset'))
+        myGroup = mc.rename(curveGrouped, (myCurve + '_grp'))
+        
+        
         #parent and zero curveGrp to joints
-        mc.parent(myGroup, ikJoint_list[-1], relative=True)
+        mc.parent(myGroup, myJnt, relative=True)
+
+        
         #unparent group (since it has correct position)
         mc.Unparent(myGroup)
+        
+        #constrain ctrl to jnt
+        mc.parentConstraint(myCurve, myJnt)
 
-        #translate contrain ik ctrl to ik handle
-        mc.parentConstraint(myCurve, ikHandle_var[0], sr=('x','y','z'))
-        #rotate constrain ik ctrl to ankle joint
-        mc.parentConstraint(myCurve, ikJoint_list[-1], st=('x','y','z'))
-
-        #parent grp to global grp to organize
-        mc.parent(myGroup, myIKGrp)
-
+        
         #append grp for outside use
-        ik_group_list.append(myGroup)
+        ik_splineCtrl_list.append(myCurve)
+        ik_splineGrp_list.append(myGroup)
+
+    #________________#
+    # parent twist shape to last ik ctrl
+    arrowTwist_pos = mc.parentConstraint(ikSpline_jnt_lst[-1], arrowTwist_list[0] ) # position arrow twist curve
+    mc.delete(arrowTwist_pos) # delete positional parent constraint
+    arrowTwist_shp = mc.listRelatives(arrowTwist_list[0], s=True)
+    mc.parent(arrowTwist_shp, ik_splineCtrl_list[-1], r=1, s=1) # parent arrow twist shape to last spline ctrl
+    mc.delete(arrowTwist_list) # delete empty transform
+    #________________#
+
+
+    # to organize and for visibility
+    myIKGrp = mc.group(em=True, n=name + '_ik_grp')
+    mc.parent(ik_splineGrp_list, myIKGrp)
+
+
+    # add stretch attribute to last ik spline ctrl
+    mc.addAttr(ik_splineCtrl_list[-1], ln='__________', nn='__________', at='enum', enumName = '__________') # add divider organizer attr
+    mc.setAttr(ik_splineCtrl_list[-1] + '.__________', channelBox=1 ) # does not appear in channel box otherwise
+    mc.addAttr(ik_splineCtrl_list[-1], ln='Stretch_Blend', nn='Stretch_Blend', min=0, max=1, at='double', dv=1, k=1) # actual stretch attr
     
-    '''
+
+    #_______________________IK Twist _______________________#
+    #_______________________________________________________#
+
+    mc.connectAttr(ik_splineCtrl_list[-1] + '.rotateX', ikHndl_var[0] + '.twist')
+
+    #______________________________________________________________________________#
+    #____________________________IK Stretch _______________________________________#
+    #______________________________________________________________________________#
+
+    # _____ nodes ______ #
+
+    curveInfo = mc.shadingNode('curveInfo', asUtility=1, n = name + '_ikSpline_curveInfo' ) # for arc length
+
+    global_scale_offs = mc.shadingNode('multiplyDivide', asUtility=1, n = name + '_global_scale_offs' )
+
+    crv_len_ratio = mc.shadingNode('multiplyDivide', asUtility=1, n = name + '_crv_len_ratio' ) # create multDiv node
+    mc.setAttr(crv_len_ratio + '.operation', 2) # set to Divide
+
+
+    # _____ attributes ______ #
+
+    global_ctrl_sclX = global_ctrl + '.scaleX'
+
+    stretch_blend = ik_splineCtrl_list[-1] + '.Stretch_Blend'
+
+    #_____ node connections ________#
+
+    mc.connectAttr(ikHndl_crv + '.worldSpace[0]', curveInfo + '.inputCurve')  # needs to be first connection to input arc length
+    curveInfo_length = mc.getAttr(curveInfo + '.arcLength') # get length from recent input
+
+    mc.connectAttr( global_ctrl_sclX, global_scale_offs + '.input1X', f=1 ) # create global scale offset node
+    mc.setAttr(global_scale_offs + '.input2X', curveInfo_length) #set to spline curve length
+
+    mc.connectAttr( curveInfo + '.arcLength', crv_len_ratio + '.input1X', f=1 )
+    mc.connectAttr( global_scale_offs + '.outputX', crv_len_ratio + '.input2X', f=1 )
+
+
+    # jnt attr, nodes, connections
+
+    for i in ikJoint_list:
+        jnt_tx = mc.getAttr(i + '.tx' )
+
+        jnt_len_mult = mc.shadingNode('multiplyDivide', asUtility=1, n = i + '_len_mult' )
+        jnt_strch_blend = mc.shadingNode('blendColors', asUtility=1, n = i + '_strch_blend' )
+
+        mc.connectAttr( crv_len_ratio + '.outputX', jnt_len_mult + '.input1X', f=1 )
+        mc.setAttr(jnt_len_mult + '.input2X', jnt_tx )
+
+        mc.connectAttr( jnt_len_mult + '.outputX', jnt_strch_blend + '.color1R', f=1 )
+        mc.setAttr(jnt_strch_blend + '.color2R', jnt_tx )
+
+        mc.connectAttr( stretch_blend, jnt_strch_blend + '.blender', f=1 )
+        mc.connectAttr( jnt_strch_blend + '.outputR', i + '.tx', f=1 )
+
+
+    
 
 
     #______________________________________________________________________________#
-    #____________________________IK/ FK Switch Ctrl ________________________________#
+    #____________________________IK/ FK Switch Ctrl _______________________________#
     #______________________________________________________________________________#
     switch_ctrl_list = []
     switch_ctrl_grp_list = []
     for items in range(0,1):
         #name circle curves
-        switchCurveA_name = 'switch_ctrlA#'
-        switchCurveB_name = 'switch_ctrlB#'
-        switchCurveC_name = 'switch_ctrlC#'
+        switchCurveA_name = name + '_swch_ctrl'
+        switchCurveB_name = name + '_swch_ctrlA'
+        switchCurveC_name = name + '_swch_ctrlB'
 
         #create nurbs circle
         switchCurveA = mc.circle(n=switchCurveA_name, ch=False, r=3, nr=(0,1,0))
@@ -387,23 +586,26 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
         #delete 3rd nurbs circle transform
         mc.delete(switchCurveC)
 
+
         #_______group switch ctrl_______#
         switchCurveA_grp = mc.group(switchCurveA, n = (switchCurveA_name + '_grp'))
         switchCurveA_l_grp_offset = mc.group(switchCurveA, n = (switchCurveA_name + '_grp_offset'))
 
+        
+
         #_______move ctrl shapes in -z_______#
-        mc.setAttr((switchCurveA[0] + ".translateY"), 20)
+        mc.setAttr((switchCurveA[0] + ".translateY"), -60)
         mc.xform (switchCurveA, ws=True, piv= (0, 0, 0))
         mc.makeIdentity(switchCurveA, apply=True)
 
         #_______move joint to ankle and parent_______#
         #parent and zero joints to last joint in selection
-        mc.parent(switchCurveA_grp, mySel[-1], relative=True)
+        mc.parent(switchCurveA_grp, jnt_chain[-1], relative=True)
         #parent joints to world space
         mc.Unparent(switchCurveA_grp)
 
         # parent constrain switch ctrl to ankle
-        mc.parentConstraint(mySel[-1], switchCurveA_grp, mo=True)
+        mc.parentConstraint(jnt_chain[-1], switchCurveA_grp, mo=True)
 
         #_______add IK FK Blend attr to switch ctrl_______#
         mc.addAttr(switchCurveA, ln = "fk_ik_blend", min=0, max=1, k=True)
@@ -419,48 +621,54 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
         mc.setAttr((switchCurveA[0] + '.sy'), lock=True, keyable=False, channelBox=False)
         mc.setAttr((switchCurveA[0] + '.sz'), lock=True, keyable=False, channelBox=False)
 
+        
+
         switch_ctrl_list.append(switchCurveA[0])
         switch_ctrl_grp_list.append(switchCurveA_grp)
 
+        
 
+    
     #_______connect switch control to blendNodes_______#
-    for items_trans, items_rot, items_scale in zip(  blendColorsTran_list, 
-                                                                blendColorsRot_list, 
-                                                                blendColorsScale_list):
+    for items_trans, items_rot in zip(  blendColorsTran_list, 
+                                        blendColorsRot_list):
         mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (items_trans + '.blender'), f=True)
         mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (items_rot + '.blender'), f=True)
-        mc.connectAttr((switch_ctrl_list[0] + '.fk_ik_blend'), (items_scale + '.blender'), f=True)
 
-
+    
     #_______connect switch control to visibility______#
     for i in range(0,1): 
         mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0)
-        mc.setAttr((ik_group_list[0] + '.visibility'), 1)
-        mc.setAttr((pv_group_list[0] + '.visibility'), 1)
+        mc.setAttr((myIKGrp + '.visibility'), 1)
         mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 0)
-        mc.setDrivenKeyframe((ik_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
-        mc.setDrivenKeyframe((pv_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+        mc.setDrivenKeyframe((myIKGrp + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
         mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
         mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 1)
-        mc.setAttr((ik_group_list[0] + '.visibility'), 0)
-        mc.setAttr((pv_group_list[0] + '.visibility'), 0)
+        mc.setAttr((myIKGrp + '.visibility'), 0)
         mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 1)
-        mc.setDrivenKeyframe((ik_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
-        mc.setDrivenKeyframe((pv_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+        mc.setDrivenKeyframe((myIKGrp + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
         mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+    
 
 
     #_____________ organize _____________#
-    #organize into final group
-    ik_fk_blend_grp = mc.group(em=True, n='ik_fk_blend_grp')
-    mc.parent(fk_ctrl_grp_list[0], ik_fk_blend_grp)
-    mc.parent(switch_ctrl_grp_list[0], ik_fk_blend_grp)
-    mc.parent(myIKGrp, ik_fk_blend_grp)
-    #parent joints to final group too
-    mc.parent(fkJoint_list[0], ik_fk_blend_grp)
-    mc.parent(ikJoint_list[0], ik_fk_blend_grp)
+    # organization group
+    organizeGrp = mc.group(em=True, n=name + '_grp')
+
+    mc.parent(fk_ctrl_grp_list[0], organizeGrp)
+    mc.parent(switch_ctrl_grp_list[0], organizeGrp)
+    mc.parent(ikHndl_crv, organizeGrp)
+    mc.parent(ikHndl_var[0], organizeGrp)
+    mc.parent(myIKGrp, organizeGrp)
 
     #_____________ visibility _____________#
     #hide ik handle
-    #mc.setAttr(ikHandle_var[0] + '.visibility', 0)
+    mc.setAttr(ikHndl_var[0] + '.visibility', 0)
+    mc.setAttr(ikHndl_crv + '.visibility', 0)
+
+    #clear final selection
+    mc.select(cl=True)
+
+    # ________ other ________ #
+    mc.setAttr(switch_ctrl_list[0] + '.fk_ik_blend', 0) # so ik appears first
     
