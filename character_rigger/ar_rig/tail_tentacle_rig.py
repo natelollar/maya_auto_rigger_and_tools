@@ -11,9 +11,12 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
                         fkJnt_prefix = 'fkJnt_', 
                         ikJnt_prefix = 'ikJnt_',
                         offs_prntJnt = 'offs_prntJnt_hips', 
-                        hip_ctrl = 'hip_ctrl',
+                        spine_root_ctrl = 'hip_ctrl',
                         global_ctrl = 'global_ctrl',
+                        global_misc_grp = 'global_misc_grp',
                         fk_ctrl_size = 10):
+
+    print('________________Gadzooooks!__________________')
     #_______ initial joints ________#
     
     spineRoot_jnt = sel_near_jnt.sel_near_jnt('standin_obj_spine_root')
@@ -86,7 +89,7 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
         mc.setAttr('.jointOrientY', cb=True)
         mc.setAttr('.jointOrientZ', cb=True)
         
-        ikJoint_rename = i.replace(defaultJnt_prefix, 'ikJnt_')
+        ikJoint_rename = i.replace(defaultJnt_prefix, ikJnt_prefix)
         ikJoint = mc.rename(ikJoint_orig, ikJoint_rename)
         mc.Unparent(ikJoint)
 
@@ -345,7 +348,7 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
         
         mc.delete(myCurve1) # delete empty transform
             
-        myCurve = mc.rename(myCurve0, 'arrowTwist_ctrl')
+        myCurve = mc.rename(myCurve0, 'arrowTwist_ctrl#')
 
         arrowTwist_list.append(myCurve)
 
@@ -421,7 +424,7 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
             mc.delete(i) # delete empty transforms
             
         for i in crvShp_lst:
-            mc.rename(i, 'fourArrow_ctrlShape') # to make sure all shapes get renamed # glitch with circle shape
+            mc.rename(i, 'fourArrow_ctrlShape#') # to make sure all shapes get renamed # glitch with circle shape
             
 
         myCurve = mc.rename(myCurve0, name + '_ik_ctrl' + string.ascii_uppercase[current_index])
@@ -604,8 +607,9 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
         #parent joints to world space
         mc.Unparent(switchCurveA_grp)
 
-        # parent constrain switch ctrl to ankle
+        # parent and scale constrain switch ctrl to ankle
         mc.parentConstraint(jnt_chain[-1], switchCurveA_grp, mo=True)
+        mc.scaleConstraint(jnt_chain[-1], switchCurveA_grp)
 
         #_______add IK FK Blend attr to switch ctrl_______#
         mc.addAttr(switchCurveA, ln = "fk_ik_blend", min=0, max=1, k=True)
@@ -659,7 +663,12 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
     mc.parent(switch_ctrl_grp_list[0], organizeGrp)
     mc.parent(ikHndl_crv, organizeGrp)
     mc.parent(ikHndl_var[0], organizeGrp)
-    mc.parent(myIKGrp, organizeGrp)
+    # parent to hip
+    mc.parent(myIKGrp, spine_root_ctrl)
+    mc.parent(fk_ctrl_grp_list[0], spine_root_ctrl)
+    # parent organize grp to global grp
+    mc.parent(organizeGrp, global_misc_grp)
+
 
     #_____________ visibility _____________#
     #hide ik handle
@@ -671,4 +680,6 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
 
     # ________ other ________ #
     mc.setAttr(switch_ctrl_list[0] + '.fk_ik_blend', 0) # so ik appears first
+
+    return ikHndl_crv
     

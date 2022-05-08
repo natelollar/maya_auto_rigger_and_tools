@@ -7,3 +7,5 @@ from . import face_rig
 from . import clavicle_rig
 from . import arm_rig
 from . import quadruped_leg_rig
+from . import tail_tentacle_rig
+from . import arm_wing_rig

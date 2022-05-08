@@ -1004,23 +1004,33 @@ class leg_rig():
             mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0)
             mc.setAttr((ik_group_list[0] + '.visibility'), 1)
             mc.setAttr((ikAnkleOff_group_list[0] + '.visibility'), 1)
+            mc.setAttr((pv_group_list[0] + '.visibility'), 1)
+            mc.setAttr((anklePV_group_list[0] + '.visibility'), 1)
             mc.setAttr((ik_hip_group_list[0] + '.visibility'), 1)
             mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 0)
 
 
             mc.setDrivenKeyframe((ik_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((ikAnkleOff_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((pv_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((anklePV_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((ik_hip_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+
 
             mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 1)
             mc.setAttr((ik_group_list[0] + '.visibility'), 0)
             mc.setAttr((ikAnkleOff_group_list[0] + '.visibility'), 0)
+            mc.setAttr((pv_group_list[0] + '.visibility'), 0)
+            mc.setAttr((anklePV_group_list[0] + '.visibility'), 0)
             mc.setAttr((ik_hip_group_list[0] + '.visibility'), 0)
             mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 1)
 
+
             mc.setDrivenKeyframe((ik_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((ikAnkleOff_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((pv_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+            mc.setDrivenKeyframe((anklePV_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((ik_hip_group_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
             mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 

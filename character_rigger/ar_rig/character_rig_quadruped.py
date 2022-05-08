@@ -9,6 +9,7 @@ from . import fk_spine_rig
 from . import extra_rig
 from . import face_rig
 from . import quadruped_leg_rig
+from . import tail_tentacle_rig
 from . import arm_rig
 
 def character_rig():
@@ -187,6 +188,22 @@ def character_rig():
     mc.parent(right_leg_rig_info[1], fk_spine_rig_info[1])
     # parent other grps to global misc grp
     mc.parent(right_leg_rig_info[2], character_misc_grp)
+
+
+    #________________________________________________________________________#
+    
+    # tail ctrls
+
+    tail_rig_info = tail_tentacle_rig.tail_tentacle_rig(    defaultJnt_prefix = 'sknJnt_',
+                                                            fkJnt_prefix = 'fkJnt_',
+                                                            ikJnt_prefix = 'ikJnt_',
+                                                            offs_prntJnt = spine_blend_offset_info,
+                                                            spine_root_ctrl = fk_spine_rig_info[1],
+                                                            global_ctrl = global_ctrl_info[1],
+                                                            global_misc_grp = character_misc_grp,
+                                                            fk_ctrl_size = ( 10 * float(control_size) ) )
+
+
     '''
     #________________________________________________________________________#
     # create offset joints for blend color arms
@@ -249,26 +266,28 @@ def character_rig():
                                             global_ctrl=global_ctrl_info[1],
                                             global_misc_grp=character_misc_grp,
                                             twstJnts_checkbox=twstJnts_checkbox )
-    
     '''
+    
     #________________________________________________________________________#
     # grp misc and global ctrl grp in final grp
     final_grp = mc.group(em=1, n='character_all_grp')
     mc.parent( global_ctrl_info[0], character_misc_grp, final_grp )
 
-
+    
     #______________________________________________________________________________#
     # select all nurbs curves to tag as controls
     allNurbsCtrls = mc.listRelatives(final_grp, ad=True, type='nurbsCurve')
     allNurbsCtrls_parent = mc.listRelatives(allNurbsCtrls, p=True)
     mc.select(allNurbsCtrls_parent)
-    '''
-    # remove arm twist splines from tag selection
-    if l_arm_rig_return:
-        mc.select(l_arm_rig_return, d=True)
-    if r_arm_rig_return:
-        mc.select(r_arm_rig_return, d=True)
-    '''
+    
+    # # remove arm twist splines from tag selection
+    # if l_arm_rig_return:
+    #     mc.select(l_arm_rig_return, d=True)
+    # if r_arm_rig_return:
+    #     mc.select(r_arm_rig_return, d=True)
+    
+    mc.select(tail_rig_info, d=True) # remove tail spline curve from controller selection
+
     # tag most all ctrls as Controller (for parallel evaluation)
     mc.TagAsController()
 
