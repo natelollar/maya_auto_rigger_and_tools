@@ -28,6 +28,7 @@ import character_rigger.ar_rig.leg_rig
 import character_rigger.ar_rig.quadruped_leg_rig
 import character_rigger.ar_rig.tail_tentacle_rig
 import character_rigger.ar_rig.arm_wing_rig
+import character_rigger.ar_rig.fk_chains_rig
 
 import character_rigger.ar_tools
 import character_rigger.ar_tools.fk_chain
@@ -72,6 +73,7 @@ imp.reload( character_rigger.ar_rig.leg_rig)
 imp.reload( character_rigger.ar_rig.quadruped_leg_rig)
 imp.reload( character_rigger.ar_rig.tail_tentacle_rig)
 imp.reload( character_rigger.ar_rig.arm_wing_rig )
+imp.reload( character_rigger.ar_rig.fk_chains_rig )
 
 imp.reload( character_rigger.ar_tools)
 imp.reload( character_rigger.ar_tools.fk_chain)

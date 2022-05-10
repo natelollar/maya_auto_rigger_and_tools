@@ -7,8 +7,6 @@ try:
 except: # will be python 3.x series
     pass
 
-from ..ar_functions import find_jnts
-from ..ar_functions import sel_joints
 from ..ar_functions import sel_near_jnt
 
 
@@ -22,7 +20,8 @@ def arm_wing_rig(   direction = 'l',
                     ik_ctrl_size = 10,
                     pv_ctrl_size = 20,
                     chest_root_ctrl = 'chest_ctrl',
-                    global_ctrl = 'global_ctrl'):
+                    global_ctrl = 'global_ctrl',
+                    aim_at_poleVector = '' ):
 
 
     #_______ initial joints ________#
@@ -50,7 +49,7 @@ def arm_wing_rig(   direction = 'l',
 
     
     #______________________________#
-    #_____Blended Joint Chain______#
+    #_____Blended Joint Chains______#
     #______________________________#
 
     fkJoint_list = []
