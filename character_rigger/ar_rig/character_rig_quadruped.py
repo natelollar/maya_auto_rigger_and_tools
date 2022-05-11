@@ -204,7 +204,7 @@ def character_rig():
                                                             fk_ctrl_size = ( 10 * float(control_size) ) )
 
 
-    '''
+    
     #________________________________________________________________________#
     # create offset joints for blend color arms
     
@@ -229,7 +229,7 @@ def character_rig():
     # hide blend joint and blend arm joints as result
     mc.setAttr(chest_blend_offset_info + '.visibility', 0)
     
-    
+    '''
     #________________________________________________________________________#
     # create l arm ctrls
     l_arm_rig_class = arm_rig.arm_rig()
