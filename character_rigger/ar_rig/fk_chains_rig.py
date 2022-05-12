@@ -3,8 +3,12 @@ import maya.cmds as mc
 from ..ar_functions import sel_near_jnt
 
 
-def fk_chains_rig(  standin_name = 'fkObj',
-                    fk_ctrl_size = 10):
+def fk_chains_rig(  direction = 'l',
+                    jnt_prefix = 'sknJnt_',
+                    standin_name = 'fkObj_l',
+                    fk_ctrl_size = 10,
+                    aim_at_PV_ctrl = '',
+                    swch_ctrl = ''):
 
 
     #______________find correct standin_obj's _______________#
@@ -38,7 +42,7 @@ def fk_chains_rig(  standin_name = 'fkObj',
 
     #print(jntChain_lst_lst)
 
-    
+    top_grp_lst = []
     for standin_obj in nrbsCrv_transform_lst:
         #____________________________________________#
         #____ get standin_obj parent jnt_____________#
@@ -115,7 +119,8 @@ def fk_chains_rig(  standin_name = 'fkObj',
             mc.setAttr((itemsShape[0] + '.overrideColorRGB'), 1, 0, 0)
 
             #rename curve, with joint name, and then new prefix
-            myCurve_name = mc.rename(i + '_ctrl')
+            myCurve_name0 = i.replace(jnt_prefix, '')
+            myCurve_name = mc.rename(myCurve_name0 + '_ctrl')
 
             #group curve
             curveGroup = mc.group(myCurve_name)
@@ -135,8 +140,8 @@ def fk_chains_rig(  standin_name = 'fkObj',
             #parent and scale constrain ctrls to fk jnts
             mc.parentConstraint(myCurve_name, i)
 
-        print(parent_jnt)
-        print(fk_ctrl_grp_list[0])
+        #print(parent_jnt)
+        #print(fk_ctrl_grp_list[0])
         mc.parentConstraint(parent_jnt, fk_ctrl_grp_list[0], mo=True )
 
         #remove first and last of lists to correctly parent ctrls and grps together in for loop
@@ -147,4 +152,57 @@ def fk_chains_rig(  standin_name = 'fkObj',
         #parent ctrls and grps together
         for i_grp, i_ctrl in zip(fk_ctrl_grp_list_temp, fk_ctrl_list_temp):
             mc.parent(i_grp, i_ctrl)
+
+
         
+        top_grp_lst.append(fk_ctrl_grp_list[0])
+
+    # _____________ ____________________________ _______________#
+    # _____________ aim at pole vector (ik only) _______________#
+    zero_aim_loc = mc.spaceLocator(n = direction + '_wing_zero_aim_locator')
+    mc.setAttr(zero_aim_loc[0] + '.visibility', 0) # hide locator
+    mc.parent(zero_aim_loc, aim_at_PV_ctrl, r=True) # to position
+    mc.parent(zero_aim_loc, top_grp_lst[0])
+
+
+    zero_aim_loc_up = mc.spaceLocator(n = direction + '_wing_zero_aim_locator_up')
+    mc.setAttr(zero_aim_loc_up[0] + '.visibility', 0) # hide locator
+    mc.parent(zero_aim_loc_up, aim_at_PV_ctrl, r=True)
+    mc.setAttr(zero_aim_loc_up[0] + '.ty', 200)
+    mc.setAttr(zero_aim_loc_up[0] + '.tz', 75)
+    mc.parent(zero_aim_loc_up, top_grp_lst[0])
+    
+
+
+    mc.select(top_grp_lst[0])
+    mc.pickWalk(d='down')
+    fin_offset_grp = mc.ls(sl=1)
+    aim_offset_grp = mc.group(fin_offset_grp, n = fin_offset_grp[0] + '_aim')
+    
+    pv_aim_const = mc.aimConstraint(aim_at_PV_ctrl, zero_aim_loc, aim_offset_grp, 
+                                    #mo=True,
+                                    worldUpObject=zero_aim_loc_up[0],
+                                    worldUpType='objectrotation' )
+    
+    # ____  set driven key ________#
+    #_______0_________#
+    mc.setAttr((swch_ctrl + '.fk_ik_blend'), 0)  #--
+
+    mc.setAttr( (aim_offset_grp + '_aimConstraint1.' + aim_at_PV_ctrl + 'W0'),  1)
+    mc.setAttr( (aim_offset_grp + '_aimConstraint1.' + zero_aim_loc[0] + 'W1'),  0)
+
+    mc.setDrivenKeyframe( (aim_offset_grp + '_aimConstraint1.' + aim_at_PV_ctrl + 'W0'), currentDriver = (swch_ctrl + '.fk_ik_blend') )
+    mc.setDrivenKeyframe( (aim_offset_grp + '_aimConstraint1.' + zero_aim_loc[0] + 'W1'), currentDriver = (swch_ctrl + '.fk_ik_blend') )
+    
+    #_______1_________#
+    mc.setAttr((swch_ctrl + '.fk_ik_blend'), 1)  #--
+
+    mc.setAttr( (aim_offset_grp + '_aimConstraint1.' + aim_at_PV_ctrl + 'W0'),  0)
+    mc.setAttr( (aim_offset_grp + '_aimConstraint1.' + zero_aim_loc[0] + 'W1'),  1)
+
+    mc.setDrivenKeyframe( (aim_offset_grp + '_aimConstraint1.' + aim_at_PV_ctrl + 'W0'), currentDriver = (swch_ctrl + '.fk_ik_blend') )
+    mc.setDrivenKeyframe( (aim_offset_grp + '_aimConstraint1.' + zero_aim_loc[0] + 'W1'), currentDriver = (swch_ctrl + '.fk_ik_blend') )
+    
+    # set default to ik arm
+    mc.setAttr((swch_ctrl + '.fk_ik_blend'), 0)
+    

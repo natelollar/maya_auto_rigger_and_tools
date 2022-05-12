@@ -3,7 +3,7 @@ import maya.cmds as mc
 # select joint/s in bounding box (of nurbs standin objects)
 def sel_near_jnt(standin_obj):
     #query joints in scene
-    scene_jnt_list = mc.ls(type='joint')
+    scene_jnt_list = mc.ls(type='joint', visible=True)
 
     #select root standin object
     root_selection_box = mc.select(standin_obj, r=True)

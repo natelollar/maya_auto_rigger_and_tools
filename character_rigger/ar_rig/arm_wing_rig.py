@@ -19,9 +19,9 @@ def arm_wing_rig(   direction = 'l',
                     fk_ctrl_size = 10,
                     ik_ctrl_size = 10,
                     pv_ctrl_size = 20,
-                    chest_root_ctrl = 'chest_ctrl',
+                    chest_ctrl = 'chest_ctrl',
                     global_ctrl = 'global_ctrl',
-                    aim_at_poleVector = '' ):
+                    global_misc_grp = 'character_misc_grp' ):
 
 
     #_______ initial joints ________#
@@ -353,10 +353,11 @@ def arm_wing_rig(   direction = 'l',
 
     #___________create IK HANDLE, for autoClav joint top to bottom, Rotate Plane Solver____________#
 
-    #main ik handle, SCS ___________
+    #main ik handle, RPS ___________
     ikHndl_autoClav = mc.ikHandle( n=direction + '_' + name + '_autoClav_jnt_ikHndl', 
                                 sj=autoClav_jnt_lst[0], 
-                                ee=autoClav_jnt_lst[1] )
+                                ee=autoClav_jnt_lst[1],
+                                sol='ikSCsolver' )  # CHANGED TO SINGLE CHAIN SOLVER, WHY RPS NEEDED?
     # rename effector
     ikHndl_autoClav_eff = mc.listConnections(ikHndl_strch, s=True, type='ikEffector')
     mc.rename(ikHndl_autoClav_eff, ikHndl_autoClav[0] + '_effector')
@@ -693,7 +694,7 @@ def arm_wing_rig(   direction = 'l',
         #mc.makeIdentity(myGroup_offset, apply=True)
 
         #___connect pole vector
-        mc.poleVectorConstraint(myCurve, ikHndl_autoClav[0])
+        #mc.poleVectorConstraint(myCurve, ikHndl_autoClav[0]) #changed to single chain solver
 
         
         #parent grp to global grp to organize
@@ -824,12 +825,14 @@ def arm_wing_rig(   direction = 'l',
         mc.setAttr((ik_wristGrp_lst[0] + '.visibility'), 1)
         mc.setAttr((pvGrp_lst[0] + '.visibility'), 1)
         mc.setAttr((ik_clavGrp_lst[0] + '.visibility'), 1)
+        mc.setAttr((ik_shldrGrp_lst[0] + '.visibility'), 1)
         mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 0)
 
 
         mc.setDrivenKeyframe((ik_wristGrp_lst[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
         mc.setDrivenKeyframe((pvGrp_lst[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
         mc.setDrivenKeyframe((ik_clavGrp_lst[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+        mc.setDrivenKeyframe((ik_shldrGrp_lst[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
         mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 
 
@@ -837,12 +840,14 @@ def arm_wing_rig(   direction = 'l',
         mc.setAttr((ik_wristGrp_lst[0] + '.visibility'), 0)
         mc.setAttr((pvGrp_lst[0] + '.visibility'), 0)
         mc.setAttr((ik_clavGrp_lst[0] + '.visibility'), 0)
+        mc.setAttr((ik_shldrGrp_lst[0] + '.visibility'), 0)
         mc.setAttr((fk_ctrl_grp_list[0] + '.visibility'), 1)
 
 
         mc.setDrivenKeyframe((ik_wristGrp_lst[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
         mc.setDrivenKeyframe((pvGrp_lst[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
         mc.setDrivenKeyframe((ik_clavGrp_lst[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
+        mc.setDrivenKeyframe((ik_shldrGrp_lst[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
         mc.setDrivenKeyframe((fk_ctrl_grp_list[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
 
 
@@ -895,16 +900,16 @@ def arm_wing_rig(   direction = 'l',
     to_wrist_len = mc.getAttr(ikJoint_list[3] + '.tx')
     # create ruler tool
     ik_jnt_ruler_temp = mc.distanceDimension( sp=(0, 0, 0), ep=(0, 0, 10) )
-    ik_jnt_ruler = mc.rename(ik_jnt_ruler_temp, ( direction + '_ik_jnt_rulerShape' ) )
+    ik_jnt_ruler = mc.rename(ik_jnt_ruler_temp, ( direction + '_' + name + '_ik_jnt_rulerShape' ) )
     # rename transform parent of distanceDimesion tool
     ruler_loc_list_rel = mc.listRelatives( ik_jnt_ruler, ap=1, type='transform' )
-    ruler_loc_list_parent = mc.rename(ruler_loc_list_rel, direction + '_ik_jnt_ruler')
+    ruler_loc_list_parent = mc.rename(ruler_loc_list_rel, direction + '_' + name + '_ik_jnt_ruler')
 
     # get locators controling length
     ruler_loc_list = mc.listConnections( ik_jnt_ruler, type='locator' )
     # rename and hide distance locators
-    arm_loc_0 = mc.rename(ruler_loc_list[0], direction + '_hip_dist_loc')
-    arm_loc_1 = mc.rename(ruler_loc_list[1], direction + '_wrist_dist_loc')
+    arm_loc_0 = mc.rename(ruler_loc_list[0], direction + '_' + name + '_hip_dist_loc')
+    arm_loc_1 = mc.rename(ruler_loc_list[1], direction + '_' + name + '_wrist_dist_loc')
     # parent constraint measure locators to ctrls (ruler loc is ends of distanceMeasure tool)
     mc.pointConstraint(strchJnt_lst[0], arm_loc_0 )
     mc.pointConstraint(ik_wristCtrl_lst[0], arm_loc_1 )
@@ -1088,21 +1093,21 @@ def arm_wing_rig(   direction = 'l',
     shldr_measerTool_parent = mc.listRelatives(shldr_measerTool, p=True)
     shldr_measerTool_parent = mc.rename(shldr_measerTool_parent, ('distanceDimension_' + shoulder_ikHandle[0]))
     
+    # global scale offset
+    shldr_globalScale_offs = mc.shadingNode('multiplyDivide', asUtility=1, n = direction + '_' + name + '_shldr_globalScale_offs' ) # default is multiply
+    mc.connectAttr( global_ctrl_sclX, shldr_globalScale_offs + '.input1X' )
+    shldr_measure_dist = mc.getAttr( shldr_measerTool_parent + '.distance' )
+    mc.setAttr( shldr_globalScale_offs + '.input2X' , shldr_measure_dist )
+    
     # get shoulder length ratio
     shldr_len_ratio = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_' + name + '_shldr_len_ratio' )
     mc.setAttr( shldr_len_ratio + '.operation', 2) # set operation to divide
     mc.connectAttr( shldr_measerTool_parent + '.distance', shldr_len_ratio + '.input1X')
-    shldr_measure_dist = mc.getAttr( shldr_measerTool_parent + '.distance')
-    mc.setAttr( shldr_len_ratio + '.input2X' , shldr_measure_dist)
-
-    # multiply shoulder length ratio by global scale
-    global_scale_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_global_scale_mult' )
-    mc.connectAttr( shldr_len_ratio + '.outputX' , global_scale_mult + '.input1X')
-    mc.connectAttr( global_ctrl_sclX, global_scale_mult + '.input2X')
+    mc.connectAttr( shldr_globalScale_offs + '.outputX', shldr_len_ratio + '.input2X')
 
     # multiply length ratio with joint default length
-    shldr_len_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_' + name + '_shldr_len_ratio' )
-    mc.connectAttr( global_scale_mult + '.outputX' , shldr_len_mult + '.input1X') # mult value
+    shldr_len_mult = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_' + name + '_shldr_len_mult' )
+    mc.connectAttr( shldr_len_ratio + '.outputX' , shldr_len_mult + '.input1X') # mult value
     mc.setAttr( shldr_len_mult + '.input2X' , to_shoulder_len)
 
     # set joint length to calculated value
@@ -1224,23 +1229,30 @@ def arm_wing_rig(   direction = 'l',
     mc.parent(shldr_measerTool_grp, myArmGrp)
     mc.parent(shldrGrp, myArmGrp)
     mc.parent(ikHndl_autoClav[0], myArmGrp)
-    # ctrls to global ctrl
-    mc.parent(ik_shldrGrp_lst[0], global_ctrl)
-    mc.parent(ik_clavGrp_lst[0], global_ctrl)
     
     
-
+    
     # parent switch grp to main arm grp
     mc.parent(switch_ctrl_grp_list, myArmGrp)
-    
+
+    #parent arm group to global misc grp
+    mc.parent(myArmGrp, global_misc_grp)
+
+    #parent top fk ctrl grp to chest ctrl
+    mc.parent(fk_ctrl_grp_list[0], chest_ctrl)
+    mc.parent(ik_clavGrp_lst[0], chest_ctrl)
+    mc.parent(ik_shldrGrp_lst[0], ik_clavCtrl_lst[0]) # parent to clav
+
+
     # set default to ik arm
     mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0)
     mc.setAttr((stretch_blend), 0.5)
     mc.setAttr((ik_shldrCtrl_lst[0] + '.Auto_or_Regular_Clav'), 0.5)
+    mc.setAttr((ik_shldrCtrl_lst[0] + '.Stretch_Blend'), 0)
     
 
     
     # return top ik and fk controls to parent to hip
-    return ik_clavGrp_lst[0], fk_ctrl_grp_list[0], myArmGrp
+    return ik_clavGrp_lst[0], fk_ctrl_grp_list[0], myArmGrp, pvCtrl_lst[0], switch_ctrl_list[0]
 
     
