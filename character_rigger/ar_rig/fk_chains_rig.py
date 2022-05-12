@@ -5,19 +5,19 @@ from ..ar_functions import sel_near_jnt
 
 def fk_chains_rig(  direction = 'l',
                     jnt_prefix = 'sknJnt_',
-                    standin_name = 'fkObj_l',
+                    standin_name = 'fkObj_',
                     fk_ctrl_size = 10,
                     aim_at_PV_ctrl = '',
                     swch_ctrl = ''):
 
-
+    standin_name0 = standin_name + direction
     #______________find correct standin_obj's _______________#
     scene_nrbsCrv_shp_lst = mc.ls(type='nurbsCurve') # gets curve shapes
     #print(scene_nrbsCrv_shp_lst)
     nrbsCrv_transform_lst = []
     for i in scene_nrbsCrv_shp_lst:
         nrbsCrv_transform = mc.listRelatives(i, parent=True)
-        if standin_name in nrbsCrv_transform[0]: # get fk ctrl standin objects
+        if standin_name0 in nrbsCrv_transform[0]: # get fk ctrl standin objects
             if nrbsCrv_transform[0] not in nrbsCrv_transform_lst: #is unique
                 nrbsCrv_transform_lst.append(nrbsCrv_transform[0])
 

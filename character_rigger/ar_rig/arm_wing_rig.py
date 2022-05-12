@@ -28,12 +28,12 @@ def arm_wing_rig(   direction = 'l',
     defaultJnt_prefix = 'sknJnt_'
     
     chestRoot_jnt = sel_near_jnt.sel_near_jnt('standin_obj_chest_root')
-    clavicle_jnt = sel_near_jnt.sel_near_jnt('standin_obj_l_clavicle')
-    shoulder_jnt = sel_near_jnt.sel_near_jnt('standin_obj_l_arm_start')
-    elbow_jnt = sel_near_jnt.sel_near_jnt('standin_obj_l_elbow')
-    elbow_poleVector_pos = 'standin_obj_l_elbow_pv'
+    clavicle_jnt = sel_near_jnt.sel_near_jnt('standin_obj_' + direction + ' _clavicle')
+    shoulder_jnt = sel_near_jnt.sel_near_jnt('standin_obj_' + direction + '_arm_start')
+    elbow_jnt = sel_near_jnt.sel_near_jnt('standin_obj_' + direction + '_elbow')
+    elbow_poleVector_pos = 'standin_obj_' + direction + '_elbow_pv'
     #autoClav_poleVector_pos = 'standin_obj_l_autoClav_pv'
-    wrist_jnt = sel_near_jnt.sel_near_jnt('standin_obj_l_arm_end')
+    wrist_jnt = sel_near_jnt.sel_near_jnt('standin_obj_' + direction + '_arm_end')
 
     chestRoot_ctrl_nm0 = chestRoot_jnt[0].replace(defaultJnt_prefix, '')
     chestRoot_ctrl_nm1 = chestRoot_ctrl_nm0 + '_ctrl'

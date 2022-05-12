@@ -250,14 +250,39 @@ def character_rig():
     # create l arm wing fin ctrls
     l_arm_wing_fins = fk_chains_rig.fk_chains_rig(  direction = 'l',
                                                     jnt_prefix = 'sknJnt_',
-                                                    standin_name = 'fkObj_l',
+                                                    standin_name = 'fkObj_',
                                                     fk_ctrl_size = 10,
                                                     aim_at_PV_ctrl = l_arm_wing_rig[3],
                                                     swch_ctrl = l_arm_wing_rig[4] )
     print ('||||||______________||||||')
     print (l_arm_wing_fins)
 
+
+    #________________________________________________________________________#
+    # create r arm wing ctrls
+    r_arm_wing_rig = arm_wing_rig.arm_wing_rig( direction = 'r',
+                                                offset_parent_jnt = chest_blend_offset_info,
+                                                swch_ctrl_size = (3 * float(control_size) ),
+                                                swch_ctrl_dist = (35 * float(control_size) ),
+                                                fk_ctrl_size = (10 * float(control_size) ),
+                                                ik_ctrl_size = (10 * float(control_size) ),
+                                                pv_ctrl_size = (20 * float(control_size) ), 
+                                                chest_ctrl = to_chest_ctrl[chest_index],
+                                                global_ctrl = global_ctrl_info[1],
+                                                global_misc_grp=character_misc_grp )
+
+            
     '''
+    # create r arm wing fin ctrls
+    r_arm_wing_fins = fk_chains_rig.fk_chains_rig(  direction = 'r',
+                                                    jnt_prefix = 'sknJnt_',
+                                                    standin_name = 'fkObj_',
+                                                    fk_ctrl_size = 10,
+                                                    aim_at_PV_ctrl = r_arm_wing_rig[3],
+                                                    swch_ctrl = r_arm_wing_rig[4] )
+
+
+    
     #________________________________________________________________________#
     # create r arm ctrls
     r_arm_rig_class = arm_rig.arm_rig()
