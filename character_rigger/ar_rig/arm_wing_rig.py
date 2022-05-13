@@ -12,16 +12,16 @@ from ..ar_functions import sel_near_jnt
 
 
 # create arm rig ('global_ctrl' for scale offset)
-def arm_wing_rig(   direction = 'l',
-                    offset_parent_jnt = 'chest_offset_parent_jnt',
+def arm_wing_rig(   direction = 'r',
+                    offset_parent_jnt = 'chest_offset_parent_jnt_TEST',
                     swch_ctrl_size = 3,
                     swch_ctrl_dist = 35,
                     fk_ctrl_size = 10,
                     ik_ctrl_size = 10,
                     pv_ctrl_size = 20,
-                    chest_ctrl = 'chest_ctrl',
-                    global_ctrl = 'global_ctrl',
-                    global_misc_grp = 'character_misc_grp' ):
+                    chest_ctrl = 'chest_ctrl_TEST',
+                    global_ctrl = 'global_ctrl_TEST',
+                    global_misc_grp = 'character_misc_grp_TEST' ):
 
 
     #_______ initial joints ________#
@@ -714,7 +714,7 @@ def arm_wing_rig(   direction = 'l',
 
     
 
-
+    
     #______________________________________________________________________________#
     #____________________________IK/ FK Switch Ctrl _______________________________#
     #______________________________________________________________________________#
@@ -771,13 +771,13 @@ def arm_wing_rig(   direction = 'l',
         switchCurveA_grp = mc.group(switchCurveA, n = (switchCurveA_name + '_grp'))
         switchCurveA_l_grp_offset = mc.group(switchCurveA, n = (switchCurveA_name + '_grp_offset'))
 
-        # #_______move ctrl shapes in -z_______#
-        # if direction == 'l':
-        #     mc.setAttr((switchCurveA[0] + '.tx'), -(swch_ctrl_dist))
-        # elif direction == 'r':
-        #     mc.setAttr((switchCurveA[0] + '.tx'), (swch_ctrl_dist))
+        #_______move ctrl shapes in -z_______#
+        if direction == 'l':
+            mc.setAttr((switchCurveA[0] + '.ty'), (2 * swch_ctrl_dist))
+        elif direction == 'r':
+            mc.setAttr((switchCurveA[0] + '.ty'), -(2 * swch_ctrl_dist))
 
-        mc.setAttr((switchCurveA[0] + '.ty'), (2 * swch_ctrl_dist))
+        #mc.setAttr((switchCurveA[0] + '.ty'), (2 * swch_ctrl_dist))
 
         mc.xform (switchCurveA, ws=True, piv= (0, 0, 0))
         mc.makeIdentity(switchCurveA, apply=True)
@@ -890,7 +890,7 @@ def arm_wing_rig(   direction = 'l',
 
 
     
-
+    
     # ______________________________________________________#
     # __________________ IK stretchy Arm ___________________#
     # ______________________________________________________#
@@ -914,7 +914,7 @@ def arm_wing_rig(   direction = 'l',
     mc.pointConstraint(strchJnt_lst[0], arm_loc_0 )
     mc.pointConstraint(ik_wristCtrl_lst[0], arm_loc_1 )
 
-
+    
     #_______________________________#
 
 
@@ -953,7 +953,7 @@ def arm_wing_rig(   direction = 'l',
 
     softIk_fllw_offs_grp_blend = mc.shadingNode('blendColors', asUtility=1, n = direction + '_' + name + '_softIk_fllw_offs_grp_blend' ) # smooth ikHndl grp follow
 
-
+    
     # part2 ... joint nodes
 
     jnt_strch_ratio = mc.shadingNode( 'multiplyDivide', asUtility=1, n = direction + '_' + name + '_jnt_strch_ratio' )
@@ -1019,7 +1019,7 @@ def arm_wing_rig(   direction = 'l',
     mc.connectAttr( softIk_fllw_grp_blend + '.outputR', ikHndl_wrist_grp1 + '.tx', f=1 ) # connect to ikHandle Grp offset
 
 
-
+    
     # part2 ... joint connections
 
     mc.connectAttr( ruler_dist, stretch_dist_ratio + '.input1X', f=1 ) # create stretch ratio
@@ -1113,16 +1113,16 @@ def arm_wing_rig(   direction = 'l',
     # set joint length to calculated value
     mc.connectAttr( shldr_len_mult + '.outputX', regClav_jnt_lst[1] + '.translateX')
 
-    '''
-    if direction == 'l':
-        mc.connectAttr(shldr_measerTool_parent + '.distance', shldr_scale_off + '.input1X')
-    elif direction == 'r':
-        # (right) invert to negative translate X (since x is up the chain instead of down the chain)
-        shldr_invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_shldr_invert_value' )
-        mc.setAttr( (shldr_invert_value + '.input2X'), -1 )
-        mc.connectAttr( (shldr_measerTool_parent + '.distance'), (shldr_invert_value + '.input1X'), f=True)
-        mc.connectAttr( (shldr_invert_value + '.outputX') , shldr_scale_off + '.input1X')
-    '''
+    
+    # if direction == 'l':
+    #     mc.connectAttr(shldr_measerTool_parent + '.distance', shldr_scale_off + '.input1X')
+    # elif direction == 'r':
+    #     # (right) invert to negative translate X (since x is up the chain instead of down the chain)
+    #     shldr_invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_shldr_invert_value' )
+    #     mc.setAttr( (shldr_invert_value + '.input2X'), -1 )
+    #     mc.connectAttr( (shldr_measerTool_parent + '.distance'), (shldr_invert_value + '.input1X'), f=True)
+    #     mc.connectAttr( (shldr_invert_value + '.outputX') , shldr_scale_off + '.input1X')
+    
 
     # create grp for ctrls and measure tool for organization
     shldr_measerTool_grp = mc.group(em = True, n= direction + '_shldr_measure_grp')
@@ -1138,7 +1138,7 @@ def arm_wing_rig(   direction = 'l',
     mc.setAttr((ik_shldrCtrl_lst[0] + '.ry'), lock=True, keyable=False, channelBox=False)
     mc.setAttr((ik_shldrCtrl_lst[0] + '.rz'), lock=True, keyable=False, channelBox=False)
     
-
+    
     #_____________________#
     #____blend shldr______#
     #_____________________#
@@ -1150,7 +1150,10 @@ def arm_wing_rig(   direction = 'l',
     mc.addAttr( ik_shldrCtrl_lst[0], ln='Stretch_Blend', nn='Stretch_Blend', min=0, max=1, at='double', dv=1, k=1)
 
     # parent rotate constrain both autoClav and regClav to clavicle, to switch between
-    mc.parentConstraint(autoClav_jnt_lst[0], regClav_jnt_lst[0], ikJoint_list[0], st=('x','y','z'), mo=True)
+    shldr_rot_const = mc.parentConstraint(autoClav_jnt_lst[0], regClav_jnt_lst[0], ikJoint_list[0], st=('x','y','z'), mo=True ) #
+    # change interp type to prevent flipping
+    if direction == 'r':
+        mc.setAttr(shldr_rot_const[0] + '.interpType', 2) # shortest (def is average)
 
     #blend between shoulder lengths____#
     shldr_len_blend = mc.shadingNode('blendColors', asUtility=1, n = direction + '_' + name + '_shldr_len' )
@@ -1191,23 +1194,14 @@ def arm_wing_rig(   direction = 'l',
     
 
 
-    '''
-    # set driven key orient constraint
-    mc.setAttr((ik_shldrCtrl_lst[0] + '.Auto_or_Regular_Clav'), 0)
-    mc.setAttr((shldr_orient + '.visibility'), 1)
-    mc.setAttr((pvGrp_lst[0] + '.visibility'), 1)
 
-    mc.setDrivenKeyframe((ik_wristGrp_lst[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
-    mc.setDrivenKeyframe((pvGrp_lst[0] + '.visibility'), currentDriver = (switch_ctrl_list[0] + '.fk_ik_blend'))
-    '''
-
-
-
+    
     #___________________________________________________________________#
     #___________________Visibility and Parenting________________________#
     #___________________________________________________________________#
 
-
+    # hide unused auto clav pole vector
+    mc.setAttr(autoClav_pvCtrl_lst[0] + '.visibility', 0)
     # stretch joint ik handle grp to invisible
     mc.setAttr(ikHndl_strch_grp1 + '.visibility', 0)
     #hide ikHandle

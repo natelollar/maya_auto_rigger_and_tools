@@ -143,6 +143,7 @@ def fk_chains_rig(  direction = 'l',
         #print(parent_jnt)
         #print(fk_ctrl_grp_list[0])
         mc.parentConstraint(parent_jnt, fk_ctrl_grp_list[0], mo=True )
+        mc.scaleConstraint(parent_jnt, fk_ctrl_grp_list[0], mo=True )
 
         #remove first and last of lists to correctly parent ctrls and grps together in for loop
         fk_ctrl_grp_list_temp = fk_ctrl_grp_list[1:]
@@ -168,8 +169,13 @@ def fk_chains_rig(  direction = 'l',
     zero_aim_loc_up = mc.spaceLocator(n = direction + '_wing_zero_aim_locator_up')
     mc.setAttr(zero_aim_loc_up[0] + '.visibility', 0) # hide locator
     mc.parent(zero_aim_loc_up, aim_at_PV_ctrl, r=True)
-    mc.setAttr(zero_aim_loc_up[0] + '.ty', 200)
-    mc.setAttr(zero_aim_loc_up[0] + '.tz', 75)
+    if direction == 'l':
+        mc.setAttr(zero_aim_loc_up[0] + '.ty', 200)
+        mc.setAttr(zero_aim_loc_up[0] + '.tz', 75)
+    if direction == 'r':
+        mc.setAttr(zero_aim_loc_up[0] + '.ty', -200)
+        mc.setAttr(zero_aim_loc_up[0] + '.tz', -75)
+
     mc.parent(zero_aim_loc_up, top_grp_lst[0])
     
 
@@ -183,7 +189,11 @@ def fk_chains_rig(  direction = 'l',
                                     #mo=True,
                                     worldUpObject=zero_aim_loc_up[0],
                                     worldUpType='objectrotation' )
-    
+    #flip for right side
+    if direction == 'r':
+        mc.setAttr(pv_aim_const[0] + '.aimVectorX', -1)
+        mc.setAttr(pv_aim_const[0] + '.upVectorY', -1)
+
     # ____  set driven key ________#
     #_______0_________#
     mc.setAttr((swch_ctrl + '.fk_ik_blend'), 0)  #--

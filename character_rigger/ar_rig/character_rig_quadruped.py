@@ -272,7 +272,7 @@ def character_rig():
                                                 global_misc_grp=character_misc_grp )
 
             
-    '''
+    
     # create r arm wing fin ctrls
     r_arm_wing_fins = fk_chains_rig.fk_chains_rig(  direction = 'r',
                                                     jnt_prefix = 'sknJnt_',
@@ -282,7 +282,7 @@ def character_rig():
                                                     swch_ctrl = r_arm_wing_rig[4] )
 
 
-    
+    '''
     #________________________________________________________________________#
     # create r arm ctrls
     r_arm_rig_class = arm_rig.arm_rig()
