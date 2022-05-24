@@ -443,6 +443,10 @@ class leg_rig():
                                     ee=ikDriverJoint_list[3],
                                     sol='ikSpringSolver' )
 
+        mc.setAttr((ikHandleDriver_var[0] + '.poleVectorX'), 0)
+        mc.setAttr((ikHandleDriver_var[0] + '.poleVectorY'), 0)
+        mc.setAttr((ikHandleDriver_var[0] + '.poleVectorZ'), 1)
+
         # rename effector
         ikHandleDriver_effector_var = mc.listConnections(ikHandleDriver_var, s=True, type='ikEffector')
         mc.rename(ikHandleDriver_effector_var, direction + '_driverChain_effector')
@@ -952,13 +956,13 @@ class leg_rig():
             switchCurveA_l_grp_offset = mc.group(switchCurveA, n = (switchCurveA_name + '_grp_offset'))
 
 
-            '''
-            #_______move ctrl shapes in -z_______#
-            if direction == 'l':
-                mc.setAttr((switchCurveA[0] + '.tx'), -(swch_ctrl_dist))
-            elif direction == 'r':
-                mc.setAttr((switchCurveA[0] + '.tx'), (swch_ctrl_dist))
-            '''
+            
+            # #_______move ctrl shapes in -z_______#
+            # if direction == 'l':
+            #     mc.setAttr((switchCurveA[0] + '.tx'), -(swch_ctrl_dist))
+            # elif direction == 'r':
+            #     mc.setAttr((switchCurveA[0] + '.tx'), (swch_ctrl_dist))
+            
             mc.setAttr((switchCurveA[0] + '.tx'), -(swch_ctrl_dist))
 
             mc.xform (switchCurveA, ws=True, piv= (0, 0, 0))
@@ -1495,4 +1499,25 @@ class leg_rig():
 
         # return top ik and fk controls to parent to hip
         return ik_hip_group_list[0], fk_ctrl_grp_list[0], myLegGrp
-        
+
+
+
+# NOTES
+#______
+# Pole Vector for Driver Ik chain may need to be adjust if driver chain oriented wrong on direction
+
+# adjust set driven key for soft ik stretch and non stretch after creation
+
+# make sure to have reverse foot placement locators, and pv elbow locators, and bounding box for joints
+
+# Misc Values
+# wyvern
+# non_stetch leg soft ik
+# 0, 35, 100.... 0, 25, 29.3
+# stetch leg soft ik
+# 0.5, 1, 2.... 1.7, 1, 0.865
+
+# non_stetch arm soft ik
+# 0, 50, 150.... 0, 17, 22.05
+# stetch arm soft ik
+# 0.3, .0.5, 1, 2.... 3, 2, 1, 0.883
