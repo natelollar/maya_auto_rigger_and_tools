@@ -7,23 +7,24 @@ from ..ar_functions import sel_near_jnt
 from ..ar_functions import sel_joints
 
 
-def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_', 
+def tentacle_rig(  defaultJnt_prefix = 'sknJnt_', 
                         fkJnt_prefix = 'fkJnt_', 
                         ikJnt_prefix = 'ikJnt_',
                         offs_prntJnt = 'offs_prntJnt_hips', 
                         spine_root_ctrl = 'hip_ctrl',
                         global_ctrl = 'global_ctrl',
                         global_misc_grp = 'global_misc_grp',
-                        fk_ctrl_size = 10):
+                        fk_ctrl_size = 10,
+                        name = 'test_'):
 
     print('________________Gadzooooks!__________________')
     #_______ initial joints ________#
     
-    spineRoot_jnt = sel_near_jnt.sel_near_jnt('standin_obj_spine_root')
-    tailStart_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tail_start')
-    tailEnd_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tail_end')
-    ikSpline_jntA_pos = sel_near_jnt.sel_near_jnt('standin_obj_ikSpline_A')
-    ikSpline_jntB_pos = sel_near_jnt.sel_near_jnt('standin_obj_ikSpline_B')
+    spineRoot_jnt = sel_near_jnt.sel_near_jnt('standin_obj_jaw')
+    tailStart_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tent_start')
+    tailEnd_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tent_end')
+    ikSpline_jntA_pos = sel_near_jnt.sel_near_jnt('standin_obj_ikSpline_I')
+    ikSpline_jntB_pos = sel_near_jnt.sel_near_jnt('standin_obj_ikSpline_II')
 
     spineRoot_ctrl_nm0 = spineRoot_jnt[0].replace(defaultJnt_prefix, '')
     spineRoot_ctrl_nm1 = spineRoot_ctrl_nm0 + '_ctrl'
@@ -348,7 +349,7 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
         
         mc.delete(myCurve1) # delete empty transform
             
-        myCurve = mc.rename(myCurve0, 'arrowTwist_ctrl#')
+        myCurve = mc.rename(myCurve0, name + 'arrowTwist_ctrl#')
 
         arrowTwist_list.append(myCurve)
 
@@ -424,7 +425,7 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
             mc.delete(i) # delete empty transforms
             
         for i in crvShp_lst:
-            mc.rename(i, 'fourArrow_ctrlShape#') # to make sure all shapes get renamed # glitch with circle shape
+            mc.rename(i, name + 'fourArrow_ctrlShape#') # to make sure all shapes get renamed # glitch with circle shape
             
 
         myCurve = mc.rename(myCurve0, name + '_ik_ctrl' + string.ascii_uppercase[current_index])
