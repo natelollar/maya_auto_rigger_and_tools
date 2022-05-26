@@ -524,6 +524,24 @@ class rigger_ui_class():
         mc.text(label = '', height=5, width=222, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
         mc.setParent("..")
 
+        # Text Input Row
+        mc.rowLayout(numberOfColumns = 15)
+
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+        mc.button(  label='Replace 2nd Object Shape', 
+                    w=197, 
+                    command = 'character_rigger.tabs.rigging.rigging_class().shape_to_selected()', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage = 'Select 2 Curves. Replace 2nd Object Shape with First Object Shape',
+                    ann = 'Select 2 Curves. Replace 2nd Object Shape with First Object Shape' )
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+        mc.setParent("..")
+
+        # green seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=222, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.setParent("..")
+
 
         #parent column to tab
         mc.setParent('..')
