@@ -2,10 +2,10 @@
 
 import maya.cmds as mc
 
-mySel = mc.ls(sl=True)
+def copy_attribute():
+    mySel = mc.ls(sl=True)
 
-# copy first selected object attribute to second selected object
-mc.copyAttr(mySel[0], 
-            mySel[1], 
-            values = True, 
-            attribute = ['tx'] )
+    mc.copyAttr(mySel[0], 
+                mySel[1], 
+                values = True, 
+                attribute = ['tx', 'ty', 'tz', 'rx', 'ry', 'rz', 'sx', 'sy', 'sz'] )

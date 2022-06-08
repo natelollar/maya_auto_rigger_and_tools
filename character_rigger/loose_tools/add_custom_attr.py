@@ -48,9 +48,59 @@ def set_visibility():
             mc.setAttr(x + '.visibility', 0)
 
 
+def add_enum_attr():
+    mySel = mc.ls(sl=True)
+    #print('HAY THERE!')
+
+    myAttr10 = mySel[0] + '.__________'
+    myAttr9 = mySel[0] + '._________'
+    myAttr8 = mySel[0] + '.________'
+    myAttr7 = mySel[0] + '._______'
+    myAttr6 = mySel[0] + '.______'
+
+    myLen10 = '__________'
+    myLen9 = '_________'
+    myLen8 = '________'
+    myLen7 = '_______'
+    myLen6 = '______'
+
+    if mc.objExists(myAttr10):
+        print('myAttr10 Exists!')
+        if mc.objExists(myAttr9):
+            print('myAttr9 Exists!')
+            if mc.objExists(myAttr8):
+                print('myAttr8 Exists!')
+                if mc.objExists(myAttr7):
+                    print('myAttr7 Exists!')
+                    if mc.objExists(myAttr6):
+                        print('myAttr6 Exists!')
+                    else:
+                        mc.addAttr(mySel, ln=myLen6, nn=myLen6, at='enum', enumName = myLen6)
+                        mc.setAttr(mySel[0] + '.' + myLen6, e=1, channelBox=1)
+                else:
+                    mc.addAttr(mySel, ln=myLen7, nn=myLen7, at='enum', enumName = myLen7)
+                    mc.setAttr(mySel[0] + '.' + myLen7, e=1, channelBox=1)
+            else:
+                mc.addAttr(mySel, ln=myLen8, nn=myLen8, at='enum', enumName = myLen8)
+                mc.setAttr(mySel[0] + '.' + myLen8, e=1, channelBox=1)
+        else:
+            mc.addAttr(mySel, ln=myLen9, nn=myLen9, at='enum', enumName = myLen9)
+            mc.setAttr(mySel[0] + '.' + myLen9, e=1, channelBox=1)
+    else:
+        mc.addAttr(mySel, ln=myLen10, nn=myLen10, at='enum', enumName = myLen10)
+        mc.setAttr(mySel[0] + '.' + myLen10, e=1, channelBox=1)
+
+
+    #mc.addAttr(mySel, ln='__________', nn='__________', at='enum', enumName = '__________')
+    #mc.setAttr(mySel[0] + '.__________', e=1, channelBox=1)
+
+
+
+
+
 #add_ft_attr(direction = 'r')
 #add_ft_roll()
-set_visibility()
+#set_visibility()
 
 
 

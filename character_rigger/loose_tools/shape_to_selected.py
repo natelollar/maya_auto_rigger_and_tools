@@ -1,3 +1,5 @@
+# switch out second selected ctrl shape for first selected curve shape
+
 import maya.cmds as mc
 
 def shape_to_selected():
@@ -21,4 +23,4 @@ def shape_to_selected():
     mc.delete(old_obj_shp)
     mc.rename(new_obj_shp, old_obj_shp)
 
-shape_to_selected()
+#shape_to_selected()

@@ -1,4 +1,3 @@
-from re import I
 import maya.cmds as mc
 
 import string
@@ -20,11 +19,11 @@ def tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
     print('________________Gadzooooks!__________________')
     #_______ initial joints ________#
     
-    spineRoot_jnt = sel_near_jnt.sel_near_jnt('standin_obj_jaw')
-    tailStart_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tent_start')
-    tailEnd_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tent_end')
-    ikSpline_jntA_pos = sel_near_jnt.sel_near_jnt('standin_obj_ikSpline_I')
-    ikSpline_jntB_pos = sel_near_jnt.sel_near_jnt('standin_obj_ikSpline_II')
+    spineRoot_jnt = sel_near_jnt.sel_near_jnt('standin_obj_spine_root')
+    tailStart_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tail_start')
+    tailEnd_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tail_end')
+    ikSpline_jntA_pos = sel_near_jnt.sel_near_jnt('standin_obj_ikSpline_A')
+    ikSpline_jntB_pos = sel_near_jnt.sel_near_jnt('standin_obj_ikSpline_B')
 
     spineRoot_ctrl_nm0 = spineRoot_jnt[0].replace(defaultJnt_prefix, '')
     spineRoot_ctrl_nm1 = spineRoot_ctrl_nm0 + '_ctrl'

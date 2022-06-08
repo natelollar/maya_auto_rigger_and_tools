@@ -49,6 +49,16 @@ import character_rigger.tabs.misc_tab
 import character_rigger.samples
 import character_rigger.samples.soft_ik_native
 
+import character_rigger.loose_tools
+import character_rigger.loose_tools.arrow_twist_ctrl
+import character_rigger.loose_tools.add_custom_attr
+import character_rigger.loose_tools.add_space_switch_multi_1
+import character_rigger.loose_tools.outliner_reorder
+import character_rigger.loose_tools.assign_blinn_mat
+import character_rigger.loose_tools.copy_attribute
+import character_rigger.loose_tools.four_arrow_ctrl_simple
+import character_rigger.loose_tools.vs_code_port_connect
+import character_rigger.loose_tools.random_scatter_tools
 
 #_______________________________________________#
 # reimport all
@@ -94,6 +104,17 @@ imp.reload( character_rigger.tabs.misc_tab)
 
 imp.reload( character_rigger.samples)
 imp.reload( character_rigger.samples.soft_ik_native)
+
+imp.reload( character_rigger.loose_tools )
+imp.reload( character_rigger.loose_tools.arrow_twist_ctrl )
+imp.reload( character_rigger.loose_tools.add_custom_attr )
+imp.reload( character_rigger.loose_tools.add_space_switch_multi_1 )
+imp.reload( character_rigger.loose_tools.outliner_reorder )
+imp.reload( character_rigger.loose_tools.assign_blinn_mat )
+imp.reload( character_rigger.loose_tools.copy_attribute )
+imp.reload( character_rigger.loose_tools.four_arrow_ctrl_simple )
+imp.reload( character_rigger.loose_tools.vs_code_port_connect )
+imp.reload( character_rigger.loose_tools.random_scatter_tools )
 
 #_______________________________________________#
 # relaunch UI

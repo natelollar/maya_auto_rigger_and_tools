@@ -4,3 +4,4 @@ from . import ar_tools
 from . import ar_ui
 from . import tabs
 from . import samples
+from . import loose_tools

@@ -379,9 +379,17 @@ class rigger_ui_class():
                                                                                             'color2B=0 ).sel_tri_circle_ctrl()',
                     bgc = (.5,.2,.1), 
                     statusBarMessage='Create 3 nurb circles with locator in middle.')
+
+        mc.button(  label='Arrow Twist Ctrl', 
+                    h=37, 
+                    w=140, 
+                    command =   'character_rigger.loose_tools.arrow_twist_ctrl.arrow_twist_ctrl()',
+                    bgc = (.4,.1,.1), 
+                    ann='',
+                    statusBarMessage='')
         # column parented to row
         mc.setParent("..")
-        mc.separator(style='none', w=10, h=75, bgc=(0.4,0,0))
+        mc.separator(style='none', w=10, h=112, bgc=(0.4,0,0))
 
         # column parented to row
         mc.columnLayout()
@@ -405,9 +413,16 @@ class rigger_ui_class():
                                                                                             'color2B=0 ).sel_sphere_ctrl()',
                     bgc = (.1,.5,.1), 
                     statusBarMessage='Create nurb curve sphere with locator shape in middle.')
+        mc.button(  label='Four Arrow Ctrl', 
+                    h=37, 
+                    w=140, 
+                    command =   'character_rigger.loose_tools.four_arrow_ctrl_simple.four_arrow_ctrl()',
+                    bgc = (.1,.3,.1), 
+                    statusBarMessage='')
         # column parented to row
         mc.setParent("..")
-        mc.separator(style='none', w=10, h=75, bgc=(0.4,0,0))
+        mc.separator(style='none', w=10, h=112, bgc=(0.4,0,0))
+
 
         # column parented to row
         mc.columnLayout()
@@ -799,8 +814,180 @@ class rigger_ui_class():
                             )
         mc.setParent("..")
 
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=454, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = 'Random Scatter Tools', height=30, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.4,0.2))
+        mc.setParent("..")
+
+
+        mc.rowLayout(numberOfColumns = 10)
+        mc.button(  label='Scatter \n to Verts', 
+                    h=30, 
+                    w=72, 
+                    command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().scatter_to_vert_pos_and_norm()', 
+                    bgc = (.5,.1,.1), 
+                    statusBarMessage='Scatter to last selected objects verts. Not for too many objects. Creates rivet then deletes for placement.' )
+        mc.text(    label = 'Up \n Down:', width=40, height=30, bgc=(.2,.7,.2), align='center',
+                    statusBarMessage='Move Up Down, Normal Orient Only',
+                    ann='Click Me!' )
+        mc.textField( 'move_up_down_text', width=30, h=30, text='0', bgc=(.2,0,.2), 
+                        statusBarMessage='Move Up Down, Normal Orient Only',
+                        ann='' )
+        mc.checkBox(    'normal_orient_checkbox', 
+                        label='Normal \n Orient', 
+                        value=True, 
+                        bgc=(.2,.7,.2), 
+                        width=60, 
+                        height=30,
+                        statusBarMessage='' )
+        mc.checkBox(    'normal_orient_random_checkbox', 
+                        label='Normal \n Orient Rand', 
+                        #align = 'center',
+                        value=True, 
+                        bgc=(.2,.7,.2), 
+                        width=90, 
+                        height=30,
+                        statusBarMessage='' )
+        mc.checkBox(    'rand_rot_checkbox', 
+                        label='Rand \n Rotate', 
+                        value=False, 
+                        bgc=(.2,.7,.5), 
+                        width=60, 
+                        height=30,
+                        statusBarMessage='' )
+        mc.checkBox(    'super_rand_rot_checkbox', 
+                        label=' Super \n Rand Rotate', 
+                        value=False, 
+                        bgc=(.2,.7,.5), 
+                        width=90, 
+                        height=30,
+                        statusBarMessage='' )
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=454, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
+        mc.setParent("..")
+
+
+        mc.rowLayout(numberOfColumns = 10)
+        mc.button(  label='Simple \n Scatter', 
+                    h=30, 
+                    w=72, 
+                    command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().simple_scatter()', 
+                    bgc = (.1,.1,.5), 
+                    statusBarMessage='Scatter to last selected object.  A more random scatter with geometry constraints and normal constraints, instead of verts and rivets.' )
+        mc.checkBox(    'normal_orient_checkbox1', 
+                        label='Normal \n Orient', 
+                        value=True, 
+                        bgc=(.2,.7,.2), 
+                        width=60, 
+                        height=30,
+                        statusBarMessage=   'A more random scatter with geometry constraints and normal constraints, instead of verts and rivets.'  +
+                                            'Scatters to bounding box. Then geo constrains.' )
+        
+        mc.text(label = '', height=30, width=20, align='center', font = 'fixedWidthFont', bgc=(0.4,0,0.4))
+        mc.button(  label='Reset \n Rotate', 
+                    h=30, 
+                    w=55, 
+                    command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().reset_rotation()', 
+                    bgc = (.1,.5,.1), 
+                    statusBarMessage='Zero out rotation. Will skip locked attributes.' )
+        mc.button(  label='Reset \n Scale', 
+                    h=30, 
+                    w=55, 
+                    command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().reset_scale()', 
+                    bgc = (.1,.1,.5), 
+                    statusBarMessage='Reset scale. Will skip locked attributes.' )
+        mc.button(  label='Reset \n Translate', 
+                    h=30, 
+                    w=55, 
+                    command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().reset_translation()', 
+                    bgc = (.5,.1,.1), 
+                    statusBarMessage='Zero out translation. Will skip locked attributes.' )
+        
+        
+        mc.setParent("..")
+
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=454, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
+        mc.setParent("..")
+
+
+        mc.rowLayout(numberOfColumns = 10)
+        mc.button(  label='Random \n Rotate', 
+                    h=30, 
+                    w=72, 
+                    command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().random_rotate()', 
+                    bgc = (.1,.1,.5), 
+                    statusBarMessage='Randomly rotate selected objects.' )
+        mc.text(    label = 'X \n -+', width=40, height=30, bgc=(.2,.7,.2), align='center',
+                    statusBarMessage='')
+        mc.textField( 'x_rot_low_text',  width=30, h=30, text='-360', bgc=(.2,0,.2))
+        mc.textField( 'x_rot_high_text',  width=30, h=30, text='360', bgc=(.2,0,.2))
+        mc.text(    label = 'Y \n -+', width=40, height=30, bgc=(.2,.7,.2), align='center',
+                    statusBarMessage='')
+        mc.textField( 'y_rot_low_text', width=30, h=30, text='-360', bgc=(.2,0,.2))
+        mc.textField( 'y_rot_high_text', width=30, h=30, text='360', bgc=(.2,0,.2))
+        mc.text(    label = 'Z \n -+', width=40, height=30, bgc=(.2,.7,.2), align='center',
+                    statusBarMessage='')
+        mc.textField( 'z_rot_low_text', width=30, h=30, text='-360', bgc=(.2,0,.2))
+        mc.textField( 'z_rot_high_text', width=30, h=30, text='360', bgc=(.2,0,.2))
+        mc.setParent("..")
+
+
+        mc.rowLayout(numberOfColumns = 10)
+        mc.button(  label='Random \n Scale', 
+                    h=30, 
+                    w=72, 
+                    command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().random_scale()', 
+                    bgc = (.1,.1,.5), 
+                    statusBarMessage='Randomly rotate selected objects.' )
+        mc.text(    label = 'Scale \n -+', width=40, height=30, bgc=(.2,.7,.2), align='center',
+                    statusBarMessage='')
+        mc.textField( 'scl_low_text',  width=30, h=30, text='0.5', bgc=(.2,0,.2))
+        mc.textField( 'scl_high_text',  width=30, h=30, text='2', bgc=(.2,0,.2))
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 10)
+        mc.button(  label='Simple \n Translate', 
+                    h=30, 
+                    w=72, 
+                    command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().simple_move()', 
+                    bgc = (.1,.1,.5), 
+                    statusBarMessage='Simple translation in relative direction.' )
+        mc.text(    label = 'X \n -+', width=40, height=30, bgc=(.2,.7,.2), align='center',
+                    statusBarMessage='')
+        mc.textField( 'x_trans_amnt_text',  width=30, h=30, text='0', bgc=(.2,0,.2))
+        mc.text(    label = 'Y \n -+', width=40, height=30, bgc=(.2,.7,.2), align='center',
+                    statusBarMessage='')
+        mc.textField( 'y_trans_amnt_text', width=30, h=30, text='-5', bgc=(.2,0,.2))
+        mc.text(    label = 'Z \n -+', width=40, height=30, bgc=(.2,.7,.2), align='center',
+                    statusBarMessage='')
+        mc.textField( 'z_trans_amnt_text', width=30, h=30, text='0', bgc=(.2,0,.2))
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=20, width=454, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 10)
+        mc.button(  label='Redshift \n Displacement Off', 
+                    h=30, 
+                    w=100, 
+                    command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().redshift_displacement_off()', 
+                    bgc = (.1,.1,.3), 
+                    statusBarMessage='Turn off Redshift render displacement and tessalation.' )
+        mc.setParent("..")
+
+
         #parent column to tab
         mc.setParent('..')
+
+
 
 
         #______________________________Color Tab @mkp _______________________________#
@@ -1033,6 +1220,81 @@ class rigger_ui_class():
                     bgc = (0.2,0.2,0.2), 
                     statusBarMessage='Scale constrain multiple to LAST selected object.',
                     ann='Scale constrain multiple to LAST selected object.')
+        mc.button(  label='Add Separator Attribute', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.loose_tools.add_custom_attr.add_enum_attr()', 
+                    bgc = (0.3,0.2,0.2), 
+                    statusBarMessage='Add Separator Enum Attribute to Selected Ctrl/ Object',
+                    ann='Add Separator Enum Attribute to Selected Ctrl/ Object')
+        mc.button(  label='Multi Space Switch', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.loose_tools.add_space_switch_multi_1.multi_space_switch()', 
+                    bgc = (0.2,0.2,0.4), 
+                    statusBarMessage=   'Select constraint objects first.   ' +
+                                        'Second to last select parent constrained object.   ' +
+                                        'Lastly select object to have custom space switch attribute.   ',
+                    ann=                'Select constraint objects first.   ' +
+                                        'Second to last select parent constrained object.   ' +
+                                        'Lastly select object to have custom space switch attribute.   ')
+        mc.setParent("..")
+
+
+        mc.rowLayout(numberOfColumns = 5)
+        mc.button(  label='Outliner \n Move Up 1', 
+                    h=40, 
+                    w=74, 
+                    command = 'character_rigger.loose_tools.outliner_reorder.outliner_move_up()', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage='Outliner Selection Move Up 1',
+                    ann='Outliner Selection Move Up 1')
+        mc.button(  label='Outliner \n Move Down 1', 
+                    h=40, 
+                    w=74, 
+                    command = 'character_rigger.loose_tools.outliner_reorder.outliner_move_down()', 
+                    bgc = (0.5,0.1,0.1), 
+                    statusBarMessage='Outliner Selection Move Down 1',
+                    ann='Outliner Selection Move Down 1')
+        mc.button(  label='Outliner \n Move Up 5', 
+                    h=40, 
+                    w=74, 
+                    command = 'character_rigger.loose_tools.outliner_reorder.outliner_move_up_five()', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage='Outliner Selection Move Up 5',
+                    ann='Outliner Selection Move Up 5')
+        mc.button(  label='Outliner \n Move Down 5', 
+                    h=40, 
+                    w=74, 
+                    command = 'character_rigger.loose_tools.outliner_reorder.outliner_move_down_five()', 
+                    bgc = (0.5,0.1,0.1), 
+                    statusBarMessage='Outliner Selection Move Down 5',
+                    ann='Outliner Selection Move Down 5')
+        mc.button(  label='Assign Rand Blinn', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.loose_tools.assign_blinn_mat.assign_blinn()', 
+                    bgc = (0.0,0.0,0.3), 
+                    statusBarMessage='Assign blinn materials to selected objects named after object with random color.',
+                    ann='Assign blinn materials to selected objects named after object with random color.')
+        mc.setParent("..")
+
+
+        mc.rowLayout(numberOfColumns = 5)
+        mc.button(  label='Copy Attributes \n To 2nd Object', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.loose_tools.copy_attribute.copy_attribute()', 
+                    bgc = (0.1,0.1,0.1), 
+                    statusBarMessage='Copy First Selected Translate Rotate Scale to Second Selected',
+                    ann='Copy First Selected Translate Rotate Scale to Second Selected')
+        mc.button(  label='VS Code \n Port Connect', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.loose_tools.vs_code_port_connect.vs_code_port_connect()', 
+                    bgc = (0.3,0.0,0.0), 
+                    statusBarMessage='',
+                    ann='')
         mc.setParent("..")
 
 
