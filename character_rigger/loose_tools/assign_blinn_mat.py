@@ -11,7 +11,7 @@ def assign_blinn():
         #_________________________________________#
 
         # create shader
-        blinn_mat = mc.shadingNode ( 'blinn', n = i + '_mat', asShader=True)
+        blinn_mat = mc.shadingNode ( 'blinn', n = i + '_blinn', asShader=True)
 
         # create shader group
         blinn_mat_SG = mc.sets( renderable=True, noSurfaceShader=True, empty=True, name = blinn_mat + 'SG'  )

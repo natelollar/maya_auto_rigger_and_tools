@@ -28,6 +28,7 @@ import character_rigger.ar_rig.leg_rig
 import character_rigger.ar_rig.quadruped_leg_rig
 import character_rigger.ar_rig.tail_tentacle_rig
 import character_rigger.ar_rig.tentacle_rig
+import character_rigger.ar_rig.tentacle_rigA
 import character_rigger.ar_rig.arm_wing_rig
 import character_rigger.ar_rig.fk_chains_rig
 
@@ -45,6 +46,7 @@ import character_rigger.tabs.color_slider
 import character_rigger.tabs.modeling
 import character_rigger.tabs.rigging
 import character_rigger.tabs.misc_tab
+import character_rigger.tabs.shading_tab
 
 import character_rigger.samples
 import character_rigger.samples.soft_ik_native
@@ -59,6 +61,8 @@ import character_rigger.loose_tools.copy_attribute
 import character_rigger.loose_tools.four_arrow_ctrl_simple
 import character_rigger.loose_tools.vs_code_port_connect
 import character_rigger.loose_tools.random_scatter_tools
+import character_rigger.loose_tools.cylinder_ctrl
+import character_rigger.loose_tools.joint_scale_compensate_toggle
 
 #_______________________________________________#
 # reimport all
@@ -84,6 +88,7 @@ imp.reload( character_rigger.ar_rig.leg_rig)
 imp.reload( character_rigger.ar_rig.quadruped_leg_rig)
 imp.reload( character_rigger.ar_rig.tail_tentacle_rig)
 imp.reload( character_rigger.ar_rig.tentacle_rig)
+imp.reload( character_rigger.ar_rig.tentacle_rigA)
 imp.reload( character_rigger.ar_rig.arm_wing_rig )
 imp.reload( character_rigger.ar_rig.fk_chains_rig )
 
@@ -101,6 +106,7 @@ imp.reload( character_rigger.tabs.color_slider)
 imp.reload( character_rigger.tabs.modeling)
 imp.reload( character_rigger.tabs.rigging)
 imp.reload( character_rigger.tabs.misc_tab)
+imp.reload( character_rigger.tabs.shading_tab)
 
 imp.reload( character_rigger.samples)
 imp.reload( character_rigger.samples.soft_ik_native)
@@ -115,6 +121,8 @@ imp.reload( character_rigger.loose_tools.copy_attribute )
 imp.reload( character_rigger.loose_tools.four_arrow_ctrl_simple )
 imp.reload( character_rigger.loose_tools.vs_code_port_connect )
 imp.reload( character_rigger.loose_tools.random_scatter_tools )
+imp.reload( character_rigger.loose_tools.cylinder_ctrl )
+imp.reload( character_rigger.loose_tools.joint_scale_compensate_toggle )
 
 #_______________________________________________#
 # relaunch UI

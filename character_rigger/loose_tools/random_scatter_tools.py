@@ -277,16 +277,6 @@ class random_scatter_tools():
 
 
 
-    def redshift_displacement_off(self):
-        mySel = mc.ls(sl=True)
-
-        # scale each in selection randomly
-        for i in mySel:
-            mc.setAttr(i + '.rsEnableSubdivision', 0)
-            mc.setAttr(i + '.rsEnableDisplacement', 0)
-
-
-
     def reset_translation(self):
         mySel = mc.ls(sl=True)
 
@@ -351,6 +341,24 @@ class random_scatter_tools():
             # else zero out all
             else:
                 mc.setAttr(i + '.scale', 1, 1, 1)
+
+    '''
+    def redshift_displacement_off(self):
+        mySel = mc.ls(sl=True)
+
+        # scale each in selection randomly
+        for i in mySel:
+            mc.setAttr(i + '.rsEnableSubdivision', 0)
+            mc.setAttr(i + '.rsEnableDisplacement', 0)
+
+    def redshift_displacement_on(self):
+        mySel = mc.ls(sl=True)
+
+        # scale each in selection randomly
+        for i in mySel:
+            mc.setAttr(i + '.rsEnableSubdivision', 1)
+            mc.setAttr(i + '.rsEnableDisplacement', 1)
+    '''
 
 
 

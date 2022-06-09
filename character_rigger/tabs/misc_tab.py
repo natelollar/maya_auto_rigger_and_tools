@@ -207,6 +207,10 @@ class misc_tab_class():
             mc.warning('Probably entered attribute wrong, string instead of number, or wrong number of values.')
 
 
+    def sel_hierarchy(self):
+        mySel = mc.ls(sl=1)
+        mc.select(mySel, hi=1)
+
 
             
         

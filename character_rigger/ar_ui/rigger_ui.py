@@ -446,6 +446,20 @@ class rigger_ui_class():
                                                                                             'color2B=0 ).sel_pyramid_ctrl()',
                     bgc = (.1,.2,.5), 
                     statusBarMessage='Create nurb curve sphere with locator shape in middle.')
+        mc.button(  label='Cylinder Ctrl Hard', 
+                    h=37, 
+                    w=140, 
+                    command =   'character_rigger.loose_tools.cylinder_ctrl.cylinder_ctrl().cylinder_ctrl_hard()',
+                    bgc = (.1,.1,.5), 
+                    statusBarMessage='Create nurb curve sphere with locator shape in middle.')
+        '''
+        mc.button(  label='Cylinder Ctrl Smooth', 
+                    h=18, 
+                    w=140, 
+                    command =   'character_rigger.loose_tools.cylinder_ctrl.cylinder_ctrl().cylinder_ctrl_smooth()',
+                    bgc = (.1,.3,.5), 
+                    statusBarMessage='Create nurb curve sphere with locator shape in middle.')
+        '''
         # column parented to row
         mc.setParent("..")
 
@@ -482,7 +496,7 @@ class rigger_ui_class():
 
         # green seperator
         mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=5, width=222, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
         mc.setParent("..")
 
         # Text Input Row
@@ -498,11 +512,25 @@ class rigger_ui_class():
                                         'Useful for autrigger when controls need to be aligned, but dont want to do both sides.',
                     ann = 'Mirror Ctrl Shape to Opposite side Ctrl (across X Axis).  Select LEFT Controls to Mirror.' )
         mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+        mc.button(  label='Shape Vis Off', 
+                    w=102, 
+                    command = 'character_rigger.tabs.rigging.rigging_class().shape_vis_off()', 
+                    bgc = (0.5,0.2,0), 
+                    statusBarMessage = 'Select Transforms. Shape/s Visibility Off',
+                    ann = 'Select Transforms. Shape/s Visibility Off' )
+        mc.separator(style='none', w=10, h=23, bgc=(0.25,0.7,0))
+        mc.button(  label='Shape Vis On', 
+                    w=102, 
+                    command = 'character_rigger.tabs.rigging.rigging_class().shape_vis_on()', 
+                    bgc = (0.2,0.5,0), 
+                    statusBarMessage = 'Select Transforms. Shape/s Visibility On',
+                    ann = 'Select Transforms. Shape/s Visibility On' )
+        mc.separator(style='none', w=10, h=23, bgc=(0.25,0.7,0))
         mc.setParent("..")
 
         # green seperator
         mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=5, width=222, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
         mc.setParent("..")
 
         # Text Input Row
@@ -518,20 +546,6 @@ class rigger_ui_class():
                     ann = 'Add Shape to Similar Named Offset Grp With Suffix (ex. _offset_grp).' +
                     'Good for adding shape to empty grp for set driven key animation.' )
         mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
-        mc.button(  label='Shape Vis Off', 
-                    w=113, 
-                    command = 'character_rigger.tabs.rigging.rigging_class().shape_vis_off()', 
-                    bgc = (0.5,0.2,0), 
-                    statusBarMessage = 'Select Transforms. Shape/s Visibility Off',
-                    ann = 'Select Transforms. Shape/s Visibility Off' )
-        mc.separator(style='none', w=10, h=23, bgc=(0.25,0.7,0))
-        mc.button(  label='Shape Vis On', 
-                    w=113, 
-                    command = 'character_rigger.tabs.rigging.rigging_class().shape_vis_on()', 
-                    bgc = (0.2,0.5,0), 
-                    statusBarMessage = 'Select Transforms. Shape/s Visibility On',
-                    ann = 'Select Transforms. Shape/s Visibility On' )
-        mc.separator(style='none', w=10, h=23, bgc=(0.25,0.7,0))
         mc.setParent("..")
 
         # green seperator
@@ -555,6 +569,24 @@ class rigger_ui_class():
         # green seperator
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = '', height=5, width=222, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=20, width=454, align='center', font = 'fixedWidthFont', bgc=(0.2,0,0.2))
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 2)
+        mc.button(  label='Multi Space Switch', 
+                    h=30, 
+                    w=110, 
+                    command = 'character_rigger.loose_tools.add_space_switch_multi_1.multi_space_switch()', 
+                    bgc = (0.5,0.2,0.2), 
+                    statusBarMessage=   'Select constraint objects first.   ' +
+                                        'Second to last select parent constrained object.   ' +
+                                        'Lastly select object to have custom space switch attribute.   ',
+                    ann=                'Select constraint objects first.   ' +
+                                        'Second to last select parent constrained object.   ' +
+                                        'Lastly select object to have custom space switch attribute.   ')
         mc.setParent("..")
 
 
@@ -616,7 +648,7 @@ class rigger_ui_class():
 
         # green seperator
         mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.text(label = '', height=15, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
         mc.setParent("..")
 
         # Text Input Row
@@ -708,11 +740,24 @@ class rigger_ui_class():
 
         # green seperator
         mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.text(label = '', height=15, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
         mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.button(  label='Reference Ctrl Shape/s', 
+                    h=30, 
+                    w=130, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().reference_curve_shape()', 
+                    bgc = (0.2,0.2,0.2), 
+                    statusBarMessage='Make Ctrl Unselectable. Good for referenceing global ctrl when animating.',
+                    ann='Make Ctrl Unselectable.')
+        mc.setParent("..")
+
 
         #parent column to tab
         mc.setParent('..')
+
+        
 
 
         #___________________________Modeling Tab @mkg _______________________________#
@@ -824,7 +869,7 @@ class rigger_ui_class():
 
 
         mc.rowLayout(numberOfColumns = 10)
-        mc.button(  label='Scatter \n to Verts', 
+        mc.button(  label='Scatter \nto Verts', 
                     h=30, 
                     w=72, 
                     command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().scatter_to_vert_pos_and_norm()', 
@@ -837,14 +882,14 @@ class rigger_ui_class():
                         statusBarMessage='Move Up Down, Normal Orient Only',
                         ann='' )
         mc.checkBox(    'normal_orient_checkbox', 
-                        label='Normal \n Orient', 
+                        label='Normal \nOrient', 
                         value=True, 
                         bgc=(.2,.7,.2), 
                         width=60, 
                         height=30,
                         statusBarMessage='' )
         mc.checkBox(    'normal_orient_random_checkbox', 
-                        label='Normal \n Orient Rand', 
+                        label='Normal \nOrient Rand', 
                         #align = 'center',
                         value=True, 
                         bgc=(.2,.7,.2), 
@@ -852,7 +897,7 @@ class rigger_ui_class():
                         height=30,
                         statusBarMessage='' )
         mc.checkBox(    'rand_rot_checkbox', 
-                        label='Rand \n Rotate', 
+                        label='Rand \nRotate', 
                         value=False, 
                         bgc=(.2,.7,.5), 
                         width=60, 
@@ -873,14 +918,14 @@ class rigger_ui_class():
 
 
         mc.rowLayout(numberOfColumns = 10)
-        mc.button(  label='Simple \n Scatter', 
+        mc.button(  label='Simple \nScatter', 
                     h=30, 
                     w=72, 
                     command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().simple_scatter()', 
                     bgc = (.1,.1,.5), 
                     statusBarMessage='Scatter to last selected object.  A more random scatter with geometry constraints and normal constraints, instead of verts and rivets.' )
         mc.checkBox(    'normal_orient_checkbox1', 
-                        label='Normal \n Orient', 
+                        label='Normal \nOrient', 
                         value=True, 
                         bgc=(.2,.7,.2), 
                         width=60, 
@@ -889,19 +934,19 @@ class rigger_ui_class():
                                             'Scatters to bounding box. Then geo constrains.' )
         
         mc.text(label = '', height=30, width=20, align='center', font = 'fixedWidthFont', bgc=(0.4,0,0.4))
-        mc.button(  label='Reset \n Rotate', 
+        mc.button(  label='Reset \nRotate', 
                     h=30, 
                     w=55, 
                     command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().reset_rotation()', 
                     bgc = (.1,.5,.1), 
                     statusBarMessage='Zero out rotation. Will skip locked attributes.' )
-        mc.button(  label='Reset \n Scale', 
+        mc.button(  label='Reset \nScale', 
                     h=30, 
                     w=55, 
                     command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().reset_scale()', 
                     bgc = (.1,.1,.5), 
                     statusBarMessage='Reset scale. Will skip locked attributes.' )
-        mc.button(  label='Reset \n Translate', 
+        mc.button(  label='Reset \nTranslate', 
                     h=30, 
                     w=55, 
                     command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().reset_translation()', 
@@ -970,20 +1015,9 @@ class rigger_ui_class():
         mc.textField( 'z_trans_amnt_text', width=30, h=30, text='0', bgc=(.2,0,.2))
         mc.setParent("..")
 
-        mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=20, width=454, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
-        mc.setParent("..")
+        
 
-        mc.rowLayout(numberOfColumns = 10)
-        mc.button(  label='Redshift \n Displacement Off', 
-                    h=30, 
-                    w=100, 
-                    command = 'character_rigger.loose_tools.random_scatter_tools.random_scatter_tools().redshift_displacement_off()', 
-                    bgc = (.1,.1,.3), 
-                    statusBarMessage='Turn off Redshift render displacement and tessalation.' )
-        mc.setParent("..")
-
-
+        
         #parent column to tab
         mc.setParent('..')
 
@@ -1101,6 +1135,106 @@ class rigger_ui_class():
         mc.setParent('..')
 
 
+        #______________________________Shading Tab @mkp _______________________________#
+        #__________________________________________________________________________#
+
+        shading_tab = mc.columnLayout()
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=20, width=454, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 10)
+        mc.button(  label='Redshift \n Displacement Off', 
+                    h=30, 
+                    w=100, 
+                    command = 'character_rigger.tabs.shading_tab.shader_utility().redshift_displacement_off()', 
+                    bgc = (.5,.1,.1), 
+                    statusBarMessage='Turn off Redshift render displacement and tessalation for selected.' )
+        mc.button(  label='', 
+                    h=30, 
+                    w=15, 
+                    command = 'character_rigger.tabs.shading_tab.shader_utility().redshift_displacement_on()', 
+                    bgc = (.1,.6,.1), 
+                    statusBarMessage='Turn on Redshift render displacement and tessalation for selected.' )
+        mc.text(label = '', height=30, width=20, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
+        mc.button(  label='Assign Random Blinn/s', 
+                    h=30, 
+                    w=150, 
+                    command = 'character_rigger.loose_tools.assign_blinn_mat.assign_blinn()', 
+                    bgc = (0.1,0.1,0.4), 
+                    statusBarMessage='Assign blinn materials to selected objects named after object with random color.',
+                    ann='Assign blinn materials to selected objects named after object with random color.')
+        mc.setParent("..")
+
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=20, width=454, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
+        mc.setParent("..")
+
+
+        mc.rowLayout(numberOfColumns = 10)
+        mc.button(  label='Create Redshift Materials \n & Connect Textures', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.tabs.shading_tab.shader_utility().connect_redshift_mat_all()', 
+                    bgc = (.1,.5,.1), 
+                    statusBarMessage='Select models with correct names. Will auto connect textures in scene.' +
+                                    ' Object name should match texture without the texture suffix.' +
+                                    '  _BaseColor, _Metallic, _Roughness, _Gloss, _Normal, _Opacity' +
+                                    ' Opacity will create Sprite.'  +
+                                    ' There will be a "_1" on the end of the texture name when u drag and drop it in.  This is accounted for.' )
+        mc.checkBox(    'fip_normal_y_checkbox', 
+                        label='Flip Y\nNormal', 
+                        value=True, 
+                        bgc=(.2,.6,.4), 
+                        width=60, 
+                        height=40,
+                        statusBarMessage='Flips Y/G Normal.  As in the middle value of XYZ or RGB.' )
+        mc.text(label = '', height=30, width=20, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
+        
+        mc.button(  label='+ Stingray \nMaterial', 
+                    h=40, 
+                    w=100, 
+                    command = 'character_rigger.tabs.shading_tab.shader_utility().stingray_mat_add()', 
+                    bgc = (.0,.3,.0), 
+                    statusBarMessage='Select object/s. Adds stingray material after youve added redshift material first.' +
+                                    ' Y/G Normal Channel still must be flipped manually in the ShaderFX graph.' +
+                                    '  Warning!  Stingray material and ShaderFX graph is very unstable.'  +
+                                    '  Should work fine though after setup and saved.  (Maya 2020)'
+                    )
+        
+
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=20, width=454, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 10)
+        mc.button(  label='Connect\nMaterial', 
+                    h=40, 
+                    w=70, 
+                    command = 'character_rigger.tabs.shading_tab.shader_utility().connect_mat()', 
+                    bgc = (.1,.1,.5), 
+                    statusBarMessage=' assign = object + "_mat" ' 
+                    )
+        mc.button(  label='Connect\nMat Sprite', 
+                    h=40, 
+                    w=70, 
+                    command = 'character_rigger.tabs.shading_tab.shader_utility().connect_mat_sprite()', 
+                    bgc = (.1,.3,.5), 
+                    statusBarMessage=' assign = object + "_mat_sprite" ' 
+                    )
+        
+        mc.setParent("..")
+
+
+
+        #parent column to tab
+        mc.setParent('..')
+
+
         #______________________________Misc Tab @mkp _______________________________#
         #__________________________________________________________________________#
 
@@ -1139,13 +1273,13 @@ class rigger_ui_class():
         mc.setParent("..")
 
         mc.rowLayout(numberOfColumns = 5)
-        mc.button(  label='Reference Ctrl Shape/s', 
+        mc.button(  label='Select \nHierarchy', 
                     h=40, 
                     w=150, 
-                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().reference_curve_shape()', 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().sel_hierarchy()', 
                     bgc = (0.2,0.2,0.2), 
-                    statusBarMessage='Make Ctrl Unselectable. Good for referenceing global ctrl when animating.',
-                    ann='Make Ctrl Unselectable.')
+                    statusBarMessage='',
+                    ann='')
         mc.button(  label='RENAME First Occurrence', 
                     h=40, 
                     w=150, 
@@ -1227,17 +1361,20 @@ class rigger_ui_class():
                     bgc = (0.3,0.2,0.2), 
                     statusBarMessage='Add Separator Enum Attribute to Selected Ctrl/ Object',
                     ann='Add Separator Enum Attribute to Selected Ctrl/ Object')
-        mc.button(  label='Multi Space Switch', 
+        mc.button(  label='Jnt Scale \n Comp Off', 
                     h=40, 
-                    w=150, 
-                    command = 'character_rigger.loose_tools.add_space_switch_multi_1.multi_space_switch()', 
-                    bgc = (0.2,0.2,0.4), 
-                    statusBarMessage=   'Select constraint objects first.   ' +
-                                        'Second to last select parent constrained object.   ' +
-                                        'Lastly select object to have custom space switch attribute.   ',
-                    ann=                'Select constraint objects first.   ' +
-                                        'Second to last select parent constrained object.   ' +
-                                        'Lastly select object to have custom space switch attribute.   ')
+                    w=74, 
+                    command = 'character_rigger.loose_tools.joint_scale_compensate_toggle.scale_compensate_off()', 
+                    bgc = (0.5,0.1,0.1), 
+                    statusBarMessage=''
+                    )
+        mc.button(  label='Jnt Scale \n Comp On', 
+                    h=40, 
+                    w=74, 
+                    command = 'character_rigger.loose_tools.joint_scale_compensate_toggle.scale_compensate_on()', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage=''
+                    )
         mc.setParent("..")
 
 
@@ -1270,13 +1407,7 @@ class rigger_ui_class():
                     bgc = (0.5,0.1,0.1), 
                     statusBarMessage='Outliner Selection Move Down 5',
                     ann='Outliner Selection Move Down 5')
-        mc.button(  label='Assign Rand Blinn', 
-                    h=40, 
-                    w=150, 
-                    command = 'character_rigger.loose_tools.assign_blinn_mat.assign_blinn()', 
-                    bgc = (0.0,0.0,0.3), 
-                    statusBarMessage='Assign blinn materials to selected objects named after object with random color.',
-                    ann='Assign blinn materials to selected objects named after object with random color.')
+
         mc.setParent("..")
 
 
@@ -1302,12 +1433,16 @@ class rigger_ui_class():
         #parent column to tab
         mc.setParent('..')
 
+
+
+        
+
         
 
         #_________________Tab Layout/ UI End___________________#
 
         #tabs layout
-        mc.tabLayout(myTabs, edit=True, tabLabel=[ (auto_rig_tab, 'Auto Rig'), (modeling_tab, 'Modeling'), (rigging_tab, 'Rigging'), (animation_tab, 'Animation'), (color_tab, 'Color'), (misc_tab, 'Misc')], bs='none')
+        mc.tabLayout(myTabs, edit=True, tabLabel=[ (auto_rig_tab, 'Auto Rig'), (modeling_tab, 'Modeling'), (rigging_tab, 'Rigging'), (animation_tab, 'Animation'), (color_tab, 'Color'), (shading_tab, 'Shading'), (misc_tab, 'Misc')], bs='none')
 
         #Show UI Window
         mc.showWindow()
