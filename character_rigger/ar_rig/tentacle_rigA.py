@@ -7,22 +7,20 @@ from ..ar_functions import sel_near_jnt
 from ..ar_functions import sel_joints
 from ..ar_functions import bb_nurbs_ctrl
 
-def tentacle_rig(   defaultJnt_prefix = 'baseJnt_', 
+def tentacle_rig(   
                     fkJnt_prefix = 'fkJnt_', 
                     ikJnt_prefix = 'ikJnt_',
-                    fk_ctrl_size = 10,
-                    ): #name = 'tentacle'
+                    fk_ctrl_size = 10
+                    ):
 
-    print('________________Gadzooooks!__________________')
+    defaultJnt_prefix = mc.textField('defaultJnt_prefix_text', query=True, text=True)
+
     #_______ initial joints ________#
     
     origin_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tentacle_parent')
     tentacleStart_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tentacle_start')
     tentacleEnd_jnt = sel_near_jnt.sel_near_jnt('standin_obj_tentacle_end')
     
-    #origin_ctrl_nm0 = origin_jnt[0].replace(defaultJnt_prefix, '')
-    #origin_ctrl_nm1 = origin_ctrl_nm0 + '_ctrl'
-
     # select joint chain
     jnt_chain = sel_joints.sel_joints(tentacleStart_jnt[0], tentacleEnd_jnt[0]).rev_sel_jnt_chainA()
     
@@ -133,10 +131,10 @@ def tentacle_rig(   defaultJnt_prefix = 'baseJnt_',
     #__________________________________________________________________#
     # parent top joints to original root spine0 to offset blend Color nodes
     #__________________________________________________________________#
-    #if origin_jnt:
-    mc.parent(fkJoint_list[0], origin_jnt)
+    if origin_jnt:
+        mc.parent(fkJoint_list[0], origin_jnt)
 
-    mc.parent(ikJoint_list[0], origin_jnt)
+        mc.parent(ikJoint_list[0], origin_jnt)
 
     
 
@@ -277,8 +275,8 @@ def tentacle_rig(   defaultJnt_prefix = 'baseJnt_',
                     dropoffRate = 2)
 
     # to organize and global scale
-    #if origin_jnt:
-    mc.parent(ikSpline_jnt_lst, origin_jnt)
+    if origin_jnt:
+        mc.parent(ikSpline_jnt_lst, origin_jnt)
     
     # ______ arrow twist curve _______   #
     # for last spline ctrl, to represent twist
@@ -321,13 +319,13 @@ def tentacle_rig(   defaultJnt_prefix = 'baseJnt_',
                             ] )
                             
                             
-        myCurve1 = mc.duplicate(myCurve0)
-        mc.setAttr(myCurve1[0] + '.scaleY', -1)
-        mc.setAttr(myCurve1[0] + '.rotateY', -180)
+        myCurve0_dup = mc.duplicate(myCurve0)
+        myCurve1= mc.rename(myCurve0_dup, myCurve0 + '_copy')
+        mc.setAttr(myCurve1 + '.scaleY', -1)
+        mc.setAttr(myCurve1 + '.rotateY', -180)
         mc.makeIdentity(myCurve1, apply=True)
 
-        crv_lst = [myCurve0, myCurve1[0]]
-        
+        crv_lst = [myCurve0, myCurve1]
         crvShp_lst = []
         for i in crv_lst:
             #change transform scale
@@ -335,9 +333,7 @@ def tentacle_rig(   defaultJnt_prefix = 'baseJnt_',
             mc.makeIdentity(i, apply=True)
             #change shape color, line width
             crv_shp = mc.listRelatives(i, s=True)
-            print(crv_shp)
-            mc.setAttr((crv_shp[0] + '.overrideEnabled'), 1)
-            
+            mc.setAttr( (crv_shp[0] + '.overrideEnabled'), 1)
             mc.setAttr((crv_shp[0] + '.overrideRGBColors'), 1)
             mc.setAttr((crv_shp[0] + '.overrideColorRGB'), .6, .8, 0)
             mc.setAttr((crv_shp[0] + '.lineWidth'), 1.5)
@@ -392,16 +388,19 @@ def tentacle_rig(   defaultJnt_prefix = 'baseJnt_',
                             (71.438, 0.0, -71.438)
                             ] )
 
-        myCurve1 = mc.duplicate(myCurve0)
-        mc.setAttr(myCurve1[0] + '.scaleZ', -1)
+        myCurve0_dup1 = mc.duplicate(myCurve0)
+        myCurve1 = mc.rename(myCurve0_dup1, myCurve0 + '_copy')
+        mc.setAttr(myCurve1 + '.scaleZ', -1)
         mc.makeIdentity(myCurve1, apply=True)
 
-        myCurve2 = mc.duplicate(myCurve0)
-        mc.setAttr(myCurve2[0] + '.rotateY', -90)
+        myCurve0_dup2 = mc.duplicate(myCurve0)
+        myCurve2 = mc.rename(myCurve0_dup2, myCurve0 + '_copy')
+        mc.setAttr(myCurve2 + '.rotateY', -90)
         mc.makeIdentity(myCurve2, apply=True)
 
-        myCurve3 = mc.duplicate(myCurve0)
-        mc.setAttr(myCurve3[0] + '.rotateY', 90)
+        myCurve0_dup3 = mc.duplicate(myCurve0)
+        myCurve3 = mc.rename(myCurve0_dup3, myCurve0 + '_copy')
+        mc.setAttr(myCurve3 + '.rotateY', 90)
         mc.makeIdentity(myCurve3, apply=True)
 
         myCurveCircle = mc.circle(r=93, nr=(0,1,0), ch=0)
@@ -668,7 +667,16 @@ def tentacle_rig(   defaultJnt_prefix = 'baseJnt_',
     # parent to ...
     mc.parent(myIKGrp, organizeGrp)
 
+    # organize joints
+    jointGrp = mc.group(em=True, n=name + '_jnt_grp')
 
+    mc.parent(fkJoint_list[0], jointGrp)
+    mc.parent(ikJoint_list[0], jointGrp)
+    if origin_jnt:
+        mc.parent(origin_jnt, jointGrp)
+    else:
+        mc.parent(jnt_chain[0], jointGrp)
+        mc.parent(ikSpline_jnt_lst, jointGrp)
 
     #_____________ visibility _____________#
     #hide ik handle
@@ -806,8 +814,23 @@ def tentacle_rig_bounding_boxes():
                     organize_grp
                     )
 
+def sample_tentacle_joints():
+    origin_jnt = mc.joint(p=(0, 0, 0), o=(0, 0, 0), n='baseJnt_origin')
+    jnt1 = mc.joint(p=(0, 139.396, 0), o=(-90, 82.003, -90), n='baseJnt_tentacle_1')
+    jnt2 = mc.joint(p=(0, 134.396, -35.587), o=(0, 0, 0), n='baseJnt_tentacle_2')
+    jnt3 = mc.joint(p=(0, 129.397, -71.174), o=(0, 0, 0), n='baseJnt_tentacle_3')
+    jnt4 = mc.joint(p=(0, 124.398, -106.761), o=(0, 0, 0), n='baseJnt_tentacle_4')
+    jnt5 = mc.joint(p=(0, 119.398, -142.349), o=(0, 0, 0), n='baseJnt_tentacle_5')
+    jnt6 = mc.joint(p=(0, 114.399, -177.936), o=(0, 0, 0), n='baseJnt_tentacle_6')
+    jnt7 = mc.joint(p=(0, 109.400, -213.523), o=(0, 0, 0), n='baseJnt_tentacle_7')
+    jnt8 = mc.joint(p=(0, 104.400, -249.111), o=(0, 0, 0), n='baseJnt_tentacle_8')
+    jnt9 = mc.joint(p=(0, 99.401, -284.698), o=(0, 0, 0), n='baseJnt_tentacle_9')
 
 
-tentacle_rig_bounding_boxes()
+    jnt_lst = [origin_jnt, jnt1, jnt2, jnt3, jnt4, jnt5, jnt6, jnt7, jnt8, jnt9]
 
-#tentacle_rig()
+    for i in jnt_lst:
+        mc.setAttr(i + '.radius', 5)
+        mc.setAttr(i + ".useObjectColor", 2)
+        mc.setAttr(i + ".wireColorRGB", 0, 0, 0)
+

@@ -575,7 +575,7 @@ class rigger_ui_class():
         mc.text(label = '', height=20, width=454, align='center', font = 'fixedWidthFont', bgc=(0.2,0,0.2))
         mc.setParent("..")
 
-        mc.rowLayout(numberOfColumns = 2)
+        mc.rowLayout(numberOfColumns = 10)
         mc.button(  label='Multi Space Switch', 
                     h=30, 
                     w=110, 
@@ -587,6 +587,31 @@ class rigger_ui_class():
                     ann=                'Select constraint objects first.   ' +
                                         'Second to last select parent constrained object.   ' +
                                         'Lastly select object to have custom space switch attribute.   ')
+        mc.separator(style='none', w=15, h=30, bgc=(0.4,0,0.4))
+        mc.button(  label='Tentacle Rig', 
+                    h=30, 
+                    w=90, 
+                    command = 'character_rigger.ar_rig.tentacle_rigA.tentacle_rig()', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage= 'Requires bounding boxes.  Click next button to create boudning boxes.'
+                    )
+        mc.button(  label='Bounding Boxes', 
+                    h=30, 
+                    w=90, 
+                    command = 'character_rigger.ar_rig.tentacle_rigA.tentacle_rig_bounding_boxes()', 
+                    bgc = (0.5,0.1,0.1), 
+                    statusBarMessage= 'Place around parent joint, start joint and end joint of tentacle.  Parent joint not required.'
+                    )
+        mc.textField(   'defaultJnt_prefix_text', width=65, h=30, text='baseJnt_', bgc=(.2,0,.2), 
+                        statusBarMessage='Prefix of tentacle joints. Used for ikJnt_ and fkJnt_ names.')
+        mc.button(  label='Sample \n Tentacle Jnts', 
+                    h=30, 
+                    w=75, 
+                    command = 'character_rigger.ar_rig.tentacle_rigA.sample_tentacle_joints()', 
+                    bgc = (0.4,0.1,0.2), 
+                    statusBarMessage= 'Create sample tentacle joints.'
+                    )
+        
         mc.setParent("..")
 
 
