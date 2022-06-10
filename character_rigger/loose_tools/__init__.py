@@ -9,3 +9,5 @@ from . import vs_code_port_connect
 from . import random_scatter_tools
 from . import cylinder_ctrl
 from . import joint_scale_compensate_toggle
+from . import copy_vertex_weights
+from . import mirror_jnt_same_orient

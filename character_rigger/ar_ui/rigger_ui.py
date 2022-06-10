@@ -460,6 +460,7 @@ class rigger_ui_class():
                     bgc = (.1,.3,.5), 
                     statusBarMessage='Create nurb curve sphere with locator shape in middle.')
         '''
+
         # column parented to row
         mc.setParent("..")
 
@@ -499,8 +500,9 @@ class rigger_ui_class():
         mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
         mc.setParent("..")
 
-        # Text Input Row
+
         mc.rowLayout(numberOfColumns = 15)
+
         mc.textField('left_prefix_text', width=40, h=24, text='l_')
         mc.textField('right_prefix_text', width=40, h=24, text='r_')
         mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
@@ -511,6 +513,69 @@ class rigger_ui_class():
                     statusBarMessage = 'Mirror Ctrl Shape to Opposite side Ctrl (across X Axis).  Select LEFT Controls to Mirror. ' +
                                         'Useful for autrigger when controls need to be aligned, but dont want to do both sides.',
                     ann = 'Mirror Ctrl Shape to Opposite side Ctrl (across X Axis).  Select LEFT Controls to Mirror.' )
+        mc.separator( style='none', w=10, h=23, bgc=(0,0.7,0.25) )
+
+        mc.textField('left_prefix_textA', width=36, h=24, text='l_')
+        mc.textField('right_prefix_textA', width=36, h=24, text='r_')
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+        mc.button(  label='MIRROR Jnt Same Orient', 
+                    h=23,
+                    w=130, 
+                    command = 'character_rigger.loose_tools.mirror_jnt_same_orient.mirror_jnt_same_orient()', 
+                    bgc = (0.1,0.3,0.5), 
+                    statusBarMessage = 'Similar to mirror joint (Currently just for individual joint/s, not chains.). Keeps equivilent orient. Different than "Behavior" or "Orientation" Mirror function.' +
+                                        ' For instance, to mirror leg.  Seperete joints, parent to middle joint, then mirror.  Then reconnect if needed.  Mirrors, then rotates X 180 Degrees, and freezes rotation.')
+        mc.separator( style='none', w=10, h=23, bgc=(0,0.7,0.25) )
+        mc.setParent("..")
+
+        # green seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.setParent("..")
+
+
+        mc.rowLayout(numberOfColumns = 15)
+        mc.textField('offs_grp_suffix_text', width=82, h=24, text='_grp_offset')
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+        mc.button(  label='Shape to Offset Grp', 
+                    w=113, 
+                    command = 'character_rigger.tabs.rigging.rigging_class().add_shape_to_offset_grp()', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage = 'Add Shape to Similar Named Offset Grp With Suffix (ex. _offset_grp).' +
+                    'Good for adding shape to empty grp for set driven key animation.',
+                    ann = 'Add Shape to Similar Named Offset Grp With Suffix (ex. _offset_grp).' +
+                    'Good for adding shape to empty grp for set driven key animation.' )
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+        mc.radioButtonGrp(  'axis_button',
+                            label='  MIRROR Jnt Axis Flip:', 
+                            labelArray3=['X', 'Y', 'Z'], 
+                            numberOfRadioButtons=3,
+                            cl4 = ['left', 'left', 'left', 'left'],
+                            cw4 = [130, 25, 25, 25],
+                            h=23,
+                            w=230,
+                            bgc = (0.1,0.3,0.5),
+                            sl=1,
+                            statusBarMessage ='Flips this jnt AXIS 180*, then freezes rotation on joint. After mirroring.'
+                            )
+        mc.setParent("..")
+
+
+        # green seperator
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
+        mc.setParent("..")
+
+
+        # Text Input Row
+        mc.rowLayout(numberOfColumns = 15)
+        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
+        mc.button(  label='Replace 2nd Object Shape', 
+                    w=197, 
+                    command = 'character_rigger.tabs.rigging.rigging_class().shape_to_selected()', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage = 'Select 2 Curves. Replace 2nd Object Shape with First Object Shape',
+                    ann = 'Select 2 Curves. Replace 2nd Object Shape with First Object Shape' )
         mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
         mc.button(  label='Shape Vis Off', 
                     w=102, 
@@ -528,47 +593,10 @@ class rigger_ui_class():
         mc.separator(style='none', w=10, h=23, bgc=(0.25,0.7,0))
         mc.setParent("..")
 
+
         # green seperator
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = '', height=5, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
-        mc.setParent("..")
-
-        # Text Input Row
-        mc.rowLayout(numberOfColumns = 15)
-        mc.textField('offs_grp_suffix_text', width=82, h=24, text='_grp_offset')
-        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
-        mc.button(  label='Shape to Offset Grp', 
-                    w=113, 
-                    command = 'character_rigger.tabs.rigging.rigging_class().add_shape_to_offset_grp()', 
-                    bgc = (0.1,0.5,0.1), 
-                    statusBarMessage = 'Add Shape to Similar Named Offset Grp With Suffix (ex. _offset_grp).' +
-                    'Good for adding shape to empty grp for set driven key animation.',
-                    ann = 'Add Shape to Similar Named Offset Grp With Suffix (ex. _offset_grp).' +
-                    'Good for adding shape to empty grp for set driven key animation.' )
-        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
-        mc.setParent("..")
-
-        # green seperator
-        mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=5, width=222, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
-        mc.setParent("..")
-
-        # Text Input Row
-        mc.rowLayout(numberOfColumns = 15)
-
-        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
-        mc.button(  label='Replace 2nd Object Shape', 
-                    w=197, 
-                    command = 'character_rigger.tabs.rigging.rigging_class().shape_to_selected()', 
-                    bgc = (0.1,0.5,0.1), 
-                    statusBarMessage = 'Select 2 Curves. Replace 2nd Object Shape with First Object Shape',
-                    ann = 'Select 2 Curves. Replace 2nd Object Shape with First Object Shape' )
-        mc.separator(style='none', w=10, h=23, bgc=(0,0.7,0.25))
-        mc.setParent("..")
-
-        # green seperator
-        mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=5, width=222, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
         mc.setParent("..")
 
         mc.rowLayout(numberOfColumns = 1)
@@ -576,24 +604,19 @@ class rigger_ui_class():
         mc.setParent("..")
 
         mc.rowLayout(numberOfColumns = 10)
-        mc.button(  label='Multi Space Switch', 
-                    h=30, 
-                    w=110, 
-                    command = 'character_rigger.loose_tools.add_space_switch_multi_1.multi_space_switch()', 
-                    bgc = (0.5,0.2,0.2), 
-                    statusBarMessage=   'Select constraint objects first.   ' +
-                                        'Second to last select parent constrained object.   ' +
-                                        'Lastly select object to have custom space switch attribute.   ',
-                    ann=                'Select constraint objects first.   ' +
-                                        'Second to last select parent constrained object.   ' +
-                                        'Lastly select object to have custom space switch attribute.   ')
+        mc.button(  label='Soft IK Sample', 
+            h=30, 
+            w=110, 
+            command =   'character_rigger.samples.soft_ik_native.soft_ik_native()',
+            bgc = (.5,.3,.1), 
+            statusBarMessage="Create a sample joint setup.  Don't select anything.")
         mc.separator(style='none', w=15, h=30, bgc=(0.4,0,0.4))
         mc.button(  label='Tentacle Rig', 
                     h=30, 
                     w=90, 
                     command = 'character_rigger.ar_rig.tentacle_rigA.tentacle_rig()', 
                     bgc = (0.1,0.5,0.1), 
-                    statusBarMessage= 'Requires bounding boxes.  Click next button to create boudning boxes.'
+                    statusBarMessage= 'Requires joints and bounding boxes.  Click next button to create boudning boxes.'
                     )
         mc.button(  label='Bounding Boxes', 
                     h=30, 
@@ -612,6 +635,41 @@ class rigger_ui_class():
                     statusBarMessage= 'Create sample tentacle joints.'
                     )
         
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=20, width=454, align='center', font = 'fixedWidthFont', bgc=(0.2,0,0.2))
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 10)
+        mc.button(  label='Copy Vertex \nWeights', 
+            h=30, 
+            w=110, 
+            command =   'character_rigger.loose_tools.copy_vertex_weights.copy_vertex_weights()',
+            bgc = (.1,.1,.5), 
+            statusBarMessage=   'Copy 1st selected vert skin weights to second selected vert.' +
+                                'Or select multiple verts, then corresponding verts in same order.')
+        mc.separator( style='none', w=15, h=30, bgc=(0.4,0,0.4) )
+        mc.button(  label='Import Vertex \nWeights Test', 
+            h=30, 
+            w=90, 
+            command =   'character_rigger.loose_tools.copy_vertex_weights.copy_vertex_weights_test()',
+            bgc = (.1,.1,.4), 
+            statusBarMessage='Import Maya scene to test out Copy Vert Weights tool.')
+        mc.separator( style='none', w=15, h=30, bgc=(0.4,0,0.4) )
+        mc.button(  label='Multi Space Switch', 
+                    h=30, 
+                    w=110, 
+                    command = 'character_rigger.loose_tools.add_space_switch_multi_1.multi_space_switch()', 
+                    bgc = (0.5,0.2,0.2), 
+                    statusBarMessage=   'Select constraint objects first.   ' +
+                                        'Second to last select parent constrained object.   ' +
+                                        'Lastly select object to have custom space switch attribute.   ',
+                    ann=                'Select constraint objects first.   ' +
+                                        'Second to last select parent constrained object.   ' +
+                                        'Lastly select object to have custom space switch attribute.   ')
+        
+        mc.separator( style='none', w=15, h=30, bgc=(0.4,0,0.4) )
         mc.setParent("..")
 
 
@@ -1298,11 +1356,11 @@ class rigger_ui_class():
         mc.setParent("..")
 
         mc.rowLayout(numberOfColumns = 5)
-        mc.button(  label='Select \nHierarchy', 
+        mc.button(  label='VS Code \n Port Connect', 
                     h=40, 
                     w=150, 
-                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().sel_hierarchy()', 
-                    bgc = (0.2,0.2,0.2), 
+                    command = 'character_rigger.loose_tools.vs_code_port_connect.vs_code_port_connect()', 
+                    bgc = (0.3,0.0,0.0), 
                     statusBarMessage='',
                     ann='')
         mc.button(  label='RENAME First Occurrence', 
@@ -1432,7 +1490,14 @@ class rigger_ui_class():
                     bgc = (0.5,0.1,0.1), 
                     statusBarMessage='Outliner Selection Move Down 5',
                     ann='Outliner Selection Move Down 5')
-
+        
+        mc.button(  label='Select \nHierarchy', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().sel_hierarchy()', 
+                    bgc = (0.2,0.2,0.2), 
+                    statusBarMessage='',
+                    ann='')
         mc.setParent("..")
 
 
@@ -1444,13 +1509,7 @@ class rigger_ui_class():
                     bgc = (0.1,0.1,0.1), 
                     statusBarMessage='Copy First Selected Translate Rotate Scale to Second Selected',
                     ann='Copy First Selected Translate Rotate Scale to Second Selected')
-        mc.button(  label='VS Code \n Port Connect', 
-                    h=40, 
-                    w=150, 
-                    command = 'character_rigger.loose_tools.vs_code_port_connect.vs_code_port_connect()', 
-                    bgc = (0.3,0.0,0.0), 
-                    statusBarMessage='',
-                    ann='')
+
         mc.setParent("..")
 
 

@@ -406,12 +406,6 @@ def soft_ik_native():
     mc.connectAttr( stretch_blend, ankleWrist_stretch_blend + '.blender', f=1 )  # foot ctrl stretch blend attr
 
 
-    
-
-
-
-
-
 
 
 

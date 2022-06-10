@@ -63,6 +63,8 @@ import character_rigger.loose_tools.vs_code_port_connect
 import character_rigger.loose_tools.random_scatter_tools
 import character_rigger.loose_tools.cylinder_ctrl
 import character_rigger.loose_tools.joint_scale_compensate_toggle
+import character_rigger.loose_tools.copy_vertex_weights
+import character_rigger.loose_tools.mirror_jnt_same_orient
 
 #_______________________________________________#
 # reimport all
@@ -123,7 +125,10 @@ imp.reload( character_rigger.loose_tools.vs_code_port_connect )
 imp.reload( character_rigger.loose_tools.random_scatter_tools )
 imp.reload( character_rigger.loose_tools.cylinder_ctrl )
 imp.reload( character_rigger.loose_tools.joint_scale_compensate_toggle )
+imp.reload( character_rigger.loose_tools.copy_vertex_weights )
+imp.reload( character_rigger.loose_tools.mirror_jnt_same_orient )
 
 #_______________________________________________#
+
 # relaunch UI
 character_rigger.ar_ui.rigger_ui.rigger_ui_class().rigger_ui_method()
