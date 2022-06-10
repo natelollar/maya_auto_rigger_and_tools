@@ -8,7 +8,8 @@ def fk_chains_rig(  direction = 'l',
                     standin_name = 'fkObj_',
                     fk_ctrl_size = 10,
                     aim_at_PV_ctrl = '',
-                    swch_ctrl = ''):
+                    swch_ctrl = '',
+                    arm_grp = ''):
 
     standin_name0 = standin_name + direction
     #______________find correct standin_obj's _______________#
@@ -23,6 +24,7 @@ def fk_chains_rig(  direction = 'l',
 
     #print(nrbsCrv_transform_lst)
 
+    organizeGrp = mc.group(em=True, n= direction + '_fin_grp')
 
     #____________find jnt chains_____________#
     jntChain_lst_lst = []
@@ -215,4 +217,11 @@ def fk_chains_rig(  direction = 'l',
     
     # set default to ik arm
     mc.setAttr((swch_ctrl + '.fk_ik_blend'), 0)
+
+
+    #_______ organize ____________#
+
+    mc.parent(top_grp_lst, organizeGrp)
+
+    mc.parent(organizeGrp, arm_grp)
     

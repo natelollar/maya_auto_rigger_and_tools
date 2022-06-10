@@ -1219,8 +1219,10 @@ class leg_rig():
         mc.parent(ikHndl_strch_grp1, ftCtrl_list[0], r=1) # to position
         mc.parent(ikHndl_strch_grp1, myLegGrp) # final spot
         mc.parent(ikHndl_strch[0], ikHndl_strch_grp_offs1)
-        # parent constrain translation only
-        mc.parentConstraint( ftCtrl_list[0], ikHndl_strch_grp1, mo=True , sr=('x','y','z') )
+        # point constrain to foot ctrl
+        mc.pointConstraint( ftCtrl_list[0], ikHndl_strch_grp1, mo=True )
+        # orient constrain to global ctrl
+        mc.orientConstraint( global_ctrl, ikHndl_strch_grp1, mo=True )
         
         
         #______________________________________#
@@ -1366,9 +1368,13 @@ class leg_rig():
 
         mc.connectAttr( invert_node + '.outputX', ikHdl_grp_smooth_setDrvKey + '.input', f=1 )
 
+        #mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=0, value=0, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change
+        #mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=50, value=15)
+        #mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=150, value=23.5)
+
         mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=0, value=0, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change
-        mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=50, value=15)
-        mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=150, value=23.5)
+        mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=35, value=25)
+        mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=100, value=29.3)
 
         mc.connectAttr( clamp_end_stop + '.outputR', softIk_fllw_grp_blend + '.color2R', f=1 )  # sets follow grp to follow constant distance from hip ctrl
         mc.setAttr(softIk_fllw_grp_blend + '.color1R', 0) # set ikHndl grp follow to 0, to stay at ankle/ wrist
@@ -1400,9 +1406,13 @@ class leg_rig():
         
         mc.connectAttr( stretch_dist_ratio + '.outputX', mainJnts_smooth_setDrvKey + '.input', f=1 ) # smooth offset keys
         
-        mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.5, value=1.75, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change # also ajust spline afterwards
+        #mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.5, value=1.75, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change # also ajust spline afterwards
+        #mc.setKeyframe(mainJnts_smooth_setDrvKey, float=1, value=1)
+        #mc.setKeyframe(mainJnts_smooth_setDrvKey, float=2, value=0.865)
+
+        mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.5, value=1.7, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change # also ajust spline afterwards
         mc.setKeyframe(mainJnts_smooth_setDrvKey, float=1, value=1)
-        mc.setKeyframe(mainJnts_smooth_setDrvKey, float=2, value=0.865)
+        mc.setKeyframe(mainJnts_smooth_setDrvKey, float=2, value=0.83)
         
 
         mc.connectAttr( knee_strch + '.outputX', knee_smooth_offs + '.input1X', f=1 ) # smooth stretch offset, with set driven key
@@ -1497,10 +1507,19 @@ class leg_rig():
         # set default to ik leg
         mc.setAttr((switch_ctrl_list[0] + '.fk_ik_blend'), 0)
 
+
+        #_______Other_________#
+        #_____________________#
+        # set pole vector to avoid knee flipping
+        mc.setAttr((ikHandleDriver_var[0] + '.poleVectorX'), 1)
+        mc.setAttr((ikHandleDriver_var[0] + '.poleVectorY'), 0)
+        mc.setAttr((ikHandleDriver_var[0] + '.poleVectorZ'), 0)
+
+
         # return top ik and fk controls to parent to hip
         return ik_hip_group_list[0], fk_ctrl_grp_list[0], myLegGrp
 
-
+        
 
 # NOTES
 #______
@@ -1515,7 +1534,7 @@ class leg_rig():
 # non_stetch leg soft ik
 # 0, 35, 100.... 0, 25, 29.3
 # stetch leg soft ik
-# 0.5, 1, 2.... 1.7, 1, 0.865
+# 0.5, 1, 2.... 1.7, 1, 0.83
 
 # non_stetch arm soft ik
 # 0, 50, 150.... 0, 17, 22.05

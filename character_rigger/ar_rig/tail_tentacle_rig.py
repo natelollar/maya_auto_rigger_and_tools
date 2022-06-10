@@ -25,8 +25,8 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
     ikSpline_jntA_pos = sel_near_jnt.sel_near_jnt('standin_obj_ikSpline_A')
     ikSpline_jntB_pos = sel_near_jnt.sel_near_jnt('standin_obj_ikSpline_B')
 
-    spineRoot_ctrl_nm0 = spineRoot_jnt[0].replace(defaultJnt_prefix, '')
-    spineRoot_ctrl_nm1 = spineRoot_ctrl_nm0 + '_ctrl'
+    #spineRoot_ctrl_nm0 = spineRoot_jnt[0].replace(defaultJnt_prefix, '')
+    #spineRoot_ctrl_nm1 = spineRoot_ctrl_nm0 + '_ctrl'
 
     # select joint chain
     jnt_chain = sel_joints.sel_joints(tailStart_jnt[0], tailEnd_jnt[0]).rev_sel_jnt_chainA()

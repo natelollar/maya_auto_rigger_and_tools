@@ -73,6 +73,7 @@ class find_jnts():
 
     # get left or right most child joint (immediate child)
     def l_r_hip_jnt(self, direction):
+        
         # select spine root
         myJoint = self.find_spine_root()
         # spine root children
@@ -95,12 +96,13 @@ class find_jnts():
         low_x_val_jnt = [jointSel[low_x_val_ind]]
 
         # if argument left or right str() choose appropriate joint
-        if direction == 'l':
+        if direction == 'l' or direction == 'left':
             mc.select(high_x_val_jnt)
             return high_x_val_jnt
-        elif direction == 'r':
+        elif direction == 'r' or direction == 'right':
             mc.select(low_x_val_jnt)
             return low_x_val_jnt
+        
 
 
     def l_r_clavicle_jnt(self, direction):
@@ -130,10 +132,10 @@ class find_jnts():
         low_x_val_jnt = [jointSelC[low_x_val_ind]]
     
         # select left or right most chest children
-        if direction == 'l':
+        if direction == 'l' or direction == 'left':
             mc.select(high_x_val_jnt)
             return high_x_val_jnt
-        elif direction == 'r':
+        elif direction == 'r' or direction == 'right':
             mc.select(low_x_val_jnt)
             return low_x_val_jnt
 

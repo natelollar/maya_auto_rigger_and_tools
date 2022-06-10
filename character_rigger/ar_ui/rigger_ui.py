@@ -55,14 +55,26 @@ class rigger_ui_class():
                                         statusBarMessage='Auto Rig Character.  No Joint Names Required. Must have tongue, bot face joints, and top face joints. Else uncheck "Head Jnts."',
                                         ann='Auto Rig Character.  No Joint Names Required. Must have tongue, bot face joints, and top face joints. Else uncheck "Head Jnts."'
                                     )
-        auto_rig_b1a = mc.button(  label='Quadruped Legs Rig (Wyvern)',
-                                        h=30, 
-                                        w=175, 
-                                        command = 'character_rigger.ar_rig.character_rig_quadruped.character_rig()',
-                                        bgc = (.2,.5,0), 
-                                        statusBarMessage='Same as RIG ME! button, except quaruped legs (double knees), instead of normal biped legs. For something like a bipedal wyvern or dragon.',
-                                        ann='Same as RIG ME! button, except quaruped legs (double knees), instead of normal biped legs. For something like a bipedal wyvern or dragon.',
-                                    )
+        auto_rig_b1a = mc.button(   label='Wyvern + Hind Legs \nAuto Rig! (Beta)',
+                                    h=30, 
+                                    w=150, 
+                                    command = 'character_rigger.ar_rig.character_rig_quadruped.character_rig()',
+                                    bgc = (.2,.5,0), 
+                                    statusBarMessage='Same as RIG ME! button, except quaruped legs (double knees), instead of normal biped legs. For something like a bipedal wyvern or dragon.',
+                                    ann='Same as RIG ME! button, except quaruped legs (double knees), instead of normal biped legs. For something like a bipedal wyvern or dragon.',
+                                )
+        auto_rig_b1b = mc.button(   label='Import Wyvern \nModel + Skin', 
+                                    h=30, 
+                                    w=110, 
+                                    command =   'character_rigger.tabs.rigging.rigging_class().import_wyvern_fbx()',
+                                    bgc = (.1,.1,.5), 
+                                    statusBarMessage='Import Wyvern Model + Skin .FBX')
+        auto_rig_b1c = mc.button(   label='Import Wyvern \nBounding Boxes', 
+                                    h=30, 
+                                    w=110, 
+                                    command =   'character_rigger.tabs.rigging.rigging_class().import_wyvern_fbx()',
+                                    bgc = (.4,.1,.1), 
+                                    statusBarMessage='Import Wyvern Bounding Boxes for the Auto Rigger to find the joints.')
         auto_rig_b2 = mc.button(label='L \n Rev Foot \n Locators', 
                                 h=50, 
                                 w=60, 
@@ -199,7 +211,7 @@ class rigger_ui_class():
                                                     statusBarMessage= 'Set skeleton import path.  .ma or fbx. will work.',
                                                     ann='Set skeleton import path.  .ma or fbx. will work.'
                                                      ) 
-        model_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "\orc_body.fbx" )
+        model_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "\orc_body.obj" )
         find_model_browser = mc.textFieldButtonGrp( 'model_browser_text',
                                                     label = '  Model :', # title
                                                     cl3 = ['right', 'left', 'left'], # alignment of 3 columns (title, text, button)
@@ -231,7 +243,9 @@ class rigger_ui_class():
                                     (auto_rig_s4 , 'top', 0),(auto_rig_s4 , 'left', 454),
                                     # buttons
                                     (auto_rig_b1 , 'top', 77),(auto_rig_b1 , 'left', 130),
-                                    (auto_rig_b1a , 'top', 280),(auto_rig_b1a , 'left', 150),
+                                    (auto_rig_b1a , 'top', 280),(auto_rig_b1a , 'left', 250),
+                                    (auto_rig_b1b , 'top', 280),(auto_rig_b1b , 'left', 0),
+                                    (auto_rig_b1c , 'top', 280),(auto_rig_b1c , 'left',125),
                                     (auto_rig_b2 , 'top', 15),(auto_rig_b2 , 'left', 325),
                                     (auto_rig_b3 , 'top', 15),(auto_rig_b3 , 'left', 390),
                                     (auto_rig_b4 , 'top', 86),(auto_rig_b4 , 'left', 15),

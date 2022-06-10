@@ -9,6 +9,8 @@ import maya.api.OpenMaya as om
 
 import string
 
+import os
+
 #_________________Rigging Functions ___________________________#
 #______________________________________________________________#
 class rigging_class():
@@ -1388,4 +1390,11 @@ class rigging_class():
             shape = mc.listRelatives(i, s=True)
             for i in shape:
                 mc.setAttr(i + '.visibility', 1)
+
+    def import_wyvern_fbx(self):
+        file_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "/" "wyvern_skele_skin.fbx" )
+        print(file_path)
+        mc.file(    str(file_path),
+                    i=True
+                    )
 

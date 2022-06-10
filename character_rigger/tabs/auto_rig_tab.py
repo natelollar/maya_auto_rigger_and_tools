@@ -31,9 +31,9 @@ class auto_rig_options():
         auto_rig_ui_info = self.auto_rig_options()
         control_size = auto_rig_ui_info[1]
 
-        if direction == 'left':
+        if direction == 'l' or direction == 'left':
             leg_rig.leg_rig().rev_foot_locators( direction = "left", ft_loc_dist = (10 * float(control_size) ) )
-        if direction == 'right':
+        if direction == 'r' or direction == 'right':
             leg_rig.leg_rig().rev_foot_locators( direction = "right", ft_loc_dist = (10 * float(control_size) ) )
 
     def show_orient_axis(self):

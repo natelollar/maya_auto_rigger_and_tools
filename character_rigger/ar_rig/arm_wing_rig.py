@@ -35,8 +35,8 @@ def arm_wing_rig(   direction = 'r',
     #autoClav_poleVector_pos = 'standin_obj_l_autoClav_pv'
     wrist_jnt = sel_near_jnt.sel_near_jnt('standin_obj_' + direction + '_arm_end')
 
-    chestRoot_ctrl_nm0 = chestRoot_jnt[0].replace(defaultJnt_prefix, '')
-    chestRoot_ctrl_nm1 = chestRoot_ctrl_nm0 + '_ctrl'
+    #chestRoot_ctrl_nm0 = chestRoot_jnt[0].replace(defaultJnt_prefix, '')
+    #chestRoot_ctrl_nm1 = chestRoot_ctrl_nm0 + '_ctrl'
 
     # select joint chain
     arm_chain = [clavicle_jnt[0], shoulder_jnt[0], elbow_jnt[0], wrist_jnt[0] ]
@@ -642,11 +642,11 @@ def arm_wing_rig(   direction = 'r',
         #parent grp to global grp to organize
         mc.parent(myGroup, global_ctrl)
 
-        pvGrp_lst .append(myGroup)
-        pvCtrl_lst .append(myCurve)
+        pvGrp_lst.append(myGroup)
+        pvCtrl_lst.append(myCurve)
 
 
-
+    '''
     #_________________POLE VECTOR autoClav___________________#
     #________________________________________________________#
     autoClav_pvGrp_lst = []
@@ -702,15 +702,23 @@ def arm_wing_rig(   direction = 'r',
 
         autoClav_pvGrp_lst.append(myGroup)
         autoClav_pvCtrl_lst.append(myCurve)
-        
+        '''
 
     # point constrain ik wrist control to autoClav pole vector ctrl
-    mc.pointConstraint(ik_wristCtrl_lst[0], autoClav_pvGrp_lst[0], mo=True)
+    #mc.pointConstraint(ik_wristCtrl_lst[0], autoClav_pvGrp_lst[0], mo=True)
     
-    # point constrain wrist control to autoClav ik handle
-    mc.pointConstraint(ik_wristCtrl_lst[0], ikHndl_autoClav[0], mo=True)
 
-    
+    autoClav_grp = mc.group(empty=True, n= direction + '_arm_auto_clav_grp', parent=autoClav_jnt_lst[1])
+
+    mc.Unparent(autoClav_grp)
+
+    mc.parent(ikHndl_autoClav[0], autoClav_grp)
+
+
+    # point constrain wrist control to autoClav ik handle grp
+    mc.pointConstraint(ik_wristCtrl_lst[0],  autoClav_grp, mo=True)
+    # orient constrain global control to autoClav ik handle grp
+    mc.orientConstraint(global_ctrl, autoClav_grp, mo=True)
 
     
 
@@ -1003,9 +1011,13 @@ def arm_wing_rig(   direction = 'r',
 
     mc.connectAttr( invert_node + '.outputX', ikHdl_grp_smooth_setDrvKey + '.input', f=1 )
 
+    #mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=0, value=0, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change
+    #mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=50, value=5)
+    #mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=150, value=7.1)
+
     mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=0, value=0, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change
-    mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=50, value=5)
-    mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=150, value=7.1)
+    mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=50, value=17)
+    mc.setKeyframe(ikHdl_grp_smooth_setDrvKey, float=150, value=22.05)
 
     mc.connectAttr( clamp_end_stop + '.outputR', softIk_fllw_grp_blend + '.color2R', f=1 )  # sets follow grp to follow constant distance from hip ctrl
     mc.setAttr(softIk_fllw_grp_blend + '.color1R', 0) # set ikHndl grp follow to 0, to stay at wrist
@@ -1037,11 +1049,16 @@ def arm_wing_rig(   direction = 'r',
 
     mc.connectAttr( stretch_dist_ratio + '.outputX', mainJnts_smooth_setDrvKey + '.input', f=1 ) # smooth offset keys
 
-    mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.3, value=3.35, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change # also ajust spline afterwards
+    #mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.3, value=3.35, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change # also ajust spline afterwards
+    #mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.5, value=2)
+    #mc.setKeyframe(mainJnts_smooth_setDrvKey, float=1, value=1)
+    #mc.setKeyframe(mainJnts_smooth_setDrvKey, float=2, value=0.957)
+
+    mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.3, value=3, inTangentType='spline', outTangentType='spline')  #set keys for jnt length change # also ajust spline afterwards
     mc.setKeyframe(mainJnts_smooth_setDrvKey, float=0.5, value=2)
     mc.setKeyframe(mainJnts_smooth_setDrvKey, float=1, value=1)
-    mc.setKeyframe(mainJnts_smooth_setDrvKey, float=2, value=0.957)
-
+    mc.setKeyframe(mainJnts_smooth_setDrvKey, float=1.5, value=.905)
+    mc.setKeyframe(mainJnts_smooth_setDrvKey, float=2, value=0.895)
 
     mc.connectAttr( elbow_strch + '.outputX', elbow_smooth_offs + '.input1X', f=1 ) # smooth stretch offset, with set driven key
     mc.connectAttr( mainJnts_smooth_setDrvKey + '.output', elbow_smooth_offs + '.input2X', f=1 )
@@ -1201,7 +1218,7 @@ def arm_wing_rig(   direction = 'r',
     #___________________________________________________________________#
 
     # hide unused auto clav pole vector
-    mc.setAttr(autoClav_pvCtrl_lst[0] + '.visibility', 0)
+    #mc.setAttr(autoClav_pvCtrl_lst[0] + '.visibility', 0)
     # stretch joint ik handle grp to invisible
     mc.setAttr(ikHndl_strch_grp1 + '.visibility', 0)
     #hide ikHandle
@@ -1216,16 +1233,16 @@ def arm_wing_rig(   direction = 'r',
     mc.parent(arm_loc_1, myArmGrp)
     #_____clav______#
     mc.setAttr(shldrGrp + '.visibility', 0)
-    mc.setAttr(ikHndl_autoClav[0] + '.visibility', 0)
+    mc.setAttr(autoClav_grp + '.visibility', 0)
     # hide dist loc and tool
     mc.setAttr(shldr_measerTool_grp + '.visibility', 0)
     #parent grp to arm grp to organize
     mc.parent(shldr_measerTool_grp, myArmGrp)
     mc.parent(shldrGrp, myArmGrp)
-    mc.parent(ikHndl_autoClav[0], myArmGrp)
+    mc.parent(autoClav_grp, myArmGrp)
     
     
-    
+
     # parent switch grp to main arm grp
     mc.parent(switch_ctrl_grp_list, myArmGrp)
 

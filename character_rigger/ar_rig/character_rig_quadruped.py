@@ -253,7 +253,8 @@ def character_rig():
                                                     standin_name = 'fkObj_',
                                                     fk_ctrl_size = 10,
                                                     aim_at_PV_ctrl = l_arm_wing_rig[3],
-                                                    swch_ctrl = l_arm_wing_rig[4] )
+                                                    swch_ctrl = l_arm_wing_rig[4],
+                                                    arm_grp =  l_arm_wing_rig[2])
     print ('||||||______________||||||')
     print (l_arm_wing_fins)
 
@@ -279,28 +280,10 @@ def character_rig():
                                                     standin_name = 'fkObj_',
                                                     fk_ctrl_size = 10,
                                                     aim_at_PV_ctrl = r_arm_wing_rig[3],
-                                                    swch_ctrl = r_arm_wing_rig[4] )
+                                                    swch_ctrl = r_arm_wing_rig[4],
+                                                    arm_grp =  r_arm_wing_rig[2] )
 
 
-    '''
-    #________________________________________________________________________#
-    # create r arm ctrls
-    r_arm_rig_class = arm_rig.arm_rig()
-
-    r_arm_rig_return = r_arm_rig_class.arm_rig( direction='right', 
-                                            offset_parent_jnt=chest_blend_offset_info, 
-                                            finger_size = (0.4 * float(control_size) ),
-                                            swch_ctrl_size = (3 * float(control_size) ),
-                                            swch_ctrl_dist = (35 * float(control_size) ),
-                                            fk_ctrl_size = (12 * float(control_size) ),
-                                            ik_ctrl_size = (10 * float(control_size) ),
-                                            pv_ctrl_size = (1 * float(control_size) ), 
-                                            elbow_dist_mult = (float(elbow_pv_dist) * float(control_size) ), 
-                                            to_chest_ctrl=to_chest_ctrl,
-                                            global_ctrl=global_ctrl_info[1],
-                                            global_misc_grp=character_misc_grp,
-                                            twstJnts_checkbox=twstJnts_checkbox )
-    '''
     
     #________________________________________________________________________#
     # grp misc and global ctrl grp in final grp
