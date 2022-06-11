@@ -802,15 +802,17 @@ class auto_rig_options():
         r_wing_grp0 = mc.duplicate(l_wing_grp, rr=True, un=True)
 
         r_wing_grp1 = mc.rename(r_wing_grp0, 'bb_slc_wyvern_r_wing_grp' )
-        # take away 1 at end of name
-        r_wing_grp2 = r_wing_grp1[:-1]
 
         mc.select('bb_slc_wyvern_r_wing_grp', hi=True)
 
         r_wing_grp0_lst = mc.ls(sl=True)
 
+        #for i in r_wing_grp0_lst:
+            #new_name = i.replace('l_', 'r_')
+            #mc.rename(i, new_name)
+
         for i in pm.selected():
-            i.rename(i.name().replace('l_', 'r_'))
+           i.rename(i.name().replace('l_', 'r_'))
 
         # -x flip to other side
         mc.setAttr(r_wing_grp1 + '.scaleX', -1 )

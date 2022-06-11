@@ -632,12 +632,12 @@ class rigger_ui_class():
             bgc = (.5,.3,.1), 
             statusBarMessage="Create a sample joint setup.  Don't select anything.")
         mc.separator(style='none', w=15, h=30, bgc=(0.4,0,0.4))
-        mc.button(  label='Tentacle Rig', 
+        mc.button(  label='Sample \n Tentacle Jnts', 
                     h=30, 
-                    w=90, 
-                    command = 'character_rigger.ar_rig.tentacle_rigA.tentacle_rig()', 
-                    bgc = (0.1,0.5,0.1), 
-                    statusBarMessage= 'Requires joints and bounding boxes.  Click next button to create boudning boxes.'
+                    w=75, 
+                    command = 'character_rigger.ar_rig.tentacle_rigA.sample_tentacle_joints()', 
+                    bgc = (0.4,0.1,0.2), 
+                    statusBarMessage= 'Create sample tentacle joints.'
                     )
         mc.button(  label='Bounding Boxes', 
                     h=30, 
@@ -648,12 +648,12 @@ class rigger_ui_class():
                     )
         mc.textField(   'defaultJnt_prefix_text', width=65, h=30, text='baseJnt_', bgc=(.2,0,.2), 
                         statusBarMessage='Prefix of tentacle joints. Used for ikJnt_ and fkJnt_ names.')
-        mc.button(  label='Sample \n Tentacle Jnts', 
+        mc.button(  label='Tentacle Rig', 
                     h=30, 
-                    w=75, 
-                    command = 'character_rigger.ar_rig.tentacle_rigA.sample_tentacle_joints()', 
-                    bgc = (0.4,0.1,0.2), 
-                    statusBarMessage= 'Create sample tentacle joints.'
+                    w=90, 
+                    command = 'character_rigger.ar_rig.tentacle_rigA.tentacle_rig()', 
+                    bgc = (0.1,0.5,0.1), 
+                    statusBarMessage= 'Requires joints and bounding boxes.  Click next button to create boudning boxes.'
                     )
         
         mc.setParent("..")
@@ -847,14 +847,21 @@ class rigger_ui_class():
         mc.text(label = '', height=15, width=454, align='center', font = 'boldLabelFont', bgc=(0,0.7,0.25))
         mc.setParent("..")
 
-        mc.rowLayout(numberOfColumns = 1)
-        mc.button(  label='Reference Ctrl Shape/s', 
+        mc.rowLayout(numberOfColumns = 4)
+        mc.button(  label='Reference \nCtrl Shapes', 
                     h=30, 
-                    w=130, 
+                    w=100, 
                     command = 'character_rigger.tabs.misc_tab.misc_tab_class().reference_curve_shape()', 
-                    bgc = (0.2,0.2,0.2), 
+                    bgc = (0.4,0.2,0.2), 
                     statusBarMessage='Make Ctrl Unselectable. Good for referenceing global ctrl when animating.',
                     ann='Make Ctrl Unselectable.')
+        mc.button(  label='Unreference \nCtrl Shapes', 
+                    h=30, 
+                    w=100, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().unreference_curve_shape()', 
+                    bgc = (0.2,0.4,0.2), 
+                    statusBarMessage='Make Ctrl Selectable.  Must find and select first (outliner, select by name, etc).'
+                    )
         mc.setParent("..")
 
 

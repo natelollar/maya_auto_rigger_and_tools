@@ -183,7 +183,7 @@ def tentacle_rig(
         myCurve_name0 = mc.rename(myCurve, i)
         myCurve_name1 = myCurve_name0.replace(fkJnt_prefix, '') # get rid of jnt prefix
         myCurve_name2 = myCurve_name1.replace('|', '') # to avoid python error
-        myCurve_name = mc.rename(myCurve_name2 + '_fkCtrl')
+        myCurve_name = mc.rename(myCurve_name0, myCurve_name2 + '_fkCtrl')
 
         
         #group curve

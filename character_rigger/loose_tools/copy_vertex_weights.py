@@ -14,7 +14,7 @@ except: # for python 3.x
 def copy_vertex_weights():
     mySel = mc.ls(sl=True, flatten=True)  #flatten to get verts individually
 
-    mySel_half = len(mySel)/2
+    mySel_half = int(len(mySel)/2)
 
     listA = mySel[:mySel_half]
 
@@ -24,7 +24,8 @@ def copy_vertex_weights():
 
     print(listB)
 
-
+    # always makes lowest joint order list A???
+    # because vert # is literally a chronological order already
     for vertA, vertB in zip(listA, listB):
         print(vertA)
         print(vertB)

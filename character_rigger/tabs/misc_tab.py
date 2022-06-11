@@ -87,6 +87,17 @@ class misc_tab_class():
                 mc.setAttr(i + '.overrideEnabled', 1)
                 mc.setAttr(i + '.overrideDisplayType', 2)
 
+    def unreference_curve_shape(self):
+        mySel = mc.ls(sl=True)
+        for i in mySel:
+            # list shapes under ctrl
+            mySel_shape = mc.listRelatives(i, s=True)
+            # incase curve has more than one shape
+            for i in mySel_shape:
+                # set display type of shape to reference
+                mc.setAttr(i + '.overrideEnabled', 1)
+                mc.setAttr(i + '.overrideDisplayType', 0)
+
 
     def rename_first(self):
         current_part = mc.textField('current_part_text', query=True, text=True)
