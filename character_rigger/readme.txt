@@ -1,3 +1,5 @@
+* Update:  Added more tools and a Wyvern Auto Rigger feature.
+
 #___________________________________________#
 Nate Tools Character Rigger Toolset ReadMe 
 > Mainly Tested in Maya 2020.4, Windows 10, Python 2.7.11 (though, should work in Maya 2022 and 2019) 
