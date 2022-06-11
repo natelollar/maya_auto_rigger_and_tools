@@ -212,6 +212,43 @@ class misc_tab_class():
         mc.select(mySel, hi=1)
 
 
+    # print basic object attributes (translation, rotation, name)
+    def object_info(self):
+        print('\n')
+        mySel = mc.ls(sl=True)
+
+        for i in mySel:
+            print('___________________________________________________________________') 
+            print(i)
+            i_position =  mc.xform(i, q=True , ws=True, t=True)
+            i_rotation =  mc.xform(i, q=True , ws=True, ro=True)
+            
+            #_________________
+            # translation rounded
+            pos_rounded_list = []
+            for pos in i_position:
+                pos_rounded = round(pos, 3)
+                pos_rounded_list.append(pos_rounded)
+
+            pos_rounded_listA = str(pos_rounded_list).replace('[', '(')
+            pos_rounded_listB = pos_rounded_listA.replace(']', ')')
+
+            print('Translation: ' + pos_rounded_listB)
+            
+            #_________________
+            # rotation rounded
+            rot_rounded_list = []
+            for rot in i_rotation:
+                rot_rounded = round(rot, 3)
+                rot_rounded_list.append(rot_rounded)
+
+            rot_rounded_listA = str(rot_rounded_list).replace('[', '(')
+            rot_rounded_listB = rot_rounded_listA.replace(']', ')')
+
+            print('Rotation: ' + rot_rounded_listB)
+        
+
+
             
         
 

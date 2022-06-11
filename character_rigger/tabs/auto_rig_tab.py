@@ -1,9 +1,19 @@
 import maya.cmds as mc
 
+import os
+
 import random as rd
+
+import pymel.core as pm
+
+try:
+    from itertools import izip as zip
+except: # will be python 3.x series
+    pass
 
 from ..ar_rig import leg_rig
 from ..ar_functions import find_jnts
+from ..ar_functions import bb_nurbs_ctrl
 
     #_________________Auto Rig Tab Options _______________________#
     #_____________________________________________________________#
@@ -219,7 +229,649 @@ class auto_rig_options():
         mc.select(mySel, hi=1)
 
 
+    def import_wyvern_fbx(self):
+        file_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "/" "wyvern_skele_skin.fbx" )
+        print(file_path)
+        mc.file(    str(file_path),
+                    i=True
+                    )
 
+
+    def wyverm_bounding_boxes(self):
+        #_________________#
+        #______tail_______#
+        #_________________#
+        chest_ctrl_name = 'standin_obj_chest_root'
+        chest_ctrl_grp = chest_ctrl_name + '_grp'
+
+        spine_root_ctrl_name = 'standin_obj_spine_root'
+        spine_root_ctrl_grp = spine_root_ctrl_name + '_grp'
+
+        start_ctrl_name = 'standin_obj_tail_start'
+        start_ctrl_grp = start_ctrl_name + '_grp'
+
+        end_ctrl_name = 'standin_obj_tail_end'
+        end_ctrl_grp = end_ctrl_name + '_grp'
+
+        ikTailA_ctrl_name = 'standin_obj_ikSpline_A'
+        ikTailA_ctrl_grp = ikTailA_ctrl_name + '_grp'
+
+        ikTailB_ctrl_name = 'standin_obj_ikSpline_B'
+        ikTailB_ctrl_grp = ikTailB_ctrl_name + '_grp'
+
+        spine_root_curve_name = 'spine_root_tail_curve'
+
+        start_curve_name = 'start_tail_curve'
+
+        start_curve_nameA = 'start_tail_curveA'
+
+        start_curve_nameB = 'start_tail_curveB'
+
+        organize_grp_name = 'bb_slc_wyvern_grp'
+
+        tail_grp_name = 'bb_slc_wyver_tail_grp'
+
+        l_wing_grp_name = 'bb_slc_wyvern_l_wing_grp'
+
+        #____________________#
+        if mc.objExists(organize_grp_name) == False:
+            organize_grp = mc.group(em=True, n='bb_slc_wyvern_grp')
+
+        if mc.objExists(tail_grp_name) == False:
+            tail_grp = mc.group(em=True, n='bb_slc_wyver_tail_grp')
+            if mc.objExists(organize_grp_name):
+                mc.parent(tail_grp, organize_grp)
+
+        if mc.objExists(l_wing_grp_name) == False:
+            l_wing_grp = mc.group(em=True, n='bb_slc_wyvern_l_wing_grp')
+            if mc.objExists(organize_grp_name):
+                mc.parent(l_wing_grp, organize_grp)
+
+
+        #____________________#
+        if mc.objExists(chest_ctrl_name) == False:
+            bb_nurbs_ctrl.bb_nurbs_ctrl(name='standin_obj_chest_root', 
+                                        size=5, 
+                                        color1R=0, 
+                                        color1G=1, 
+                                        color1B=1, 
+                                        color2R=1, 
+                                        color2G=1, 
+                                        color2B=0).sel_box_ctrl()
+            mc.select(chest_ctrl_name)
+            mc.Unparent()
+            mc.delete(chest_ctrl_grp)
+
+            mc.setAttr(chest_ctrl_name + '.translate', 0.0, 174.427, 40.123)
+
+            mc.parent(  chest_ctrl_name, 
+                        tail_grp)
+
+        #____________________#
+        if mc.objExists(spine_root_ctrl_name) == False:
+            bb_nurbs_ctrl.bb_nurbs_ctrl(name='standin_obj_spine_root', 
+                                        size=5, 
+                                        color1R=0, 
+                                        color1G=1, 
+                                        color1B=1, 
+                                        color2R=1, 
+                                        color2G=1, 
+                                        color2B=0).sel_box_ctrl()
+            mc.select(spine_root_ctrl_name)
+            mc.Unparent()
+            mc.delete(spine_root_ctrl_grp)
+
+            mc.setAttr(spine_root_ctrl_name + '.translate', 0.0, 140.38, 1.278)
+
+            mc.parent(  spine_root_ctrl_name, 
+                        tail_grp)
+
+        
+        #____________________#
+        if mc.objExists(start_ctrl_name) == False:
+            bb_nurbs_ctrl.bb_nurbs_ctrl(name='standin_obj_tail_start', 
+                                        size=5, 
+                                        color1R=0, 
+                                        color1G=1, 
+                                        color1B=0, 
+                                        color2R=1, 
+                                        color2G=1, 
+                                        color2B=0).sel_box_ctrl()
+            mc.select(start_ctrl_name)
+            mc.Unparent()
+            mc.delete(start_ctrl_grp)
+
+            mc.setAttr(start_ctrl_name + '.translate', 0.0, 133.91, -22.863)
+
+            mc.parent(
+                        start_ctrl_name, 
+                        tail_grp
+                        )
+
+        #____________________#
+        if mc.objExists(end_ctrl_name) == False:
+            bb_nurbs_ctrl.bb_nurbs_ctrl(name='standin_obj_tail_end', 
+                                        size=5, 
+                                        color1R=1, 
+                                        color1G=0, 
+                                        color1B=0, 
+                                        color2R=1, 
+                                        color2G=1, 
+                                        color2B=0).sel_box_ctrl()
+            mc.select(end_ctrl_name)
+            mc.Unparent(end_ctrl_name)
+            mc.delete(end_ctrl_grp)
+
+            mc.setAttr(end_ctrl_name + '.translate', 0.0, 100.497, -283.462)
+
+            mc.parent(
+                        end_ctrl_name,
+                        tail_grp
+                        )
+
+
+        #____________________#
+        if mc.objExists(ikTailA_ctrl_name) == False:
+            bb_nurbs_ctrl.bb_nurbs_ctrl(name='standin_obj_ikSpline_A', 
+                                        size=5, 
+                                        color1R=0, 
+                                        color1G=.3, 
+                                        color1B=1, 
+                                        color2R=1, 
+                                        color2G=1, 
+                                        color2B=0).sel_sphere_ctrl()
+            ikTailA_ctrl_name = 'standin_obj_ikSpline_A1'
+            ikTailA_ctrl_grp = ikTailA_ctrl_name + '_grp'
+            mc.select(ikTailA_ctrl_name)
+            mc.Unparent(ikTailA_ctrl_name)
+            mc.delete(ikTailA_ctrl_grp)
+
+            mc.setAttr(ikTailA_ctrl_name + '.translate', 0.0, 105.52, -131.872)
+
+            mc.parent(
+                        ikTailA_ctrl_name,
+                        tail_grp
+                        )
+            ikTailA_ctrl_name = mc.rename(ikTailA_ctrl_name, ikTailA_ctrl_name[:-1])
+
+        #____________________#
+        if mc.objExists(ikTailB_ctrl_name) == False:
+            bb_nurbs_ctrl.bb_nurbs_ctrl(name='standin_obj_ikSpline_B', 
+                                        size=5, 
+                                        color1R=0, 
+                                        color1G=.3, 
+                                        color1B=1, 
+                                        color2R=1, 
+                                        color2G=1, 
+                                        color2B=0).sel_sphere_ctrl()
+            ikTailB_ctrl_name = 'standin_obj_ikSpline_B1'
+            ikTailB_ctrl_grp = ikTailB_ctrl_name + '_grp'
+            mc.select(ikTailB_ctrl_name)
+            mc.Unparent(ikTailB_ctrl_name)
+            mc.delete(ikTailB_ctrl_grp)
+
+            mc.setAttr(ikTailB_ctrl_name + '.translate', 0.0, 100.497, -283.462)
+
+            mc.parent(
+                        ikTailB_ctrl_name,
+                        tail_grp
+                        )
+            ikTailB_ctrl_name = mc.rename(ikTailB_ctrl_name, ikTailB_ctrl_name[:-1])
+        
+
+        # ______________ connect curves _______________#
+        #_____________
+        if mc.objExists(spine_root_curve_name) == False:
+            spine_root_curve = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='spine_root_tail_curve')
+            spine_root_curve_shp = mc.listRelatives(spine_root_curve, type='shape')
+            mc.setAttr(spine_root_curve_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(spine_root_curve_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(spine_root_curve_shp[0] + '.overrideColorRGB', 0, 1, 1)
+            mc.setAttr(spine_root_curve_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( spine_root_ctrl_name + '.translate', 
+                            spine_root_curve_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( start_ctrl_name + '.translate', 
+                            spine_root_curve_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        spine_root_curve,
+                        tail_grp
+                        )
+
+        #_____________
+        if mc.objExists(start_curve_name) == False:
+            start_curve = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='start_tail_curve')
+            start_curve_shp = mc.listRelatives(start_curve, type='shape')
+            mc.setAttr(start_curve_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(start_curve_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(start_curve_shp[0] + '.overrideColorRGB', 0, 1, 0)
+            mc.setAttr(start_curve_shp[0] + '.lineWidth', 4)
+
+            mc.connectAttr( start_ctrl_name + '.translate', 
+                            start_curve_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( end_ctrl_name + '.translate', 
+                            start_curve_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        start_curve,
+                        tail_grp
+                        )
+
+        #_____________
+        if mc.objExists(start_curve_nameA) == False:
+            start_curveA = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='start_tail_curveA')
+            start_curveA_shp = mc.listRelatives(start_curveA, type='shape')
+            mc.setAttr(start_curveA_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(start_curveA_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(start_curveA_shp[0] + '.overrideColorRGB', 0, 1, 1)
+            mc.setAttr(start_curveA_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( start_ctrl_name + '.translate', 
+                            start_curveA_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( ikTailA_ctrl_name + '.translate', 
+                            start_curveA_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        start_curveA,
+                        tail_grp
+                        )
+
+        #_____________
+        if mc.objExists(start_curve_nameB) == False:
+            start_curveB = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='start_tail_curveB')
+            start_curveB_shp = mc.listRelatives(start_curveB, type='shape')
+            mc.setAttr(start_curveB_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(start_curveB_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(start_curveB_shp[0] + '.overrideColorRGB', 0, 1, 1)
+            mc.setAttr(start_curveB_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( start_ctrl_name + '.translate', 
+                            start_curveB_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( ikTailB_ctrl_name + '.translate', 
+                            start_curveB_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        start_curveB,
+                        tail_grp
+                        )
+
+
+        
+
+
+        #_________________#
+        #_____l_wing______#
+        #_________________#
+
+        l_chest_root_curve_name = 'l_chest_root_curve'
+
+        l_clavicle_curve_name = 'l_clavicle_curve'
+
+        l_arm_start_curve_name = 'l_arm_start_curve'
+
+        l_elbow_curve_name = 'l_elbow_curve'
+        l_elbow_curveA_name = 'l_elbowA_curve'
+
+        l_arm_end_curveA_name = 'l_arm_end_curveA'
+        l_arm_end_curveB_name = 'l_arm_end_curveB'
+        l_arm_end_curveC_name = 'l_arm_end_curveC'
+        l_arm_end_curveD_name = 'l_arm_end_curveD'
+        l_arm_end_curveE_name = 'l_arm_end_curveE'
+
+
+        l_wing_bb_lst = [
+                            'standin_obj_l_clavicle', 
+                            'standin_obj_l_arm_start',
+                            'standin_obj_l_elbow',
+                            'standin_fkObj_l_wingA',
+                            'standin_obj_l_arm_end',
+                            'standin_fkObj_l_wingB',
+                            'standin_fkObj_l_wingC',
+                            'standin_fkObj_l_wingD',
+                            'standin_fkObj_l_wingF',
+                            'standin_fkObj_l_wingE',
+                        ]
+
+        l_wing_bb_grp_lst = [
+                            'standin_obj_l_clavicle_grp', 
+                            'standin_obj_l_arm_start_grp',
+                            'standin_obj_l_elbow_grp',
+                            'standin_fkObj_l_wingA_grp',
+                            'standin_obj_l_arm_end_grp',
+                            'standin_fkObj_l_wingB_grp',
+                            'standin_fkObj_l_wingC_grp',
+                            'standin_fkObj_l_wingD_grp',
+                            'standin_fkObj_l_wingF_grp',
+                            'standin_fkObj_l_wingE_grp',
+                        ]
+
+        l_wing_bb_pos_lst = [   
+                            (3.35, 171.894, 85.449), 
+                            (20.417, 198.92, 53.718),
+                            (86.027, 201.213, 26.698),
+                            (86.708, 197.721, 20.523),
+                            (173.696, 256.659, 81.309),
+                            (183.624, 257.845, 79.356),
+                            (196.932, 264.209, 84.819),
+                            (206.782, 270.019, 95.036),
+                            (199.161, 274.51, 101.963),
+                            (180.16, 264.177, 92.352)
+                        ]
+
+
+        for i_bb, i_bb_grp, i_bb_pos in zip(l_wing_bb_lst, l_wing_bb_grp_lst, l_wing_bb_pos_lst):
+             #____________________#
+            if mc.objExists(i_bb) == False:
+                bb_nurbs_ctrl.bb_nurbs_ctrl(name=i_bb, 
+                                            size=5, 
+                                            color1R=0, 
+                                            color1G=0, 
+                                            color1B=1, 
+                                            color2R=1, 
+                                            color2G=1, 
+                                            color2B=0).sel_box_ctrl()
+                mc.select(i_bb)
+                mc.Unparent()
+                mc.delete(i_bb_grp)
+
+                mc.setAttr(i_bb + '.translate', i_bb_pos[0], i_bb_pos[1], i_bb_pos[2] )
+                mc.setAttr(i_bb + '.scale', 0.5, 0.5, 0.5 )
+
+                mc.parent(  i_bb, 
+                            l_wing_grp)
+        
+
+
+        #_________________ connection curves ______________________#
+
+
+        #_____________
+        if mc.objExists(l_chest_root_curve_name) == False:
+            l_chest_root_curve = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='l_chest_root_curve')
+            l_chest_root_curve_shp = mc.listRelatives(l_chest_root_curve, type='shape')
+            mc.setAttr(l_chest_root_curve_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(l_chest_root_curve_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(l_chest_root_curve_shp[0] + '.overrideColorRGB', 0, 1, 0)
+            mc.setAttr(l_chest_root_curve_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( chest_ctrl_name + '.translate', 
+                            l_chest_root_curve_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( l_wing_bb_lst[0] + '.translate', 
+                            l_chest_root_curve_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        l_chest_root_curve,
+                        l_wing_grp
+                        )
+
+        #_____________
+        if mc.objExists(l_clavicle_curve_name) == False:
+            l_clavicle_curve = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='l_clavicle_curve')
+            l_clavicle_curve_shp = mc.listRelatives(l_clavicle_curve, type='shape')
+            mc.setAttr(l_clavicle_curve_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(l_clavicle_curve_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(l_clavicle_curve_shp[0] + '.overrideColorRGB', 0, 1, 0)
+            mc.setAttr(l_clavicle_curve_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( l_wing_bb_lst[0] + '.translate', 
+                            l_clavicle_curve_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( l_wing_bb_lst[1] + '.translate', 
+                            l_clavicle_curve_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        l_clavicle_curve,
+                        l_wing_grp
+                        )
+        
+        #_____________
+        if mc.objExists(l_arm_start_curve_name) == False:
+            l_arm_start_curve = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='l_arm_start_curve')
+            l_arm_start_curve_shp = mc.listRelatives(l_arm_start_curve, type='shape')
+            mc.setAttr(l_arm_start_curve_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(l_arm_start_curve_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(l_arm_start_curve_shp[0] + '.overrideColorRGB', 0, 1, 0)
+            mc.setAttr(l_arm_start_curve_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( l_wing_bb_lst[1] + '.translate', 
+                            l_arm_start_curve_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( l_wing_bb_lst[2] + '.translate', 
+                            l_arm_start_curve_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        l_arm_start_curve,
+                        l_wing_grp
+                        )
+
+        #_____________
+        if mc.objExists(l_elbow_curve_name) == False:
+            l_elbow_curve = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='l_elbow_curve')
+            l_elbow_curve_shp = mc.listRelatives(l_elbow_curve, type='shape')
+            mc.setAttr(l_elbow_curve_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(l_elbow_curve_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(l_elbow_curve_shp[0] + '.overrideColorRGB', 0, 1, 0)
+            mc.setAttr(l_elbow_curve_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( l_wing_bb_lst[2] + '.translate', 
+                            l_elbow_curve_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( l_wing_bb_lst[3] + '.translate', 
+                            l_elbow_curve_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        l_elbow_curve,
+                        l_wing_grp
+                        )
+
+
+        #_____________
+        if mc.objExists(l_elbow_curveA_name) == False:
+            l_elbow_curveA = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='l_elbow_curveA')
+            l_elbow_curveA_shp = mc.listRelatives(l_elbow_curveA, type='shape')
+            mc.setAttr(l_elbow_curveA_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(l_elbow_curveA_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(l_elbow_curveA_shp[0] + '.overrideColorRGB', 0, 1, 0)
+            mc.setAttr(l_elbow_curveA_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( l_wing_bb_lst[2] + '.translate', 
+                            l_elbow_curveA_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( l_wing_bb_lst[4] + '.translate', 
+                            l_elbow_curveA_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        l_elbow_curveA,
+                        l_wing_grp
+                        )
+
+
+        #_____________**
+        if mc.objExists(l_arm_end_curveA_name) == False:
+            l_arm_end_curveA = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='l_arm_end_curveA')
+            l_arm_end_curveA_shp = mc.listRelatives(l_arm_end_curveA, type='shape')
+            mc.setAttr(l_arm_end_curveA_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(l_arm_end_curveA_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(l_arm_end_curveA_shp[0] + '.overrideColorRGB', 0, 1, 0)
+            mc.setAttr(l_arm_end_curveA_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( l_wing_bb_lst[4] + '.translate', 
+                            l_arm_end_curveA_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( l_wing_bb_lst[5] + '.translate', 
+                            l_arm_end_curveA_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        l_arm_end_curveA,
+                        l_wing_grp
+                        )
+
+        #_____________**
+        if mc.objExists(l_arm_end_curveB_name) == False:
+            l_arm_end_curveB = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='l_arm_end_curveB')
+            l_arm_end_curveB_shp = mc.listRelatives(l_arm_end_curveB, type='shape')
+            mc.setAttr(l_arm_end_curveB_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(l_arm_end_curveB_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(l_arm_end_curveB_shp[0] + '.overrideColorRGB', 0, 1, 0)
+            mc.setAttr(l_arm_end_curveB_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( l_wing_bb_lst[4] + '.translate', 
+                            l_arm_end_curveB_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( l_wing_bb_lst[6] + '.translate', 
+                            l_arm_end_curveB_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        l_arm_end_curveB,
+                        l_wing_grp
+                        )
+
+        #_____________**
+        if mc.objExists(l_arm_end_curveC_name) == False:
+            l_arm_end_curveC = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='l_arm_end_curveC')
+            l_arm_end_curveC_shp = mc.listRelatives(l_arm_end_curveC, type='shape')
+            mc.setAttr(l_arm_end_curveC_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(l_arm_end_curveC_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(l_arm_end_curveC_shp[0] + '.overrideColorRGB', 0, 1, 0)
+            mc.setAttr(l_arm_end_curveC_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( l_wing_bb_lst[4] + '.translate', 
+                            l_arm_end_curveC_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( l_wing_bb_lst[7] + '.translate', 
+                            l_arm_end_curveC_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        l_arm_end_curveC,
+                        l_wing_grp
+                        )
+
+        #_____________**
+        if mc.objExists(l_arm_end_curveD_name) == False:
+            l_arm_end_curveD = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='l_arm_end_curveD')
+            l_arm_end_curveD_shp = mc.listRelatives(l_arm_end_curveD, type='shape')
+            mc.setAttr(l_arm_end_curveD_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(l_arm_end_curveD_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(l_arm_end_curveD_shp[0] + '.overrideColorRGB', 0, 1, 0)
+            mc.setAttr(l_arm_end_curveD_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( l_wing_bb_lst[4] + '.translate', 
+                            l_arm_end_curveD_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( l_wing_bb_lst[9] + '.translate', 
+                            l_arm_end_curveD_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        l_arm_end_curveD,
+                        l_wing_grp
+                        )
+
+        #_____________**
+        if mc.objExists(l_arm_end_curveE_name) == False:
+            l_arm_end_curveE = mc.curve(degree=1, p=[(0,0,0),(0,0,-100)], n='l_arm_end_curveE')
+            l_arm_end_curveE_shp = mc.listRelatives(l_arm_end_curveE, type='shape')
+            mc.setAttr(l_arm_end_curveE_shp[0] + '.overrideEnabled', 1)
+            mc.setAttr(l_arm_end_curveE_shp[0] + '.overrideRGBColors', 1)
+            mc.setAttr(l_arm_end_curveE_shp[0] + '.overrideColorRGB', 0, 1, 0)
+            mc.setAttr(l_arm_end_curveE_shp[0] + '.lineWidth', 2)
+
+            mc.connectAttr( l_wing_bb_lst[4] + '.translate', 
+                            l_arm_end_curveE_shp[0] + '.controlPoints[0]', f=True )
+
+            mc.connectAttr( l_wing_bb_lst[8] + '.translate', 
+                            l_arm_end_curveE_shp[0] + '.controlPoints[1]', f=True )
+
+            mc.parent(  
+                        l_arm_end_curveE,
+                        l_wing_grp
+                        )
+
+
+        #_________________#
+        #_____r_wing______#
+        #_________________#
+        
+        r_wing_grp0 = mc.duplicate(l_wing_grp, rr=True, un=True)
+
+        r_wing_grp1 = mc.rename(r_wing_grp0, 'bb_slc_wyvern_r_wing_grp' )
+
+        r_wing_grp2 = r_wing_grp1[:-1]
+
+        r_wing_grp0_lst = mc.select('bb_slc_wyvern_r_wing_grp', hi=True)
+
+        for i in pm.selected():
+            i.rename(i.name().replace('l_', 'r_'))
+
+        mc.setAttr(r_wing_grp1 + '.scaleX', -1 )
+
+
+        #____________________#
+        #_____elbows PV______#
+        #____________________#
+
+        l_elbowPV_ctrl_name = 'standin_obj_l_elbow_pv'
+        l_elbowPV_ctrl_grp = l_elbowPV_ctrl_name + '_grp'
+
+        r_elbowPV_ctrl_name = 'standin_obj_r_elbow_pv'
+        r_elbowPV_ctrl_grp = r_elbowPV_ctrl_name + '_grp'
+
+        #__________l__________#
+        if mc.objExists(l_elbowPV_ctrl_name) == False:
+            bb_nurbs_ctrl.bb_nurbs_ctrl(name='standin_obj_l_elbow_pv', 
+                                        size=5, 
+                                        color1R=0, 
+                                        color1G=0, 
+                                        color1B=1, 
+                                        color2R=1, 
+                                        color2G=1, 
+                                        color2B=0).sel_pyramid_ctrl()
+            l_elbowPV_ctrl_name = 'standin_obj_l_elbow_pv1'
+            l_elbowPV_ctrl_grp = l_elbowPV_ctrl_name + '_grp'
+            mc.select(l_elbowPV_ctrl_name)
+            mc.Unparent(l_elbowPV_ctrl_name)
+            mc.delete(l_elbowPV_ctrl_grp)
+
+            mc.setAttr(l_elbowPV_ctrl_name + '.translate', 106.07, 127.39, -110.583 )
+            mc.setAttr(l_elbowPV_ctrl_name + '.rotate', -29.127, 0.017, 15.22 )
+
+
+            mc.parent(
+                        l_elbowPV_ctrl_name,
+                        organize_grp
+                        )
+            l_elbowPV_ctrl_name = mc.rename(l_elbowPV_ctrl_name, l_elbowPV_ctrl_name[:-1])
+
+        #__________r__________#
+        if mc.objExists(r_elbowPV_ctrl_name) == False:
+            bb_nurbs_ctrl.bb_nurbs_ctrl(name='standin_obj_r_elbow_pv', 
+                                        size=5, 
+                                        color1R=0, 
+                                        color1G=0, 
+                                        color1B=1, 
+                                        color2R=1, 
+                                        color2G=1, 
+                                        color2B=0).sel_pyramid_ctrl()
+            r_elbowPV_ctrl_name = 'standin_obj_r_elbow_pv1'
+            r_elbowPV_ctrl_grp = r_elbowPV_ctrl_name + '_grp'
+            mc.select(r_elbowPV_ctrl_name)
+            mc.Unparent(r_elbowPV_ctrl_name)
+            mc.delete(r_elbowPV_ctrl_grp)
+
+            mc.setAttr(r_elbowPV_ctrl_name + '.translate', -106.07, 127.39, -110.583 )
+            mc.setAttr(r_elbowPV_ctrl_name + '.rotate', -29.127, -0.017, -15.22 )
+
+
+            mc.parent(
+                        r_elbowPV_ctrl_name,
+                        organize_grp
+                        )
+            r_elbowPV_ctrl_name = mc.rename(r_elbowPV_ctrl_name, r_elbowPV_ctrl_name[:-1])
 
 
 

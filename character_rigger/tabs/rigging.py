@@ -1391,10 +1391,5 @@ class rigging_class():
             for i in shape:
                 mc.setAttr(i + '.visibility', 1)
 
-    def import_wyvern_fbx(self):
-        file_path = os.path.abspath( os.path.join(__file__, "..", "..", "other") + "/" "wyvern_skele_skin.fbx" )
-        print(file_path)
-        mc.file(    str(file_path),
-                    i=True
-                    )
+    
 

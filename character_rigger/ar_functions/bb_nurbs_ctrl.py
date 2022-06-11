@@ -57,6 +57,10 @@ class bb_nurbs_ctrl():
         
         mc.delete(locator_ctrl)
 
+        sphere_ctrl = mc.ls(sl=True)
+
+        return sphere_ctrl
+
 
     def sel_tri_circle_ctrl(self):
         tri_circle_ctrl_var = nurbs_ctrl.nurbs_ctrl( self.name, 1, self.color1R, self.color1G, self.color1B )

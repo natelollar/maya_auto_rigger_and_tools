@@ -66,13 +66,13 @@ class rigger_ui_class():
         auto_rig_b1b = mc.button(   label='Import Wyvern \nModel + Skin', 
                                     h=30, 
                                     w=110, 
-                                    command =   'character_rigger.tabs.rigging.rigging_class().import_wyvern_fbx()',
+                                    command =   'character_rigger.tabs.auto_rig_tab.auto_rig_options().import_wyvern_fbx()',
                                     bgc = (.1,.1,.5), 
                                     statusBarMessage='Import Wyvern Model + Skin .FBX')
         auto_rig_b1c = mc.button(   label='Import Wyvern \nBounding Boxes', 
                                     h=30, 
                                     w=110, 
-                                    command =   'character_rigger.tabs.rigging.rigging_class().import_wyvern_fbx()',
+                                    command =   'character_rigger.tabs.auto_rig_tab.auto_rig_options().wyverm_bounding_boxes()',
                                     bgc = (.4,.1,.1), 
                                     statusBarMessage='Import Wyvern Bounding Boxes for the Auto Rigger to find the joints.')
         auto_rig_b2 = mc.button(label='L \n Rev Foot \n Locators', 
@@ -1374,7 +1374,7 @@ class rigger_ui_class():
                     h=40, 
                     w=150, 
                     command = 'character_rigger.loose_tools.vs_code_port_connect.vs_code_port_connect()', 
-                    bgc = (0.3,0.0,0.0), 
+                    bgc = (0.2,0.2,0.2), 
                     statusBarMessage='',
                     ann='')
         mc.button(  label='RENAME First Occurrence', 
@@ -1509,7 +1509,7 @@ class rigger_ui_class():
                     h=40, 
                     w=150, 
                     command = 'character_rigger.tabs.misc_tab.misc_tab_class().sel_hierarchy()', 
-                    bgc = (0.2,0.2,0.2), 
+                    bgc = (0.1,0.1,0.4), 
                     statusBarMessage='',
                     ann='')
         mc.setParent("..")
@@ -1523,7 +1523,13 @@ class rigger_ui_class():
                     bgc = (0.1,0.1,0.1), 
                     statusBarMessage='Copy First Selected Translate Rotate Scale to Second Selected',
                     ann='Copy First Selected Translate Rotate Scale to Second Selected')
-
+        mc.button(  label='Print \nObject Info', 
+                    h=40, 
+                    w=150, 
+                    command = 'character_rigger.tabs.misc_tab.misc_tab_class().object_info()', 
+                    bgc = (0.3,0.0,0.1), 
+                    statusBarMessage='Print basic object attributes (translation, rotation, name)'
+                    )
         mc.setParent("..")
 
 
