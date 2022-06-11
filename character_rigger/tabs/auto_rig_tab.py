@@ -287,7 +287,7 @@ class auto_rig_options():
             if mc.objExists(organize_grp_name):
                 mc.parent(l_wing_grp, organize_grp)
 
-
+        
         #____________________#
         if mc.objExists(chest_ctrl_name) == False:
             bb_nurbs_ctrl.bb_nurbs_ctrl(name='standin_obj_chest_root', 
@@ -304,9 +304,11 @@ class auto_rig_options():
 
             mc.setAttr(chest_ctrl_name + '.translate', 0.0, 174.427, 40.123)
 
-            mc.parent(  chest_ctrl_name, 
-                        tail_grp)
+            #mc.delete('standin_obj_chest_root1')
 
+            mc.parent(  chest_ctrl_name, 
+                        organize_grp)
+        
         #____________________#
         if mc.objExists(spine_root_ctrl_name) == False:
             bb_nurbs_ctrl.bb_nurbs_ctrl(name='standin_obj_spine_root', 
@@ -800,16 +802,34 @@ class auto_rig_options():
         r_wing_grp0 = mc.duplicate(l_wing_grp, rr=True, un=True)
 
         r_wing_grp1 = mc.rename(r_wing_grp0, 'bb_slc_wyvern_r_wing_grp' )
-
+        # take away 1 at end of name
         r_wing_grp2 = r_wing_grp1[:-1]
 
-        r_wing_grp0_lst = mc.select('bb_slc_wyvern_r_wing_grp', hi=True)
+        mc.select('bb_slc_wyvern_r_wing_grp', hi=True)
+
+        r_wing_grp0_lst = mc.ls(sl=True)
 
         for i in pm.selected():
             i.rename(i.name().replace('l_', 'r_'))
 
+        # -x flip to other side
         mc.setAttr(r_wing_grp1 + '.scaleX', -1 )
 
+        # rename again to name curve shapes different
+        mc.select('bb_slc_wyvern_r_wing_grp', hi=True)
+
+        r_wing_grp0_lst = mc.ls(sl=True)
+
+        for i in r_wing_grp0_lst:
+            mc.rename(i, i)
+
+        # delete extra duplicated chest node
+        mc.delete('standin_obj_chest_root1')
+
+        #attach curve to middle chest
+        r_chest_root_curve_shp = mc.listRelatives('r_chest_root_curve', type='shape')
+        mc.connectAttr( chest_ctrl_name + '.translate', 
+                        r_chest_root_curve_shp[0] + '.controlPoints[0]', f=True )
 
         #____________________#
         #_____elbows PV______#
@@ -874,4 +894,189 @@ class auto_rig_options():
             r_elbowPV_ctrl_name = mc.rename(r_elbowPV_ctrl_name, r_elbowPV_ctrl_name[:-1])
 
 
+        #hide grp
+        #mc.hide(organize_grp)
+
+
+    def wyvern_rev_foot_locators(self):
+        l_direction = 'l'
+        r_direction = 'r'
+
+        l_loc_grp = mc.group(em=True, n=l_direction + '_ft_loc_grp')
+        r_loc_grp = mc.group(em=True, n=r_direction + '_ft_loc_grp')
+
+        # __________l locators ________#
+        if mc.objExists(l_direction + '_loc_ankle') == False:
+            loc_ankle = mc.spaceLocator(n = l_direction + '_loc_ankle')
+            mc.setAttr((loc_ankle[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_ankle[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_ankle[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_ankle[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_ankle[0] + '.translate'), 28.478, 9.607, 7.831)
+            mc.setAttr((loc_ankle[0] + '.rotate'), 0.0, -86.004, 0.0)
+            mc.parent(loc_ankle, l_loc_grp)
+        else:
+            print(l_direction + '_loc_ankle' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+        if mc.objExists(l_direction + '_loc_toe') == False:
+            loc_toe = mc.spaceLocator(n = l_direction + '_loc_toe')
+            mc.setAttr((loc_toe[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_toe[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_toe[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_toe[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_toe[0] + '.translate'), 29.078, 4.778, 16.419)
+            mc.setAttr((loc_toe[0] + '.rotate'), 0.0, -86.004, 0.0)
+            mc.parent(loc_toe, l_loc_grp)
+        else:
+            print(l_direction + '_loc_toe' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+        if mc.objExists(l_direction + '_loc_toe_end') == False:
+            loc_toe_end = mc.spaceLocator(n = l_direction + '_loc_toe_end')
+            mc.setAttr((loc_toe_end[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_toe_end[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_toe_end[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_toe_end[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_toe_end[0] + '.translate'), 30.123, 0.0, 31.383)
+            mc.setAttr((loc_toe_end[0] + '.rotate'), 0.0, -86.004, 0.0)
+            mc.parent(loc_toe_end, l_loc_grp)
+        else:
+            print(l_direction + '_loc_toe_end' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+        if mc.objExists(l_direction + '_loc_heel') == False:
+            loc_heel = mc.spaceLocator(n = l_direction + '_loc_heel')
+            mc.setAttr((loc_heel[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_heel[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_heel[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_heel[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_heel[0] + '.translate'), 28.439, 0.0, 7.273)
+            mc.setAttr((loc_heel[0] + '.rotate'), 0.0, -86.004, 0.0)
+            mc.parent(loc_heel, l_loc_grp)
+        else:
+            print(l_direction + '_loc_heel' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+        if mc.objExists(l_direction + '_loc_outer_foot') == False:
+            loc_outer_foot = mc.spaceLocator(n = l_direction + '_loc_outer_foot')
+            mc.setAttr((loc_outer_foot[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_outer_foot[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_outer_foot[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_outer_foot[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_outer_foot[0] + '.translate'), 40.142, 0.0, 15.063)
+            mc.setAttr((loc_outer_foot[0] + '.rotate'), 0.0, -63.306, 0.0)
+            mc.parent(loc_outer_foot, l_loc_grp)
+        else:
+            print(l_direction + '_loc_outer_foot' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+        if mc.objExists(l_direction + '_loc_inner_foot') == False:
+            loc_inner_foot = mc.spaceLocator(n = l_direction + '_loc_inner_foot')
+            mc.setAttr((loc_inner_foot[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_inner_foot[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_inner_foot[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_inner_foot[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_inner_foot[0] + '.translate'), 17.481, 0.0, 17.846)
+            mc.setAttr((loc_inner_foot[0] + '.rotate'), -0.0, -104.943, 0.0)
+            mc.parent(loc_inner_foot, l_loc_grp)
+        else:
+            print(l_direction + '_loc_inner_foot' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+    
+        # __________r locators ________#
+        if mc.objExists(r_direction + '_loc_ankle') == False:
+            loc_ankle = mc.spaceLocator(n = r_direction + '_loc_ankle')
+            mc.setAttr((loc_ankle[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_ankle[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_ankle[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_ankle[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_ankle[0] + '.translate'), -28.478, 9.607, 7.831)
+            mc.setAttr((loc_ankle[0] + '.rotate'), 0.0, 266.004, 0.0)
+            mc.parent(loc_ankle, r_loc_grp)
+        else:
+            print(r_direction + '_loc_ankle' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+        if mc.objExists(r_direction + '_loc_toe') == False:
+            loc_toe = mc.spaceLocator(n = r_direction + '_loc_toe')
+            mc.setAttr((loc_toe[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_toe[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_toe[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_toe[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_toe[0] + '.translate'), -29.078, 4.778, 16.419)
+            mc.setAttr((loc_toe[0] + '.rotate'), 180.0, -86.004, 180.0)
+            mc.parent(loc_toe, r_loc_grp)
+        else:
+            print(r_direction + '_loc_toe' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+        if mc.objExists(r_direction + '_loc_toe_end') == False:
+            loc_toe_end = mc.spaceLocator(n = r_direction + '_loc_toe_end')
+            mc.setAttr((loc_toe_end[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_toe_end[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_toe_end[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_toe_end[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_toe_end[0] + '.translate'), -30.123, 0.0, 31.383)
+            mc.setAttr((loc_toe_end[0] + '.rotate'), 180.0, -86.004, 180.0)
+            mc.parent(loc_toe_end, r_loc_grp)
+        else:
+            print(r_direction + '_loc_toe_end' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+        if mc.objExists(r_direction + '_loc_heel') == False:
+            loc_heel = mc.spaceLocator(n = r_direction + '_loc_heel')
+            mc.setAttr((loc_heel[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_heel[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_heel[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_heel[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_heel[0] + '.translate'), -28.439, 0.0, 7.273)
+            mc.setAttr((loc_heel[0] + '.rotate'), 0.0, 266.004, 0.0)
+            mc.parent(loc_heel, r_loc_grp)
+        else:
+            print(r_direction + '_loc_heel' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+        if mc.objExists(r_direction + '_loc_outer_foot') == False:
+            loc_outer_foot = mc.spaceLocator(n = r_direction + '_loc_outer_foot')
+            mc.setAttr((loc_outer_foot[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_outer_foot[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_outer_foot[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_outer_foot[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_outer_foot[0] + '.translate'), -40.142, 0.0, 15.063)
+            mc.setAttr((loc_outer_foot[0] + '.rotate'), 180.0, -63.306, 180.0)
+            mc.parent(loc_outer_foot, r_loc_grp)
+        else:
+            print(r_direction + '_loc_outer_foot' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+        if mc.objExists(r_direction + '_loc_inner_foot') == False:
+            loc_inner_foot = mc.spaceLocator(n = r_direction + '_loc_inner_foot')
+            mc.setAttr((loc_inner_foot[0] + '.overrideEnabled'), 1)
+            mc.setAttr((loc_inner_foot[0] + '.overrideRGBColors'), 1)
+            mc.setAttr((loc_inner_foot[0] + '.overrideColorRGB'), .1, 1, 0)
+            mc.setAttr((loc_inner_foot[0] + '.localScale'), 5, 5, 5)
+            mc.setAttr((loc_inner_foot[0] + '.translate'), -17.481, 0.0, 17.846)
+            mc.setAttr((loc_inner_foot[0] + '.rotate'), 0.0, -75.057, -0.0)
+            mc.parent(loc_inner_foot, r_loc_grp)
+        else:
+            print(r_direction + '_loc_inner_foot' + ' Already Exists!')
+            mc.select(cl=True)
+
+
+        # hide grps
+        #mc.hide(l_loc_grp)
+        #mc.hide(r_loc_grp)
 

@@ -56,10 +56,10 @@ class rigger_ui_class():
                                         ann='Auto Rig Character.  No Joint Names Required. Must have tongue, bot face joints, and top face joints. Else uncheck "Head Jnts."'
                                     )
         auto_rig_b1a = mc.button(   label='Wyvern + Hind Legs \nAuto Rig! (Beta)',
-                                    h=30, 
-                                    w=150, 
+                                    h=40, 
+                                    w=110, 
                                     command = 'character_rigger.ar_rig.character_rig_quadruped.character_rig()',
-                                    bgc = (.2,.5,0), 
+                                    bgc = (0,.5,0), 
                                     statusBarMessage='Same as RIG ME! button, except quaruped legs (double knees), instead of normal biped legs. For something like a bipedal wyvern or dragon.',
                                     ann='Same as RIG ME! button, except quaruped legs (double knees), instead of normal biped legs. For something like a bipedal wyvern or dragon.',
                                 )
@@ -75,6 +75,12 @@ class rigger_ui_class():
                                     command =   'character_rigger.tabs.auto_rig_tab.auto_rig_options().wyverm_bounding_boxes()',
                                     bgc = (.4,.1,.1), 
                                     statusBarMessage='Import Wyvern Bounding Boxes for the Auto Rigger to find the joints.')
+        auto_rig_b1d = mc.button(   label='Import Wyvern \nRev Foot Locators', 
+                                    h=30, 
+                                    w=110, 
+                                    command = 'character_rigger.tabs.auto_rig_tab.auto_rig_options().wyvern_rev_foot_locators()',
+                                    bgc = (.1,.4,.1), 
+                                    statusBarMessage='Import Wyvern Reverse Foot Locators.')
         auto_rig_b2 = mc.button(label='L \n Rev Foot \n Locators', 
                                 h=50, 
                                 w=60, 
@@ -243,9 +249,10 @@ class rigger_ui_class():
                                     (auto_rig_s4 , 'top', 0),(auto_rig_s4 , 'left', 454),
                                     # buttons
                                     (auto_rig_b1 , 'top', 77),(auto_rig_b1 , 'left', 130),
-                                    (auto_rig_b1a , 'top', 280),(auto_rig_b1a , 'left', 250),
                                     (auto_rig_b1b , 'top', 280),(auto_rig_b1b , 'left', 0),
-                                    (auto_rig_b1c , 'top', 280),(auto_rig_b1c , 'left',125),
+                                    (auto_rig_b1c , 'top', 280),(auto_rig_b1c , 'left',115),
+                                    (auto_rig_b1d , 'top', 280),(auto_rig_b1d , 'left',230),
+                                    (auto_rig_b1a , 'top', 280),(auto_rig_b1a , 'left', 345),
                                     (auto_rig_b2 , 'top', 15),(auto_rig_b2 , 'left', 325),
                                     (auto_rig_b3 , 'top', 15),(auto_rig_b3 , 'left', 390),
                                     (auto_rig_b4 , 'top', 86),(auto_rig_b4 , 'left', 15),

@@ -322,12 +322,13 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
                             ] )
                             
                             
-        myCurve1 = mc.duplicate(myCurve0)
-        mc.setAttr(myCurve1[0] + '.scaleY', -1)
-        mc.setAttr(myCurve1[0] + '.rotateY', -180)
+        myCurve0_dup = mc.duplicate(myCurve0)
+        myCurve1= mc.rename(myCurve0_dup, myCurve0 + '_copy')
+        mc.setAttr(myCurve1 + '.scaleY', -1)
+        mc.setAttr(myCurve1 + '.rotateY', -180)
         mc.makeIdentity(myCurve1, apply=True)
 
-        crv_lst = [myCurve0, myCurve1[0]]
+        crv_lst = [myCurve0, myCurve1]
 
         crvShp_lst = []
         for i in crv_lst:
@@ -391,16 +392,19 @@ def tail_tentacle_rig(  defaultJnt_prefix = 'sknJnt_',
                             (71.438, 0.0, -71.438)
                             ] )
 
-        myCurve1 = mc.duplicate(myCurve0)
-        mc.setAttr(myCurve1[0] + '.scaleZ', -1)
+        myCurve0_dup1 = mc.duplicate(myCurve0)
+        myCurve1 = mc.rename(myCurve0_dup1, myCurve0 + '_copy')
+        mc.setAttr(myCurve1 + '.scaleZ', -1)
         mc.makeIdentity(myCurve1, apply=True)
 
-        myCurve2 = mc.duplicate(myCurve0)
-        mc.setAttr(myCurve2[0] + '.rotateY', -90)
+        myCurve0_dup2 = mc.duplicate(myCurve0)
+        myCurve2 = mc.rename(myCurve0_dup2, myCurve0 + '_copy')
+        mc.setAttr(myCurve2 + '.rotateY', -90)
         mc.makeIdentity(myCurve2, apply=True)
 
-        myCurve3 = mc.duplicate(myCurve0)
-        mc.setAttr(myCurve3[0] + '.rotateY', 90)
+        myCurve0_dup3 = mc.duplicate(myCurve0)
+        myCurve3 = mc.rename(myCurve0_dup3, myCurve0 + '_copy')
+        mc.setAttr(myCurve3 + '.rotateY', 90)
         mc.makeIdentity(myCurve3, apply=True)
 
         myCurveCircle = mc.circle(r=93, nr=(0,1,0), ch=0)
