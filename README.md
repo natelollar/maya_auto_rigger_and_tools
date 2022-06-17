@@ -29,8 +29,8 @@ if Maya has trouble importing files, use the 'import_reload.py' file to import a
 
 ##
 
-#### Rigger Toolset Video Demo<br/> 
-- https://youtu.be/nm6rtZPfLnY
+#### Rigger Toolset Example<br/> 
+- https://youtu.be/FcX4T4Ze4f8
 
 ## 
 
