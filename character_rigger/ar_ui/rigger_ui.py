@@ -884,21 +884,21 @@ class rigger_ui_class():
         # create random, scatter selected, scatter to vertices
         mc.rowLayout(numberOfColumns = 5)
         mc.button(  label='create RANDOM objects', 
-                    h=75, 
+                    h=45, 
                     w=142, 
                     command = 'character_rigger.tabs.modeling.modeling_class().create_random()', 
                     bgc = (.4,0,.1), 
                     statusBarMessage='Creates random polygonal objects for testing')
-        mc.separator(style='none', w=10, h=75, bgc=(0,0.2,0.4))
+        mc.separator(style='none', w=10, h=45, bgc=(0,0.2,0.4))
         mc.button(  label='SCATTER Selected', 
-                    h=75, 
+                    h=45, 
                     w=142, 
                     command = 'character_rigger.tabs.modeling.modeling_class().scatter_selected()' , 
                     bgc = (0,.4,.4), 
                     statusBarMessage='Scatter selected randomly' )
-        mc.separator(style='none', w=10, h=75, bgc=(0,0.2,0.4))
+        mc.separator(style='none', w=10, h=45, bgc=(0,0.2,0.4))
         mc.button(  label='SCATTER Selected \n ...to Object Verts', 
-                    h=75, w=142, 
+                    h=45, w=142, 
                     command = 'character_rigger.tabs.modeling.modeling_class().scatter_to_vertices()', 
                     bgc = (.25,.5,0), 
                     statusBarMessage='First Select Objects to Scatter, Last Select Single Object to Scatter On' )
@@ -912,23 +912,23 @@ class rigger_ui_class():
 
         # create HUMAN model, Polygon ARCH 
         mc.rowLayout(numberOfColumns = 6)
-        mc.button(  label='Multi OBJECT Export \n \      / \n \   / \n \/', 
-                    h=75, 
+        mc.button(  label='Empty...', 
+                    h=45, 
                     w=142, 
-                    command = 'character_rigger.tabs.modeling.modeling_class().mult_obj_exp()', 
-                    bgc = (.5,0,.5), 
-                    statusBarMessage='Select multiple objects to export.')
+                    command = 'print("EMPTY!")', 
+                    bgc = (.2,0,.2), 
+                    statusBarMessage='')
         
-        mc.separator(style='none', w=10, h=75, bgc=(0,0.2,0.4))
+        mc.separator(style='none', w=10, h=45, bgc=(0,0.2,0.4))
         mc.button(  label='Make Polygon ARCH \n (No Undo)', 
-                    h=75, 
+                    h=45, 
                     w=142, 
                     command = 'character_rigger.tabs.modeling.modeling_class().make_poly_arch()', 
                     bgc = (.5,.2,0), 
                     statusBarMessage='Create Basic Polygonal Arch (1st One Created Does Not Support Undo Currently)')
-        mc.separator(style='none', w=10, h=75, bgc=(0,0.2,0.4))
+        mc.separator(style='none', w=10, h=45, bgc=(0,0.2,0.4))
         mc.button(  label='create HUMAN model', 
-                    h=75, 
+                    h=45, 
                     w=142, 
                     command = 'character_rigger.tabs.modeling.modeling_class().create_human()', 
                     bgc = (.25,.2,.2), 
@@ -938,34 +938,45 @@ class rigger_ui_class():
 
         # blue seperator
         mc.rowLayout(numberOfColumns = 1)
-        mc.text(label = '', height=10, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.2,0.4))
+        mc.text(label = '', height=17, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.2,0.4))
         mc.setParent("..")
+
+
+        #----------------------------------------------------------
+        # EXPORT OBJECTS
+        #----------------------------------------------------------
 
         # obj export text field
         def_text_var = os.path.abspath( os.path.join(__file__, "..", "..", "..", "..", "..", "..", "..", "downloads") )
-        mc.rowLayout(numberOfColumns = 1)
+        mc.rowLayout(numberOfColumns = 2)
         mc.textFieldButtonGrp(  'obj_exp_text',
-                                label = '   Export Path:', # title
+                                label = '  Export Path:', # title
                                 cl3 = ['left', 'left', 'left'], # alignment of 3 columns (title, text, button)
                                 height=30, 
-                                width=454, 
+                                width=352, 
                                 text= def_text_var + '/',
                                 #bgc=(.5,0,.5), #background color
-                                cw3 = [75,315,60], # width of the 3 columns 
+                                cw3 = [73,225,60], # width of the 3 columns 
                                 buttonLabel='Browse', # button label
                                 buttonCommand= 'character_rigger.tabs.modeling.modeling_class().browse_files()' ) 
+        mc.button(  label='Export Objects', 
+                    h=25, 
+                    w=100, 
+                    command = 'character_rigger.tabs.modeling.modeling_class().mult_obj_exp()', 
+                    bgc = (.5,0,.3), 
+                    statusBarMessage='Select multiple objects to export.')
         mc.setParent("..")
 
         mc.rowLayout(numberOfColumns = 1)
         mc.radioButtonGrp(  'obj_radio_button',
                             label='   Export Type:', 
-                            labelArray3=['.obj', '.fbx', '.ma'], 
-                            numberOfRadioButtons=3,
-                            cl4 = ['left', 'left', 'left', 'left'],
-                            cw4 = [85, 75, 65, 65],
+                            labelArray4=['.obj', '.fbx', '.ma', '.rs'], 
+                            numberOfRadioButtons=4,
+                            cl5 = ['left', 'left', 'left', 'left', 'left'],
+                            cw5 = [85, 75, 65, 65, 65],
                             height=20, 
                             width=454,
-                            bgc = (0,0.2,0.4),
+                            bgc = (0,0.3,0.4),
                             sl=1
                             )
         mc.setParent("..")
@@ -973,6 +984,49 @@ class rigger_ui_class():
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = '', height=5, width=454, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
         mc.setParent("..")
+
+
+        #----------------------------------------------------------
+        # IMPORT OBJECTS
+        #----------------------------------------------------------
+
+        # obj export text field
+        def_text_var = ''
+        mc.rowLayout(numberOfColumns = 2)
+        mc.textFieldButtonGrp(  'obj_imp_text',
+                                label = '  Objects: ', # title
+                                cl3 = ['left', 'left', 'left'], # alignment of 3 columns (title, text, button)
+                                height=30, 
+                                width=352, 
+                                text= 'Browse for objects...',
+                                cw3 = [50,248,60], # width of the 3 columns 
+                                buttonLabel='Browse', # button label
+                                buttonCommand= 'character_rigger.tabs.modeling.modeling_class().browse_files_import()' ) 
+        mc.button(  label='Import Objects', 
+                    h=25, 
+                    w=100, 
+                    command = 'character_rigger.tabs.modeling.modeling_class().mult_obj_imp()', 
+                    bgc = (.3,0,.5), 
+                    statusBarMessage='Select multiple objects to import.')
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 2)
+        mc.text(label = ' Import Types:   .obj   .fbx   .ma   .rs', 
+                    height=20, 
+                    width=454, 
+                    align='left', 
+                    font = 'fixedWidthFont', 
+                    bgc=(0,0.3,0.4))
+        mc.setParent("..")
+
+        mc.rowLayout(numberOfColumns = 1)
+        mc.text(label = '', height=5, width=454, align='center', font = 'fixedWidthFont', bgc=(0.1,0,0.1))
+        mc.setParent("..")
+
+
+        #----------------------------------------------------------
+        # RANDOM SCATTER TOOLS
+        #----------------------------------------------------------
 
         mc.rowLayout(numberOfColumns = 1)
         mc.text(label = 'Random Scatter Tools', height=30, width=454, align='center', font = 'fixedWidthFont', bgc=(0,0.4,0.2))

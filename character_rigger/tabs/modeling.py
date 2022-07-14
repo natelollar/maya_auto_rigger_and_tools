@@ -2,6 +2,7 @@ import maya.cmds as mc
 
 import random
 import os
+from pathlib import Path
 
 #_________________Modeling Tab Methods __________________________#
 #________________________________________________________________#
@@ -196,6 +197,9 @@ class modeling_class():
         elif radio_button == 3:
             radio_button_val = 'mayaAscii'
             export_opt = ('v=0;')
+        elif radio_button == 4:
+            radio_button_val = 'Redshift Proxy'
+            export_opt = ('v=0;')
         
         path_dir = mc.textFieldButtonGrp('obj_exp_text', query=True, text=True)
         
@@ -210,7 +214,75 @@ class modeling_class():
                         options=export_opt, 
                         )
 
-                        
+
+    #import multiple objs (including redshift proxy)
+    def mult_obj_imp(self):
+        '''
+        radio_button = mc.radioButtonGrp( 'obj_radio_button', query=True, sl=True)
+        if radio_button == 1:
+            radio_button_val = 'OBJ'
+            imp_opt = ('mo=1;lo=0')
+        elif radio_button == 2:
+            radio_button_val = 'FBX'
+            imp_opt = ('v=0;')
+        elif radio_button == 3:
+            radio_button_val = 'mayaAscii'
+            imp_opt = ('v=0;')
+        elif radio_button == 4:
+            radio_button_val = 'Redshift Proxy'
+            imp_opt = ('v=0;')
+        '''
+        obj_paths0 = mc.textFieldButtonGrp('obj_imp_text', query=True, text=True)
+        obj_paths1 = obj_paths0.replace("'","") # remove extra quotation
+        obj_paths2 = obj_paths1.strip('][').split(', ') #convert string back to list
+
+
+        for i in obj_paths2:
+            obj_suffix = Path(i).suffix
+            obj_name = Path(i).stem
+
+            if obj_suffix == '.obj':
+                #radio_button_val = 'OBJ'
+                imp_opt = ('mo=1;lo=0')
+            elif obj_suffix == '.fbx':
+                #radio_button_val = 'FBX'
+                imp_opt = ('v=0;')
+            elif obj_suffix == '.ma':
+                #radio_button_val = 'mayaAscii'
+                imp_opt = ('v=0;')
+
+            if obj_suffix == '.obj' or obj_suffix == '.fbx' or obj_suffix == '.ma':
+                mc.file(i, #file path
+                        #type=radio_button_val,
+                        i=1, # import
+                        iv=1, #ignoreVersion
+                        mnc=0, #mergeNamespacesOnClash
+                        ra=1, #renameAll
+                        #rpr=obj_name, #renamingPrefix
+                        f=1, # force
+                        pr=1, # preserve references
+                        itr='keep', #importTimeRange
+                        options=imp_opt, 
+                        )
+
+            if obj_suffix == '.rs':
+                
+                proxy_node = mc.createNode('RedshiftProxyMesh', name='rsProxy_node_' + obj_name)
+
+                mc.setAttr(proxy_node + '.fileName', i, type='string') # set redshift proxy path
+                mc.setAttr(proxy_node + '.displayMode', 1) # Preview Mesh
+                mc.setAttr(proxy_node + '.displayPercent', 5) # Preview Mesh
+
+                shp_node = mc.createNode('mesh')
+
+                mc.sets(e=True, forceElement='initialShadingGroup')
+
+                mc.connectAttr(proxy_node + '.outMesh', shp_node + '.inMesh')
+
+                trans_node0 = mc.listRelatives(shp_node, parent=True)
+                trans_node = mc.rename(trans_node0, 'rsProxy_' + obj_name)
+
+
 
     def browse_files(self):
         path_dir = mc.fileDialog2(  fileMode=3, #3 The name of a directory. Only directories are displayed in the dialog.
@@ -219,6 +291,15 @@ class modeling_class():
                                     okCaption='Accept')
 
         if path_dir: mc.textFieldButtonGrp('obj_exp_text', edit=True, text=path_dir[0] + '/') 
+
+    def browse_files_import(self):
+        #print('WORKING!')
+        imp_path_dir = mc.fileDialog2(  fileMode=4, #4 Then names of one or more existing files.
+                                        caption='Choose Objects to Import',
+                                        dialogStyle=2,
+                                        okCaption='Accept')
+
+        if imp_path_dir: mc.textFieldButtonGrp('obj_imp_text', edit=True, text=str(imp_path_dir)) 
 
     # for testing file locations
     def file_spot(self):
