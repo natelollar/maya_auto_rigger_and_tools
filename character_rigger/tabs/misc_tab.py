@@ -5,8 +5,6 @@ import sys
 from PySide2 import QtCore
 import PySide2
 
-from ..ar_rig import quadruped_leg_rig
-
 
 class misc_tab_class():
 

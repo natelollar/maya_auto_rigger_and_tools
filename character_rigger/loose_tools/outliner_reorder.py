@@ -23,3 +23,10 @@ def outliner_move_down_five():
     mySel = mc.ls(sl=1)
 
     mc.reorder(mySel, relative=5 )
+
+
+#________
+def outliner_select_down_one():
+    mySel = mc.ls(sl=1)
+
+    mc.pickWalk(mySel, direction='right') # right is down transform in group
