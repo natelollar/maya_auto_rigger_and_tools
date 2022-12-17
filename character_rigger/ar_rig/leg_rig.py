@@ -929,13 +929,13 @@ class leg_rig():
         knee_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_knee_len_con' )
         ankle_len_con = mc.shadingNode('condition', asUtility=True, n=direction + '_ankle_len_con' )
         #set operation to 'greater than'
-        if direction == 'left':
-            mc.setAttr(knee_len_con + '.operation', 2)
-            mc.setAttr(ankle_len_con + '.operation', 2)
+        #if direction == 'left':
+        mc.setAttr(knee_len_con + '.operation', 2)
+        mc.setAttr(ankle_len_con + '.operation', 2)
         #set operation to 'less than'
-        elif direction == 'right':
-            mc.setAttr(knee_len_con + '.operation', 4)
-            mc.setAttr(ankle_len_con + '.operation', 4)
+        # elif direction == 'right':
+        #     mc.setAttr(knee_len_con + '.operation', 4)
+        #     mc.setAttr(ankle_len_con + '.operation', 4)
 
         # connect leg distance to global scale offset
         mc.connectAttr( (ik_jnt_ruler + '.distance'), (globalScale_off + '.input1X'), f=True )
@@ -943,14 +943,14 @@ class leg_rig():
         mc.connectAttr( (global_ctrl + '.scaleX'), (globalScale_off + '.input2X'), f=True )
 
         # connect ruler distance over total distance of joints
-        if direction == 'left':
-            mc.connectAttr( (globalScale_off + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
-        elif direction == 'right':
-            # (right) invert to negative translate X (since x is up the chain instead of down the chain)
-            invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_invert_value' )
-            mc.setAttr( (invert_value + '.input2X'), -1 )
-            mc.connectAttr( (globalScale_off + '.outputX'), (invert_value + '.input1X'), f=True )
-            mc.connectAttr( (invert_value + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
+        #if direction == 'left':
+        mc.connectAttr( (globalScale_off + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
+        # elif direction == 'right':
+        #     # (right) invert to negative translate X (since x is up the chain instead of down the chain)
+        #     invert_value = mc.shadingNode('multiplyDivide', asUtility=True, n=direction + '_leg_invert_value' )
+        #     mc.setAttr( (invert_value + '.input2X'), -1 )
+        #     mc.connectAttr( (globalScale_off + '.outputX'), (invert_value + '.input1X'), f=True )
+        #     mc.connectAttr( (invert_value + '.outputX'), (leg_dist_ratio + '.input1X'), f=True )
 
         #__________#
         # must create expression to account for offset of elbow and wrist length when scaling
