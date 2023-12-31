@@ -1,0 +1,18 @@
+#shelf button
+#camera Tumble pivot to selected object rotate pivot
+#rather than to bounding box of all children
+// camera tumble pivot to rotation pivot of selected
+string $sel[] = `ls -sl`;	
+string $locator_object = "perspShape";
+for ($obj in $sel)
+	{   
+        float $pivotPosition[] = `xform -q -ws -rp $obj`;
+        setAttr ($locator_object + ".tumblePivotX") $pivotPosition[0];
+        setAttr ($locator_object + ".tumblePivotY") $pivotPosition[1];
+        setAttr ($locator_object + ".tumblePivotZ") $pivotPosition[2];
+	}
+print "Camera PIVOT updated to selected!"
+
+
+#also look at F hotkey
+#FrameSelectedWithoutChildren, etc..

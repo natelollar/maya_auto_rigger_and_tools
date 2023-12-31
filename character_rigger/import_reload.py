@@ -55,6 +55,7 @@ import character_rigger.loose_tools
 import character_rigger.loose_tools.arrow_twist_ctrl
 import character_rigger.loose_tools.add_custom_attr
 import character_rigger.loose_tools.add_space_switch_multi_1
+import character_rigger.loose_tools.add_space_switch_multi_rot
 import character_rigger.loose_tools.outliner_reorder
 import character_rigger.loose_tools.assign_blinn_mat
 import character_rigger.loose_tools.copy_attribute
@@ -65,6 +66,9 @@ import character_rigger.loose_tools.cylinder_ctrl
 import character_rigger.loose_tools.joint_scale_compensate_toggle
 import character_rigger.loose_tools.copy_vertex_weights
 import character_rigger.loose_tools.mirror_jnt_same_orient
+
+import character_rigger.loose_tools.arnold
+import character_rigger.loose_tools.arnold.arnold_basic_character
 
 #_______________________________________________#
 # reimport all
@@ -117,6 +121,7 @@ imp.reload( character_rigger.loose_tools )
 imp.reload( character_rigger.loose_tools.arrow_twist_ctrl )
 imp.reload( character_rigger.loose_tools.add_custom_attr )
 imp.reload( character_rigger.loose_tools.add_space_switch_multi_1 )
+imp.reload( character_rigger.loose_tools.add_space_switch_multi_rot )
 imp.reload( character_rigger.loose_tools.outliner_reorder )
 imp.reload( character_rigger.loose_tools.assign_blinn_mat )
 imp.reload( character_rigger.loose_tools.copy_attribute )
@@ -127,6 +132,9 @@ imp.reload( character_rigger.loose_tools.cylinder_ctrl )
 imp.reload( character_rigger.loose_tools.joint_scale_compensate_toggle )
 imp.reload( character_rigger.loose_tools.copy_vertex_weights )
 imp.reload( character_rigger.loose_tools.mirror_jnt_same_orient )
+
+imp.reload( character_rigger.loose_tools.arnold )
+imp.reload( character_rigger.loose_tools.arnold.arnold_basic_character )
 
 #_______________________________________________#
 

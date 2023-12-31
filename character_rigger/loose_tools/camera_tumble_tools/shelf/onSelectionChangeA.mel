@@ -1,0 +1,15 @@
+// run with script job to live set new pivot to rotation pivot of selected object
+
+//global proc onSelectionChangeA() {
+//    string $sel[] = `ls -sl`;	
+//    string $locator_object = "perspShape";
+//    for ($obj in $sel)
+//    	{   
+//            float $pivotPosition[] = `xform -q -ws -rp $obj`;
+//            setAttr ($locator_object + ".tumblePivotX") $pivotPosition[0];
+//            setAttr ($locator_object + ".tumblePivotY") $pivotPosition[1];
+//          setAttr ($locator_object + ".tumblePivotZ") $pivotPosition[2];
+//    	}
+//}
+
+

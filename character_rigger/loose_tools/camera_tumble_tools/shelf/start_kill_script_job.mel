@@ -1,0 +1,11 @@
+
+
+
+// Create a scriptJob that triggers on selection change
+int $onSelectionChangeA_JobId = `scriptJob -e "SelectionChanged" "onSelectionChangeA"`;
+print "script job ACTIVATED!!!"
+
+
+// kill scriptjob running
+scriptJob -kill $onSelectionChangeA_JobId;
+print "script job KILLED!!!"
