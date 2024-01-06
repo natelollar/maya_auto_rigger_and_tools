@@ -78,8 +78,12 @@ def onPress():
     
     #if intersections from raycast mouse 2d position exist
     if intersection_list:
-        cam_transform = "persp"
-        cam_pos = cmds.xform(cam_transform, query=True, worldSpace=True, translation=True)
+        viewport = cmds.getPanel(withFocus=True)
+        print("Viewport = " + str(viewport))
+        current_cam_query = cmds.modelEditor(viewport, q=1, av=1, cam=1)
+        current_cam = current_cam_query.split('|')[-1]
+        print("Current Camera: " + current_cam) 
+        cam_pos = cmds.xform(current_cam, query=True, worldSpace=True, translation=True)
         
         #find distance to camera of each position
         distance_between_list = []
@@ -108,17 +112,43 @@ def onPress():
         else:
             pass
         
+        
         #get index list inex of smallest distance
         closest_inters_index = distance_between_list_abs.index(min(distance_between_list_abs) )
         #apply that index to original intersection position list
         closest_inters_pos = intersection_list[closest_inters_index]
         
         #set camera to first intersection point  (smallest distance between cam and intersection)
-        cam_shape = "perspShape"
-        cmds.setAttr(cam_shape + ".tumblePivotX", closest_inters_pos[0])
-        cmds.setAttr(cam_shape + ".tumblePivotY", closest_inters_pos[1])
-        cmds.setAttr(cam_shape + ".tumblePivotZ", closest_inters_pos[2])
-        
+        cmds.setAttr(current_cam + ".tumblePivotX", closest_inters_pos[0])
+        cmds.setAttr(current_cam + ".tumblePivotY", closest_inters_pos[1])
+        cmds.setAttr(current_cam + ".tumblePivotZ", closest_inters_pos[2])
+
+        #get distance for center of interest (affects zooming in and out)
+        closest_inters_dist = min(distance_between_list_abs)
+        print("Closest geo intersection: " + str(closest_inters_dist))
+        #set center of interest for current camera
+        cmds.setAttr(current_cam + ".centerOfInterest", closest_inters_dist)
+
+
+        #----- Set locator position ----# (nead to for when camera changes)
+        if cmds.objExists("cam_pivot_loc"):
+            connected_cam = cmds.listConnections("cam_pivot_loc.translate")[0]
+            print("Current camera connected to locator: " + connected_cam)
+            
+            same_cam = (current_cam == connected_cam)
+            print("Same Camera: " + str(same_cam))
+            
+            if same_cam:
+                pass
+            else:
+                cmds.connectAttr(current_cam + ".tumblePivot", "cam_pivot_loc.translate", f=True)
+                
+            new_connected_cam = cmds.listConnections("cam_pivot_loc.translate")[0]
+            print("New camera connected to locator: " + new_connected_cam)
+        else:
+            print("No 'cam_pivot_loc' in scene.")
+
+
         #get mesh intersected with for debugging
         closest_inters_mesh = intersection_mesh_list[closest_inters_index]
         print("--------- Intersected with " + str(closest_inters_mesh) + " at " + str(closest_inters_pos) + " ----------")
@@ -130,3 +160,4 @@ def onPress():
 
 
 # run onPress function 
+onPress()
