@@ -1,2 +1,11 @@
-*.pyc 
+*.tx
+*.log
+*.mayaSwatches
+*.swatch
+*.pyc
 *__pycache__
+*.venv
+*.git
+*build
+*.egg-info
+*dist

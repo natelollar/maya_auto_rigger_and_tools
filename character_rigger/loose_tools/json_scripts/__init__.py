@@ -1,0 +1,1 @@
+from . import save_curve_attributes

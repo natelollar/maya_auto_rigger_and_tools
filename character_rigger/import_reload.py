@@ -70,6 +70,9 @@ import character_rigger.loose_tools.mirror_jnt_same_orient
 import character_rigger.loose_tools.arnold
 import character_rigger.loose_tools.arnold.arnold_basic_character
 
+import character_rigger.loose_tools.json_scripts
+import character_rigger.loose_tools.json_scripts.save_curve_attributes
+
 #_______________________________________________#
 # reimport all
 imp.reload( character_rigger )
@@ -135,6 +138,9 @@ imp.reload( character_rigger.loose_tools.mirror_jnt_same_orient )
 
 imp.reload( character_rigger.loose_tools.arnold )
 imp.reload( character_rigger.loose_tools.arnold.arnold_basic_character )
+
+imp.reload(  character_rigger.loose_tools.json_scripts )
+imp.reload(  character_rigger.loose_tools.json_scripts.save_curve_attributes )
 
 #_______________________________________________#
 
