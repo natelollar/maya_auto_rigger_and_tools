@@ -1,4 +1,6 @@
 
+###### *Update:  Currently works with Python 3 (Maya 2022+). <br/> 
+
 ###### *Update:  Added more tools and a Wyvern Auto Rigger feature. <br/> 
 
 ## *Nate Tools Character Rigger Toolset ReadMe*<br/>
