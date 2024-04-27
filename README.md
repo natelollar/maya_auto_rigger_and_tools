@@ -9,7 +9,7 @@
 ##
 First, place the 'character_rigger' folder in root level of the Maya scripts folder.<br/> 
 > ~~C:\Users\Bob\Documents\maya\2020\scripts~~<br/>
-> > C:\Users\Bob\Documents\maya\2024\scripts<br/> 
+>  C:\Users\Bob\Documents\maya\2024\scripts<br/> 
 
 ( or add path to maya.env as PYTHONPATH = ' ' )<br/> 
 
