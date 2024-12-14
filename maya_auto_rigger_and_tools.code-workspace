@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+        "python.defaultInterpreterPath": "C:/Program Files/Autodesk/Maya2024/bin/mayapy.exe"
+    }
+}
